@@ -51,5 +51,5 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Start the app directly (run migrations manually via Railway dashboard if needed)
-CMD ["npm", "start"]
+# Run migrations and start the app
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
