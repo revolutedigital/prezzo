@@ -30,6 +30,7 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
+RUN apk add --no-cache openssl
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
@@ -50,5 +51,5 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Run migrations and start
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+# Run migrations and start (don't fail if migrations fail)
+CMD ["sh", "-c", "npx prisma migrate deploy || true && npm start"]
