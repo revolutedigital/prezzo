@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: prezzo-postgres
+    restart: unless-stopped
+    ports:
+      - "8000:5432"
+    environment:
+      POSTGRES_USER: prezzo
+      POSTGRES_PASSWORD: prezzo123
+      POSTGRES_DB: prezzo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prezzo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prezzo-app
+    restart: unless-stopped
+    ports:
+      - "8001:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://prezzo:prezzo123@postgres:5432/prezzo?schema=public
+      - NEXTAUTH_URL=http://localhost:8001
+      - NEXTAUTH_SECRET=prezzo-production-secret-change-me-in-production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+
+  # Development mode (opcional - use este em vez do 'app' para desenvolvimento)
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: prezzo-dev
+    restart: unless-stopped
+    ports:
+      - "8001:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://prezzo:prezzo123@postgres:5432/prezzo?schema=public
+      - NEXTAUTH_URL=http://localhost:8001
+      - NEXTAUTH_SECRET=prezzo-dev-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+    driver: local

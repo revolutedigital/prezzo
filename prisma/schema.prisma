@@ -1,0 +1,269 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Matérias-primas e insumos
+model MateriaPrima {
+  id                String   @id @default(cuid())
+  nome              String
+  codigo            String?  @unique
+  unidadeMedida     String   // metro, kg, unidade, litro
+  custoUnitario     Decimal  @db.Decimal(10, 2)
+  fornecedor        String?
+  categoria         String?
+  ativo             Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  composicoes       ComposicaoProduto[]
+  historicoCustos   HistoricoCusto[]
+  atualizacoes      AtualizacaoCusto[]
+
+  @@map("materias_primas")
+}
+
+// Histórico de mudanças de custo
+model HistoricoCusto {
+  id                String   @id @default(cuid())
+  materiaPrimaId    String
+  materiaPrima      MateriaPrima @relation(fields: [materiaPrimaId], references: [id], onDelete: Cascade)
+  custoAnterior     Decimal  @db.Decimal(10, 2)
+  custoNovo         Decimal  @db.Decimal(10, 2)
+  percentualMudanca Decimal  @db.Decimal(5, 2)
+  motivo            String?  // "NF", "Manual", "Reajuste"
+  notaFiscalId      String?
+  createdAt         DateTime @default(now())
+  userId            String
+
+  @@map("historico_custos")
+}
+
+// Tipos de Mão de Obra
+model TipoMaoDeObra {
+  id                String   @id @default(cuid())
+  nome              String
+  codigo            String?  @unique
+  custoHora         Decimal  @db.Decimal(10, 2) // custo por hora de trabalho
+  incluiMaquina     Boolean  @default(false) // se inclui custo de máquina
+  custoMaquinaHora  Decimal? @db.Decimal(10, 2) // custo adicional de máquina por hora
+  descricao         String?
+  ativo             Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  composicoesMaoDeObra ComposicaoMaoDeObra[]
+  historicoMaoDeObra   HistoricoMaoDeObra[]
+
+  @@map("tipos_mao_de_obra")
+}
+
+// Histórico de mudanças de custo de mão de obra
+model HistoricoMaoDeObra {
+  id                String   @id @default(cuid())
+  tipoMaoDeObraId   String
+  tipoMaoDeObra     TipoMaoDeObra @relation(fields: [tipoMaoDeObraId], references: [id], onDelete: Cascade)
+  custoAnterior     Decimal  @db.Decimal(10, 2)
+  custoNovo         Decimal  @db.Decimal(10, 2)
+  percentualMudanca Decimal  @db.Decimal(5, 2)
+  motivo            String?  // "Manual", "Reajuste", "Acordo"
+  createdAt         DateTime @default(now())
+  userId            String
+
+  @@map("historico_mao_de_obra")
+}
+
+// Tipos de produto base
+model TipoProduto {
+  id          String   @id @default(cuid())
+  nome        String
+  codigo      String?  @unique
+  categoria   String?
+  descricao   String?
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  variacoes   VariacaoProduto[]
+
+  @@map("tipos_produto")
+}
+
+// Variações do produto (ex: Grade de Ferro, Cobre, etc)
+model VariacaoProduto {
+  id              String   @id @default(cuid())
+  tipoProdutoId   String
+  tipoProduto     TipoProduto @relation(fields: [tipoProdutoId], references: [id], onDelete: Cascade)
+  nome            String
+  codigo          String?  @unique
+  sku             String?
+  descricao       String?
+  margemPadrao    Decimal  @default(0) @db.Decimal(5, 2) // % de margem padrão
+  ativo           Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  composicao           ComposicaoProduto[]
+  composicaoMaoDeObra  ComposicaoMaoDeObra[]
+  itensProduto         ItemProduto[]
+
+  @@map("variacoes_produto")
+}
+
+// Composição: quais matérias-primas formam cada variação
+model ComposicaoProduto {
+  id                  String   @id @default(cuid())
+  variacaoProdutoId   String
+  variacaoProduto     VariacaoProduto @relation(fields: [variacaoProdutoId], references: [id], onDelete: Cascade)
+  materiaPrimaId      String
+  materiaPrima        MateriaPrima @relation(fields: [materiaPrimaId], references: [id], onDelete: Cascade)
+  quantidade          Decimal  @db.Decimal(10, 4)
+  unidade             String
+  ordem               Int      @default(0)
+
+  @@unique([variacaoProdutoId, materiaPrimaId])
+  @@map("composicao_produto")
+}
+
+// Composição de Mão de Obra: quais tipos de mão de obra são necessários para cada produto
+model ComposicaoMaoDeObra {
+  id                  String   @id @default(cuid())
+  variacaoProdutoId   String
+  variacaoProduto     VariacaoProduto @relation(fields: [variacaoProdutoId], references: [id], onDelete: Cascade)
+  tipoMaoDeObraId     String
+  tipoMaoDeObra       TipoMaoDeObra @relation(fields: [tipoMaoDeObraId], references: [id], onDelete: Cascade)
+  horasNecessarias    Decimal  @db.Decimal(10, 2) // quantidade de horas necessárias
+  descricao           String?  // descrição do trabalho (ex: "Soldagem da base")
+  ordem               Int      @default(0)
+
+  @@unique([variacaoProdutoId, tipoMaoDeObraId])
+  @@map("composicao_mao_de_obra")
+}
+
+// Produto final pronto para venda (com preço calculado)
+model ItemProduto {
+  id                  String   @id @default(cuid())
+  variacaoProdutoId   String
+  variacaoProduto     VariacaoProduto @relation(fields: [variacaoProdutoId], references: [id], onDelete: Cascade)
+  custoCalculado      Decimal  @db.Decimal(10, 2) // calculado automaticamente
+  margemLucro         Decimal  @db.Decimal(5, 2) // % pode ser diferente do padrão
+  precoVenda          Decimal  @db.Decimal(10, 2) // calculado automaticamente
+  tabelaPreco         String   @default("padrao") // padrao, atacado, especial
+  ativo               Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  itensOrcamento      ItemOrcamento[]
+
+  @@map("itens_produto")
+}
+
+// Orçamentos
+model Orcamento {
+  id              String   @id @default(cuid())
+  numero          String   @unique
+  clienteNome     String
+  clienteEmail    String?
+  clienteTelefone String?
+  clienteCNPJ     String?
+  status          String   @default("rascunho") // rascunho, enviado, aprovado, rejeitado
+  validade        DateTime
+  observacoes     String?
+  desconto        Decimal  @default(0) @db.Decimal(10, 2)
+  descontoTipo    String   @default("percentual") // percentual ou valor
+  subtotal        Decimal  @db.Decimal(10, 2)
+  total           Decimal  @db.Decimal(10, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  userId          String
+
+  itens           ItemOrcamento[]
+
+  @@map("orcamentos")
+}
+
+// Itens do orçamento
+model ItemOrcamento {
+  id              String   @id @default(cuid())
+  orcamentoId     String
+  orcamento       Orcamento @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  itemProdutoId   String
+  itemProduto     ItemProduto @relation(fields: [itemProdutoId], references: [id])
+  descricao       String   // snapshot do nome no momento
+  quantidade      Decimal  @db.Decimal(10, 2)
+  precoUnitario   Decimal  @db.Decimal(10, 2)
+  desconto        Decimal  @default(0) @db.Decimal(10, 2)
+  total           Decimal  @db.Decimal(10, 2)
+  ordem           Int      @default(0)
+
+  @@map("itens_orcamento")
+}
+
+// Notas fiscais processadas pela IA
+model NotaFiscal {
+  id                String   @id @default(cuid())
+  arquivo           String   // URL do arquivo
+  nomeArquivo       String   // Nome original do arquivo
+  fornecedor        String?
+  numeroNF          String?
+  dataEmissao       DateTime?
+  valorTotal        Decimal? @db.Decimal(10, 2)
+  status            String   @default("processando") // processando, processado, erro
+  dadosExtraidos    Json?    // JSON com dados extraídos pela IA
+  erroMensagem      String?  // Mensagem de erro se status = erro
+  itensProcessados  Int      @default(0)
+  itensAtualizados  Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  atualizacoes      AtualizacaoCusto[]
+
+  @@map("notas_fiscais")
+}
+
+// Atualizações de custo realizadas
+model AtualizacaoCusto {
+  id                String   @id @default(cuid())
+  notaFiscalId      String?
+  notaFiscal        NotaFiscal? @relation(fields: [notaFiscalId], references: [id])
+  materiaPrimaId    String
+  materiaPrima      MateriaPrima @relation(fields: [materiaPrimaId], references: [id])
+  custoAnterior     Decimal  @db.Decimal(10, 2)
+  custoNovo         Decimal  @db.Decimal(10, 2)
+  percentualMudanca Decimal  @db.Decimal(5, 2)
+  motivo            String   @default("IA") // "IA", "Manual", "Reajuste"
+  confirmado        Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  @@map("atualizacoes_custo")
+}
+
+// Usuários
+model User {
+  id            String   @id @default(cuid())
+  nome          String
+  email         String   @unique
+  senha         String
+  empresa       String?
+  telefone      String?
+  ativo         Boolean  @default(true)
+  role          String   @default("user") // admin, user
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  notasFiscais  NotaFiscal[]
+  atualizacoes  AtualizacaoCusto[]
+
+  @@map("users")
+}
