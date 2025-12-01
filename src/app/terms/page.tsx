@@ -56,7 +56,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-2xl font-black text-white mb-4 uppercase">5. Limitação de Responsabilidade</h2>
-              <p>O Prezzo é fornecido "como está". Não nos responsabilizamos por decisões de negócio tomadas com base nos dados do sistema.</p>
+              <p>O Prezzo é fornecido &quot;como está&quot;. Não nos responsabilizamos por decisões de negócio tomadas com base nos dados do sistema.</p>
             </section>
 
             <section>
