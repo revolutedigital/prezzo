@@ -360,8 +360,8 @@ export default function LandingPage() {
             <div>
               <h4 className="text-white font-mono font-bold mb-4 text-sm uppercase tracking-wider">Empresa</h4>
               <ul className="space-y-2 font-mono text-sm">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Sobre</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contato</a></li>
+                <li><Link href="/sobre" className="text-gray-400 hover:text-white transition-colors">Sobre</Link></li>
+                <li><Link href="/contato" className="text-gray-400 hover:text-white transition-colors">Contato</Link></li>
                 <li>
                   <Link href="/login" className="text-blue-500 hover:text-white transition-colors">
                     Login →
@@ -374,8 +374,8 @@ export default function LandingPage() {
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-xs font-mono">© 2024 PREZZO. ALL RIGHTS RESERVED.</p>
             <div className="flex gap-6 text-xs font-mono text-gray-500">
-              <a href="#" className="hover:text-white transition-colors">PRIVACY</a>
-              <a href="#" className="hover:text-white transition-colors">TERMS</a>
+              <Link href="/privacy" className="hover:text-white transition-colors">PRIVACY</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">TERMS</Link>
             </div>
           </div>
         </div>
