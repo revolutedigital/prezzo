@@ -1,358 +1,291 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Calculator, TrendingUp, Clock, Shield, Users, BarChart3, Check, Star, Zap, Award } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Calculator, TrendingUp, Clock, Shield, Users, BarChart3, Zap, DollarSign, Target, LineChart } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function LandingPage() {
-  const [isVisible, setIsVisible] = useState(false);
-  const statsRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    setIsVisible(true);
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-fade-in');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
 
-    document.querySelectorAll('.fade-in-section').forEach((el) => {
-      observer.observe(el);
-    });
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
 
-    return () => observer.disconnect();
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white overflow-x-hidden">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      {/* Cursor follower */}
+      <div
+        className="fixed w-96 h-96 pointer-events-none z-0 transition-transform duration-1000 ease-out"
+        style={{
+          left: mousePos.x - 192,
+          top: mousePos.y - 192,
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+        }}
+      />
+
       {/* Header */}
-      <header className="border-b border-gray-200/50 bg-white/70 backdrop-blur-xl fixed w-full top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-5 flex justify-between items-center">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-all duration-300 group-hover:scale-105">
-              <span className="text-white font-bold text-xl">P</span>
+      <header className="fixed w-full top-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-500 relative">
+              <div className="absolute inset-0 bg-blue-500 animate-pulse"></div>
+              <span className="relative z-10 flex items-center justify-center h-full font-mono font-bold text-black text-lg">P</span>
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent tracking-tight">Prezzo</span>
+            <span className="text-xl font-mono font-bold tracking-tighter">PREZZO</span>
           </div>
-          <nav className="hidden md:flex gap-10 items-center">
-            <a href="#funcionalidades" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium text-sm tracking-wide">Funcionalidades</a>
-            <a href="#beneficios" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium text-sm tracking-wide">Benefícios</a>
-            <a href="#industrias" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium text-sm tracking-wide">Indústrias</a>
+          <nav className="hidden md:flex gap-8 items-center font-mono text-sm">
+            <a href="#features" className="text-gray-400 hover:text-white transition-colors uppercase tracking-wider">Features</a>
+            <a href="#benefits" className="text-gray-400 hover:text-white transition-colors uppercase tracking-wider">Benefits</a>
+            <a href="#industries" className="text-gray-400 hover:text-white transition-colors uppercase tracking-wider">Industries</a>
           </nav>
           <Link
             href="/login"
-            className="relative bg-gradient-to-r from-blue-500 to-blue-600 text-white px-7 py-2.5 rounded-xl hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-300 font-semibold text-sm tracking-wide group overflow-hidden"
+            className="bg-white text-black px-6 py-2 font-mono text-sm font-bold uppercase tracking-wider hover:bg-blue-500 hover:text-white transition-all duration-300"
           >
-            <span className="relative z-10">Acessar Sistema</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            Login →
           </Link>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-32 px-4 overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-500/5 to-blue-600/5 rounded-full blur-3xl"></div>
+      <section className="relative min-h-screen flex items-center px-6 pt-32 pb-20">
+        {/* Grid background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px)',
+            backgroundSize: '50px 50px'
+          }}></div>
         </div>
 
-        <div className={`container mx-auto max-w-7xl transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="text-center max-w-5xl mx-auto">
+        {/* Geometric shapes */}
+        <div className="absolute top-40 right-20 w-72 h-72 border-2 border-blue-500/20 rotate-45" style={{ transform: `translateY(${scrollY * 0.3}px) rotate(45deg)` }}></div>
+        <div className="absolute bottom-40 left-20 w-96 h-96 border border-white/5" style={{ transform: `translateY(${-scrollY * 0.2}px)` }}></div>
+
+        <div className="container mx-auto relative z-10">
+          <div className="max-w-5xl">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200/50 rounded-full mb-8 group hover:bg-blue-100 transition-colors duration-300">
-              <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-semibold text-blue-700 tracking-wide">Sistema de Precificação Profissional</span>
+            <div className="inline-flex items-center gap-3 mb-12 border border-blue-500/30 bg-blue-500/5 px-4 py-2">
+              <div className="w-2 h-2 bg-blue-500 animate-pulse"></div>
+              <span className="font-mono text-xs uppercase tracking-widest text-blue-400">Sistema Profissional</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
-              <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-                Descubra o Custo Real
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 bg-clip-text text-transparent">
-                de Cada Produto
-              </span>
+            <h1 className="text-7xl md:text-8xl lg:text-9xl font-black mb-10 leading-[0.9] tracking-tighter">
+              <span className="block text-white">DESCUBRA</span>
+              <span className="block text-white">O CUSTO</span>
+              <span className="block text-blue-500">REAL.</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto font-light">
-              Chega de precificar no achômetro. <span className="font-bold text-gray-900">Calcule custos exatos de matéria-prima, mão de obra e margem de lucro</span> em segundos. Sistema completo que <span className="font-medium text-gray-800">mostra onde sua margem está vazando</span> e te dá controle total sobre cada centavo.
+            <p className="text-xl md:text-2xl text-gray-400 mb-16 max-w-2xl leading-relaxed font-light">
+              Chega de precificar no achômetro. <span className="text-white font-medium">Calcule custos exatos</span> de matéria-prima, mão de obra e margem de lucro em <span className="text-blue-500">segundos</span>.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 mb-20">
               <Link
                 href="/login"
-                className="group relative bg-gradient-to-r from-blue-500 to-blue-600 text-white px-10 py-5 rounded-2xl hover:shadow-2xl hover:shadow-blue-500/40 transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 overflow-hidden min-w-[240px]"
+                className="group relative bg-blue-500 text-black px-10 py-5 font-mono font-bold uppercase tracking-wider text-sm overflow-hidden hover:bg-white transition-colors duration-300"
               >
-                <span className="relative z-10">Começar Agora</span>
-                <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative z-10 flex items-center justify-center gap-3">
+                  Começar Agora
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+                </span>
               </Link>
               <a
-                href="#funcionalidades"
-                className="group bg-white text-gray-900 px-10 py-5 rounded-2xl hover:bg-gray-50 transition-all duration-300 font-bold text-lg border-2 border-gray-300 hover:border-gray-400 hover:shadow-xl min-w-[240px]"
+                href="#features"
+                className="border-2 border-white/20 text-white px-10 py-5 font-mono font-bold uppercase tracking-wider text-sm hover:border-blue-500 hover:bg-blue-500/10 transition-all duration-300"
               >
                 Ver Funcionalidades
               </a>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Acesso imediato</span>
+            {/* Stats inline */}
+            <div className="grid grid-cols-3 gap-8 max-w-xl">
+              <div className="border-l-2 border-blue-500 pl-4">
+                <div className="text-4xl font-black font-mono text-blue-500 mb-1">95%</div>
+                <div className="text-xs font-mono uppercase tracking-wider text-gray-500">Precisão</div>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Sem instalação</span>
+              <div className="border-l-2 border-white/20 pl-4">
+                <div className="text-4xl font-black font-mono text-white mb-1">60%</div>
+                <div className="text-xs font-mono uppercase tracking-wider text-gray-500">Economia</div>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Dados 100% seguros</span>
+              <div className="border-l-2 border-white/20 pl-4">
+                <div className="text-4xl font-black font-mono text-white mb-1">24/7</div>
+                <div className="text-xs font-mono uppercase tracking-wider text-gray-500">Uptime</div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="relative py-24 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-600 text-white overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-1/4 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
-            <div className="group fade-in-section">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Award className="w-8 h-8" />
-              </div>
-              <div className="text-6xl font-bold mb-3 bg-gradient-to-br from-white to-blue-100 bg-clip-text text-transparent">95%</div>
-              <div className="text-blue-50 font-medium text-lg">Precisão nos Cálculos</div>
-            </div>
-            <div className="group fade-in-section">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Clock className="w-8 h-8" />
-              </div>
-              <div className="text-6xl font-bold mb-3 bg-gradient-to-br from-white to-blue-100 bg-clip-text text-transparent">60%</div>
-              <div className="text-blue-50 font-medium text-lg">Redução de Tempo</div>
-            </div>
-            <div className="group fade-in-section">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                <TrendingUp className="w-8 h-8" />
-              </div>
-              <div className="text-6xl font-bold mb-3 bg-gradient-to-br from-white to-blue-100 bg-clip-text text-transparent">100%</div>
-              <div className="text-blue-50 font-medium text-lg">Controle de Custos</div>
-            </div>
-            <div className="group fade-in-section">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Shield className="w-8 h-8" />
-              </div>
-              <div className="text-6xl font-bold mb-3 bg-gradient-to-br from-white to-blue-100 bg-clip-text text-transparent">24/7</div>
-              <div className="text-blue-50 font-medium text-lg">Disponibilidade</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="funcionalidades" className="py-32 px-4 bg-gradient-to-b from-white to-gray-50/50">
-        <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-20 fade-in-section">
-            <div className="inline-block px-4 py-2 bg-blue-50 border border-blue-100 rounded-full mb-6">
-              <span className="text-sm font-semibold text-blue-700 tracking-wide">FUNCIONALIDADES</span>
-            </div>
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Tudo que Você Precisa
+      <section id="features" className="relative py-32 px-6 bg-white text-black">
+        <div className="container mx-auto">
+          {/* Title */}
+          <div className="mb-20">
+            <div className="font-mono text-xs uppercase tracking-widest text-gray-500 mb-4">Features</div>
+            <h2 className="text-6xl md:text-7xl font-black tracking-tighter mb-6">
+              TUDO QUE<br />VOCÊ PRECISA
             </h2>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light">
-              Gerencie seus custos em um só lugar com ferramentas profissionais
-            </p>
+            <div className="w-24 h-1 bg-blue-500"></div>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="group fade-in-section bg-white p-10 rounded-3xl border border-gray-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/25">
-                <Calculator className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Cálculo Automático de Custos</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Cadastre matérias-primas, defina composições e calcule custos automaticamente. Sistema considera mão de obra, custos de máquina e margem de lucro.
-              </p>
-            </div>
-            <div className="group fade-in-section bg-white p-10 rounded-3xl border border-gray-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/25">
-                <BarChart3 className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Orçamentos Profissionais</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Crie orçamentos detalhados com margens personalizadas. Acompanhe propostas, gerencie clientes e converta mais vendas.
-              </p>
-            </div>
-            <div className="group fade-in-section bg-white p-10 rounded-3xl border border-gray-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/25">
-                <TrendingUp className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Gestão de Variações</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Gerencie múltiplas variações de produtos com composições diferentes. Mantenha histórico de custos e compare versões.
-              </p>
-            </div>
-            <div className="group fade-in-section bg-white p-10 rounded-3xl border border-gray-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/25">
-                <Clock className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Controle de Mão de Obra</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Cadastre tipos de mão de obra com custos por hora. Sistema calcula automaticamente o custo total baseado no tempo necessário.
-              </p>
-            </div>
-            <div className="group fade-in-section bg-white p-10 rounded-3xl border border-gray-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/25">
-                <Shield className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Segurança Total</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Dados criptografados, backup automático e controle de acesso por usuário. Seus custos protegidos com máxima segurança.
-              </p>
-            </div>
-            <div className="group fade-in-section bg-white p-10 rounded-3xl border border-gray-200 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-500/25">
-                <Users className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Multi-usuário</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Trabalhe em equipe com controle de permissões. Cada usuário acessa apenas o que precisa, mantendo organização e segurança.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Industries Section */}
-      <section id="industrias" className="py-20 px-4 bg-gray-50">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Indústrias Atendidas</h2>
-            <p className="text-xl text-gray-600">Solução completa para diversos segmentos industriais</p>
-          </div>
+          {/* Features Grid - Asymmetric */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              "Metalúrgica",
-              "Plásticos",
-              "Móveis",
-              "Confecção",
-              "Alimentos",
-              "Cosméticos",
-              "Embalagens",
-              "Eletrônicos",
-              "Construção Civil"
-            ].map((industry) => (
-              <div key={industry} className="bg-white p-6 rounded-lg border border-gray-200 hover:border-blue-500 transition">
-                <div className="font-semibold text-gray-900 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  {industry}
-                </div>
-              </div>
-            ))}
+            <div className="group bg-black text-white p-8 relative overflow-hidden hover:bg-blue-500 transition-colors duration-500">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 translate-x-16 -translate-y-16"></div>
+              <Calculator className="w-12 h-12 mb-6 relative z-10" />
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Cálculo Automático</h3>
+              <p className="text-gray-400 group-hover:text-gray-200 leading-relaxed">
+                Cadastre matérias-primas, defina composições e calcule custos automaticamente.
+              </p>
+            </div>
+
+            <div className="group bg-black text-white p-8 md:mt-12 relative overflow-hidden hover:bg-blue-500 transition-colors duration-500">
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/20 -translate-x-16 translate-y-16"></div>
+              <BarChart3 className="w-12 h-12 mb-6 relative z-10" />
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Orçamentos Pro</h3>
+              <p className="text-gray-400 group-hover:text-gray-200 leading-relaxed">
+                Crie orçamentos detalhados com margens personalizadas e converta mais vendas.
+              </p>
+            </div>
+
+            <div className="group bg-black text-white p-8 relative overflow-hidden hover:bg-blue-500 transition-colors duration-500">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 translate-x-16 -translate-y-16"></div>
+              <TrendingUp className="w-12 h-12 mb-6 relative z-10" />
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Gestão Variações</h3>
+              <p className="text-gray-400 group-hover:text-gray-200 leading-relaxed">
+                Gerencie múltiplas variações de produtos com composições diferentes.
+              </p>
+            </div>
+
+            <div className="group bg-black text-white p-8 md:mt-12 relative overflow-hidden hover:bg-blue-500 transition-colors duration-500">
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/20 -translate-x-16 translate-y-16"></div>
+              <Clock className="w-12 h-12 mb-6 relative z-10" />
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Mão de Obra</h3>
+              <p className="text-gray-400 group-hover:text-gray-200 leading-relaxed">
+                Cadastre tipos de mão de obra com custos por hora e cálculo automático.
+              </p>
+            </div>
+
+            <div className="group bg-black text-white p-8 relative overflow-hidden hover:bg-blue-500 transition-colors duration-500">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 translate-x-16 -translate-y-16"></div>
+              <Shield className="w-12 h-12 mb-6 relative z-10" />
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Segurança Total</h3>
+              <p className="text-gray-400 group-hover:text-gray-200 leading-relaxed">
+                Dados criptografados, backup automático e controle de acesso por usuário.
+              </p>
+            </div>
+
+            <div className="group bg-black text-white p-8 md:mt-12 relative overflow-hidden hover:bg-blue-500 transition-colors duration-500">
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/20 -translate-x-16 translate-y-16"></div>
+              <Users className="w-12 h-12 mb-6 relative z-10" />
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Multi-usuário</h3>
+              <p className="text-gray-400 group-hover:text-gray-200 leading-relaxed">
+                Trabalhe em equipe com controle de permissões e organização total.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="beneficios" className="py-32 px-4 bg-white">
-        <div className="container mx-auto max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="fade-in-section">
-              <div className="inline-block px-4 py-2 bg-blue-50 border border-blue-100 rounded-full mb-6">
-                <span className="text-sm font-semibold text-blue-700 tracking-wide">BENEFÍCIOS</span>
-              </div>
-              <h2 className="text-5xl md:text-6xl font-bold mb-12 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent leading-tight">
-                Por que escolher<br />o Prezzo?
+      {/* Benefits Section - Split */}
+      <section id="benefits" className="relative py-32 px-6 bg-black">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-20">
+            {/* Left - Benefits List */}
+            <div>
+              <div className="font-mono text-xs uppercase tracking-widest text-blue-500 mb-4">Benefits</div>
+              <h2 className="text-6xl md:text-7xl font-black tracking-tighter mb-16 leading-tight">
+                POR QUE<br />PREZZO?
               </h2>
+
               <div className="space-y-8">
-                <div className="group flex gap-5 p-6 rounded-2xl hover:bg-blue-50/50 transition-all duration-300">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-                    <Check className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Elimine Erros de Cálculo</h3>
-                    <p className="text-gray-600 text-lg leading-relaxed">Sistema automatizado que elimina erros humanos e garante precisão absoluta nos seus custos.</p>
-                  </div>
+                <div className="border-l-4 border-blue-500 pl-6">
+                  <h3 className="text-2xl font-black uppercase mb-3">Zero Erros</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    Sistema automatizado que elimina erros humanos e garante precisão absoluta.
+                  </p>
                 </div>
-                <div className="group flex gap-5 p-6 rounded-2xl hover:bg-blue-50/50 transition-all duration-300">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-                    <Check className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Economize Tempo</h3>
-                    <p className="text-gray-600 text-lg leading-relaxed">Reduza de horas para minutos o tempo gasto com cálculos de custos e criação de orçamentos.</p>
-                  </div>
+
+                <div className="border-l-4 border-white/20 pl-6 hover:border-blue-500 transition-colors">
+                  <h3 className="text-2xl font-black uppercase mb-3">Economize Tempo</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    Reduza de horas para minutos o tempo gasto com cálculos de custos.
+                  </p>
                 </div>
-                <div className="group flex gap-5 p-6 rounded-2xl hover:bg-blue-50/50 transition-all duration-300">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-                    <Check className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Aumente Sua Margem</h3>
-                    <p className="text-gray-600 text-lg leading-relaxed">Identifique oportunidades de otimização e ajuste suas margens com base em dados reais.</p>
-                  </div>
+
+                <div className="border-l-4 border-white/20 pl-6 hover:border-blue-500 transition-colors">
+                  <h3 className="text-2xl font-black uppercase mb-3">Aumente Margem</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    Identifique oportunidades de otimização e ajuste suas margens com dados reais.
+                  </p>
                 </div>
-                <div className="group flex gap-5 p-6 rounded-2xl hover:bg-blue-50/50 transition-all duration-300">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-                    <Check className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Decisões Baseadas em Dados</h3>
-                    <p className="text-gray-600 text-lg leading-relaxed">Tenha visibilidade completa dos seus custos e tome decisões estratégicas fundamentadas.</p>
-                  </div>
+
+                <div className="border-l-4 border-white/20 pl-6 hover:border-blue-500 transition-colors">
+                  <h3 className="text-2xl font-black uppercase mb-3">Decisões Data-Driven</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    Tenha visibilidade completa dos seus custos e tome decisões estratégicas.
+                  </p>
                 </div>
               </div>
             </div>
-            <div className="relative fade-in-section">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl blur-2xl opacity-20"></div>
-              <div className="relative bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 p-12 md:p-16 rounded-3xl text-white shadow-2xl shadow-blue-500/25 overflow-hidden">
-                {/* Decorative circles */}
-                <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-                <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
 
-                <div className="relative z-10">
-                  <Star className="w-12 h-12 mb-6 text-yellow-300" fill="currentColor" />
-                  <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">Comece Hoje Mesmo</h3>
-                  <p className="text-blue-50 mb-10 text-xl leading-relaxed">
-                    Transforme a forma como sua indústria gerencia custos e precifica produtos. Sistema pronto para usar.
-                  </p>
-                  <Link
-                    href="/login"
-                    className="group inline-flex items-center gap-3 bg-white text-blue-600 px-10 py-5 rounded-2xl hover:bg-blue-50 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105"
-                  >
-                    Acessar o Sistema
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </Link>
-                  <div className="mt-10 pt-10 border-t border-white/20">
-                    <div className="flex flex-col gap-3 text-base text-blue-50">
-                      <div className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-blue-200" />
-                        <span className="font-medium">Sem instalação</span>
+            {/* Right - CTA Block */}
+            <div className="relative">
+              <div className="sticky top-32">
+                <div className="bg-blue-500 p-12 relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" style={{
+                      backgroundImage: 'linear-gradient(rgba(0,0,0,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.2) 1px, transparent 1px)',
+                      backgroundSize: '20px 20px'
+                    }}></div>
+                  </div>
+
+                  <div className="relative z-10">
+                    <div className="text-black font-mono text-xs uppercase tracking-widest mb-6">Get Started</div>
+                    <h3 className="text-5xl font-black text-black mb-6 leading-tight">
+                      COMECE<br />HOJE
+                    </h3>
+                    <p className="text-black/80 text-lg mb-10 leading-relaxed">
+                      Transforme a forma como sua indústria gerencia custos e precifica produtos.
+                    </p>
+
+                    <Link
+                      href="/login"
+                      className="inline-block bg-black text-white px-10 py-5 font-mono font-bold uppercase tracking-wider text-sm hover:bg-white hover:text-black transition-colors duration-300 mb-10"
+                    >
+                      Acessar Sistema →
+                    </Link>
+
+                    <div className="space-y-3 border-t-2 border-black/20 pt-8">
+                      <div className="flex items-center gap-3 text-black font-mono text-sm">
+                        <div className="w-1.5 h-1.5 bg-black"></div>
+                        <span>Acesso imediato</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-blue-200" />
-                        <span className="font-medium">Acesso imediato</span>
+                      <div className="flex items-center gap-3 text-black font-mono text-sm">
+                        <div className="w-1.5 h-1.5 bg-black"></div>
+                        <span>Sem instalação</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-blue-200" />
-                        <span className="font-medium">Suporte completo</span>
+                      <div className="flex items-center gap-3 text-black font-mono text-sm">
+                        <div className="w-1.5 h-1.5 bg-black"></div>
+                        <span>Suporte completo</span>
                       </div>
                     </div>
                   </div>
@@ -363,68 +296,86 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-400 py-20 px-4 overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
-        </div>
+      {/* Industries Section */}
+      <section id="industries" className="relative py-32 px-6 bg-white text-black">
+        <div className="container mx-auto">
+          <div className="mb-16">
+            <div className="font-mono text-xs uppercase tracking-widest text-gray-500 mb-4">Industries</div>
+            <h2 className="text-6xl md:text-7xl font-black tracking-tighter">
+              TODOS OS<br />SETORES
+            </h2>
+          </div>
 
-        <div className="container mx-auto max-w-7xl relative z-10">
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              "Metalúrgica",
+              "Plásticos",
+              "Móveis",
+              "Confecção",
+              "Alimentos",
+              "Cosméticos",
+              "Embalagens",
+              "Eletrônicos",
+              "Construção Civil"
+            ].map((industry, index) => (
+              <div
+                key={industry}
+                className="border border-black/10 p-6 hover:bg-black hover:text-white transition-colors duration-300 group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold uppercase tracking-wider text-sm">{industry}</span>
+                  <div className="w-2 h-2 bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="relative bg-black border-t border-white/10 py-16 px-6">
+        <div className="container mx-auto">
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-6 group">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-white font-bold text-2xl">P</span>
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-blue-500">
+                  <span className="flex items-center justify-center h-full font-mono font-bold text-black text-lg">P</span>
                 </div>
-                <span className="text-3xl font-bold text-white">Prezzo</span>
+                <span className="text-2xl font-mono font-bold tracking-tighter">PREZZO</span>
               </div>
-              <p className="text-gray-400 text-lg mb-6 max-w-md leading-relaxed">
-                Sistema completo de gestão de custos para indústrias. Calcule, gerencie e otimize seus processos de precificação.
+              <p className="text-gray-400 text-sm max-w-md mb-6 font-mono">
+                Sistema completo de gestão de custos para indústrias.
               </p>
-              <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                </a>
-                <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                </a>
-                <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors duration-300">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                </a>
-              </div>
             </div>
+
             <div>
-              <h4 className="text-white font-bold mb-6 text-lg">Produto</h4>
-              <ul className="space-y-3">
-                <li><a href="#funcionalidades" className="hover:text-blue-400 transition-colors duration-200 text-base">Funcionalidades</a></li>
-                <li><a href="#industrias" className="hover:text-blue-400 transition-colors duration-200 text-base">Indústrias</a></li>
-                <li><a href="#beneficios" className="hover:text-blue-400 transition-colors duration-200 text-base">Benefícios</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors duration-200 text-base">Preços</a></li>
+              <h4 className="text-white font-mono font-bold mb-4 text-sm uppercase tracking-wider">Produto</h4>
+              <ul className="space-y-2 font-mono text-sm">
+                <li><a href="#features" className="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                <li><a href="#industries" className="text-gray-400 hover:text-white transition-colors">Industries</a></li>
+                <li><a href="#benefits" className="text-gray-400 hover:text-white transition-colors">Benefits</a></li>
               </ul>
             </div>
+
             <div>
-              <h4 className="text-white font-bold mb-6 text-lg">Empresa</h4>
-              <ul className="space-y-3">
-                <li><a href="#" className="hover:text-blue-400 transition-colors duration-200 text-base">Sobre Nós</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors duration-200 text-base">Contato</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors duration-200 text-base">Suporte</a></li>
+              <h4 className="text-white font-mono font-bold mb-4 text-sm uppercase tracking-wider">Empresa</h4>
+              <ul className="space-y-2 font-mono text-sm">
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Sobre</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contato</a></li>
                 <li>
-                  <Link href="/login" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium text-base">
-                    Acessar Sistema
-                    <ArrowRight className="w-4 h-4" />
+                  <Link href="/login" className="text-blue-500 hover:text-white transition-colors">
+                    Login →
                   </Link>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-sm">© 2024 Prezzo. Todos os direitos reservados.</p>
-            <div className="flex gap-6 text-sm text-gray-500">
-              <a href="#" className="hover:text-blue-400 transition-colors duration-200">Privacidade</a>
-              <a href="#" className="hover:text-blue-400 transition-colors duration-200">Termos</a>
-              <a href="#" className="hover:text-blue-400 transition-colors duration-200">Cookies</a>
+
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-gray-500 text-xs font-mono">© 2024 PREZZO. ALL RIGHTS RESERVED.</p>
+            <div className="flex gap-6 text-xs font-mono text-gray-500">
+              <a href="#" className="hover:text-white transition-colors">PRIVACY</a>
+              <a href="#" className="hover:text-white transition-colors">TERMS</a>
             </div>
           </div>
         </div>
