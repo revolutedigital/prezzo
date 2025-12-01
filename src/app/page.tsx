@@ -69,23 +69,23 @@ export default function LandingPage() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200/50 rounded-full mb-8 group hover:bg-blue-100 transition-colors duration-300">
               <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-semibold text-blue-700 tracking-wide">Sistema de Precificação Inteligente</span>
+              <span className="text-sm font-semibold text-blue-700 tracking-wide">Sistema de Precificação Profissional</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
               <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-                Precifique Seus Produtos
+                Descubra o Custo Real
               </span>
               <br />
               <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 bg-clip-text text-transparent">
-                com Precisão Absoluta
+                de Cada Produto
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto font-light">
-              Sistema completo de gestão de custos para indústrias. <span className="font-medium text-gray-800">Calcule matéria-prima, mão de obra e margem de lucro</span> em tempo real. Tome decisões baseadas em dados reais.
+              Chega de precificar no achômetro. <span className="font-bold text-gray-900">Calcule custos exatos de matéria-prima, mão de obra e margem de lucro</span> em segundos. Sistema completo que <span className="font-medium text-gray-800">mostra onde sua margem está vazando</span> e te dá controle total sobre cada centavo.
             </p>
 
             {/* CTAs */}
@@ -102,7 +102,7 @@ export default function LandingPage() {
                 href="#funcionalidades"
                 className="group bg-white text-gray-900 px-10 py-5 rounded-2xl hover:bg-gray-50 transition-all duration-300 font-bold text-lg border-2 border-gray-300 hover:border-gray-400 hover:shadow-xl min-w-[240px]"
               >
-                Conhecer Funcionalidades
+                Ver Funcionalidades
               </a>
             </div>
 
@@ -110,15 +110,15 @@ export default function LandingPage() {
             <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Sem instalação</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-blue-600" />
                 <span className="font-medium">Acesso imediato</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Dados seguros</span>
+                <span className="font-medium">Sem instalação</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-5 h-5 text-blue-600" />
+                <span className="font-medium">Dados 100% seguros</span>
               </div>
             </div>
           </div>
