@@ -3,7 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { processarNotaFiscal } from "@/lib/claude-nf-processor";
-import * as pdfParse from "pdf-parse";
+// TEMPORARIAMENTE DESABILITADO - pdf-parse causa SIGSEGV no Railway
+// import * as pdfParse from "pdf-parse";
 
 export async function POST(request: NextRequest) {
   try {
@@ -93,9 +94,11 @@ export async function GET(request: NextRequest) {
 // Função para processar em background (idealmente seria uma queue como Bull/BullMQ)
 async function processarNotaFiscalBackground(notaFiscalId: string, buffer: Buffer, userId: string) {
   try {
+    // TEMPORARIAMENTE DESABILITADO - pdf-parse causa SIGSEGV
     // Extrair texto do PDF
-    const pdfData = await (pdfParse as any).default(buffer);
-    const pdfText = pdfData.text;
+    // const pdfData = await (pdfParse as any).default(buffer);
+    // const pdfText = pdfData.text;
+    const pdfText = ""; // Placeholder temporário
 
     // Processar com Claude AI
     const dadosExtraidos = await processarNotaFiscal(pdfText);
