@@ -25,6 +25,10 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const categoria = searchParams.get("categoria") || "";
     const ativo = searchParams.get("ativo");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const sortBy = searchParams.get("sortBy") || "nome";
+    const order = searchParams.get("order") || "asc";
 
     const where: any = {};
 
@@ -43,24 +47,44 @@ export async function GET(request: NextRequest) {
       where.ativo = ativo === "true";
     }
 
-    const tiposProduto = await prisma.tipoProduto.findMany({
-      where,
-      orderBy: { nome: "asc" },
-      include: {
-        variacoes: {
-          include: {
-            _count: {
-              select: { composicao: true }
+    const skip = (page - 1) * limit;
+
+    // Validar campos de ordenação permitidos
+    const allowedSortFields = ['nome', 'codigo', 'categoria', 'ativo', 'createdAt'];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'nome';
+    const validOrder = (order === 'asc' || order === 'desc') ? order : 'asc';
+
+    const [tiposProduto, total] = await Promise.all([
+      prisma.tipoProduto.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { [validSortBy]: validOrder },
+        include: {
+          variacoes: {
+            include: {
+              _count: {
+                select: { composicao: true }
+              }
             }
+          },
+          _count: {
+            select: { variacoes: true }
           }
-        },
-        _count: {
-          select: { variacoes: true }
         }
+      }),
+      prisma.tipoProduto.count({ where })
+    ]);
+
+    return NextResponse.json({
+      data: tiposProduto,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
       }
     });
-
-    return NextResponse.json(tiposProduto);
   } catch (error) {
     console.error("Erro ao buscar tipos de produto:", error);
     return NextResponse.json(

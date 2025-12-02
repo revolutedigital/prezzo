@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export default function VariacaoEditPage() {
   const [custoMateriais, setCustoMateriais] = useState(0);
   const [custoMaoDeObra, setCustoMaoDeObra] = useState(0);
 
-  const carregarVariacao = async () => {
+  const carregarVariacao = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/variacoes-produto/${params.id}`);
@@ -40,13 +40,13 @@ export default function VariacaoEditPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
 
   useEffect(() => {
     if (params.id) {
       carregarVariacao();
     }
-  }, [params.id]);
+  }, [params.id, carregarVariacao]);
 
   const formatarMoeda = (valor: number) => {
     return new Intl.NumberFormat("pt-BR", {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,7 @@ export default function PrezzoAIDetalhesPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirming, setConfirming] = useState(false);
 
-  const loadNotaFiscal = async () => {
+  const loadNotaFiscal = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/notas-fiscais/${params.id}`);
@@ -85,11 +85,11 @@ export default function PrezzoAIDetalhesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
 
   useEffect(() => {
     loadNotaFiscal();
-  }, [params.id]);
+  }, [loadNotaFiscal]);
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";

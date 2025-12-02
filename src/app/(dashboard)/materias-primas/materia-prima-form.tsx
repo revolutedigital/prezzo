@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
+import { Loader2 } from "lucide-react";
+import { materiaPrimaSchema, type MateriaPrimaFormData } from "@/schemas/materia-prima.schema";
 
 interface MateriaPrimaFormProps {
   materiaPrima?: any;
@@ -20,20 +24,28 @@ export function MateriaPrimaForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState({
-    nome: "",
-    codigo: "",
-    unidadeMedida: "unidade",
-    custoUnitario: "",
-    fornecedor: "",
-    categoria: "",
-    ativo: true,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<MateriaPrimaFormData>({
+    resolver: zodResolver(materiaPrimaSchema),
+    defaultValues: {
+      nome: materiaPrima?.nome || "",
+      codigo: materiaPrima?.codigo || "",
+      unidadeMedida: materiaPrima?.unidadeMedida || "unidade",
+      custoUnitario: String(materiaPrima?.custoUnitario || ""),
+      fornecedor: materiaPrima?.fornecedor || "",
+      categoria: materiaPrima?.categoria || "",
+      ativo: materiaPrima?.ativo ?? true,
+    },
   });
 
-  // Preencher formulário se estiver editando
+  // Atualizar formulário se estiver editando
   useEffect(() => {
     if (materiaPrima) {
-      setFormData({
+      reset({
         nome: materiaPrima.nome || "",
         codigo: materiaPrima.codigo || "",
         unidadeMedida: materiaPrima.unidadeMedida || "unidade",
@@ -43,10 +55,9 @@ export function MateriaPrimaForm({
         ativo: materiaPrima.ativo ?? true,
       });
     }
-  }, [materiaPrima]);
+  }, [materiaPrima, reset]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: MateriaPrimaFormData) => {
     setLoading(true);
     setError("");
 
@@ -61,19 +72,19 @@ export function MateriaPrimaForm({
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
-          custoUnitario: parseFloat(formData.custoUnitario),
-          codigo: formData.codigo || undefined,
-          fornecedor: formData.fornecedor || undefined,
-          categoria: formData.categoria || undefined,
+          ...data,
+          custoUnitario: parseFloat(data.custoUnitario),
+          codigo: data.codigo || undefined,
+          fornecedor: data.fornecedor || undefined,
+          categoria: data.categoria || undefined,
         }),
       });
 
       if (response.ok) {
         onSuccess();
       } else {
-        const data = await response.json();
-        setError(data.error || "Erro ao salvar matéria-prima");
+        const responseData = await response.json();
+        setError(responseData.error || "Erro ao salvar matéria-prima");
       }
     } catch (error) {
       console.error("Erro ao salvar:", error);
@@ -84,7 +95,7 @@ export function MateriaPrimaForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {error && (
         <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
           {error}
@@ -96,34 +107,33 @@ export function MateriaPrimaForm({
           <Label htmlFor="nome">Nome *</Label>
           <Input
             id="nome"
-            value={formData.nome}
-            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+            {...register("nome")}
             placeholder="Ex: Filtro de Alumínio"
-            required
             disabled={loading}
           />
+          {errors.nome && (
+            <p className="text-sm text-red-500 mt-1">{errors.nome.message}</p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="codigo">Código</Label>
           <Input
             id="codigo"
-            value={formData.codigo}
-            onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+            {...register("codigo")}
             placeholder="Ex: FLT-001"
             disabled={loading}
           />
+          {errors.codigo && (
+            <p className="text-sm text-red-500 mt-1">{errors.codigo.message}</p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="unidadeMedida">Unidade de Medida *</Label>
           <NativeSelect
             id="unidadeMedida"
-            value={formData.unidadeMedida}
-            onChange={(e) =>
-              setFormData({ ...formData, unidadeMedida: e.target.value })
-            }
-            required
+            {...register("unidadeMedida")}
             disabled={loading}
           >
             <option value="unidade">Unidade</option>
@@ -135,6 +145,9 @@ export function MateriaPrimaForm({
             <option value="caixa">Caixa</option>
             <option value="pacote">Pacote</option>
           </NativeSelect>
+          {errors.unidadeMedida && (
+            <p className="text-sm text-red-500 mt-1">{errors.unidadeMedida.message}</p>
+          )}
         </div>
 
         <div>
@@ -144,55 +157,56 @@ export function MateriaPrimaForm({
             type="number"
             step="0.01"
             min="0"
-            value={formData.custoUnitario}
-            onChange={(e) =>
-              setFormData({ ...formData, custoUnitario: e.target.value })
-            }
+            {...register("custoUnitario")}
             placeholder="0.00"
-            required
             disabled={loading}
           />
+          {errors.custoUnitario && (
+            <p className="text-sm text-red-500 mt-1">{errors.custoUnitario.message}</p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="fornecedor">Fornecedor</Label>
           <Input
             id="fornecedor"
-            value={formData.fornecedor}
-            onChange={(e) =>
-              setFormData({ ...formData, fornecedor: e.target.value })
-            }
+            {...register("fornecedor")}
             placeholder="Nome do fornecedor"
             disabled={loading}
           />
+          {errors.fornecedor && (
+            <p className="text-sm text-red-500 mt-1">{errors.fornecedor.message}</p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="categoria">Categoria</Label>
           <Input
             id="categoria"
-            value={formData.categoria}
-            onChange={(e) =>
-              setFormData({ ...formData, categoria: e.target.value })
-            }
+            {...register("categoria")}
             placeholder="Ex: Metais, Plásticos"
             disabled={loading}
           />
+          {errors.categoria && (
+            <p className="text-sm text-red-500 mt-1">{errors.categoria.message}</p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="ativo">Status</Label>
           <NativeSelect
             id="ativo"
-            value={formData.ativo ? "true" : "false"}
-            onChange={(e) =>
-              setFormData({ ...formData, ativo: e.target.value === "true" })
-            }
+            {...register("ativo", {
+              setValueAs: (v) => v === "true",
+            })}
             disabled={loading}
           >
             <option value="true">Ativo</option>
             <option value="false">Inativo</option>
           </NativeSelect>
+          {errors.ativo && (
+            <p className="text-sm text-red-500 mt-1">{errors.ativo.message}</p>
+          )}
         </div>
       </div>
 
@@ -206,7 +220,14 @@ export function MateriaPrimaForm({
           Cancelar
         </Button>
         <Button type="submit" disabled={loading}>
-          {loading ? "Salvando..." : materiaPrima ? "Atualizar" : "Cadastrar"}
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            materiaPrima ? "Atualizar" : "Cadastrar"
+          )}
         </Button>
       </div>
     </form>

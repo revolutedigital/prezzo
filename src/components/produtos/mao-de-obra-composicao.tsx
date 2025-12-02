@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -69,7 +69,7 @@ export function MaoDeObraComposicao({ variacaoProdutoId, onCustoChange }: MaoDeO
   const [descricao, setDescricao] = useState("");
   const [salvando, setSalvando] = useState(false);
 
-  const carregarDados = async () => {
+  const carregarDados = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -97,13 +97,13 @@ export function MaoDeObraComposicao({ variacaoProdutoId, onCustoChange }: MaoDeO
     } finally {
       setLoading(false);
     }
-  };
+  }, [variacaoProdutoId, onCustoChange]);
 
   useEffect(() => {
     if (variacaoProdutoId) {
       carregarDados();
     }
-  }, [variacaoProdutoId]);
+  }, [variacaoProdutoId, carregarDados]);
 
   const handleAdicionar = () => {
     setTipoSelecionado("");

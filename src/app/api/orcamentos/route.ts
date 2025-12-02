@@ -57,6 +57,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const sortBy = searchParams.get("sortBy") || "createdAt";
+    const order = searchParams.get("order") || "desc";
 
     const where: any = {};
 
@@ -73,32 +77,52 @@ export async function GET(request: NextRequest) {
       where.status = status;
     }
 
-    const orcamentos = await prisma.orcamento.findMany({
-      where,
-      include: {
-        itens: {
-          include: {
-            itemProduto: {
-              include: {
-                variacaoProduto: {
-                  include: {
-                    tipoProduto: true
+    const skip = (page - 1) * limit;
+
+    // Validar campos de ordenação permitidos
+    const allowedSortFields = ['numero', 'clienteNome', 'status', 'valorTotal', 'validade', 'createdAt'];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const validOrder = (order === 'asc' || order === 'desc') ? order : 'desc';
+
+    const [orcamentos, total] = await Promise.all([
+      prisma.orcamento.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          itens: {
+            include: {
+              itemProduto: {
+                include: {
+                  variacaoProduto: {
+                    include: {
+                      tipoProduto: true
+                    }
                   }
                 }
               }
             }
+          },
+          _count: {
+            select: { itens: true }
           }
         },
-        _count: {
-          select: { itens: true }
+        orderBy: {
+          [validSortBy]: validOrder
         }
-      },
-      orderBy: {
-        createdAt: "desc"
+      }),
+      prisma.orcamento.count({ where })
+    ]);
+
+    return NextResponse.json({
+      data: orcamentos,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
       }
     });
-
-    return NextResponse.json(orcamentos);
   } catch (error) {
     console.error("Erro ao buscar orçamentos:", error);
     return NextResponse.json(

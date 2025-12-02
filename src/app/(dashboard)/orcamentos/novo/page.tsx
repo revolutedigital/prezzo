@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowLeft, Plus, Search, Trash2, Package } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { showWarning, showSuccess, showError } from "@/lib/toast";
 
 interface ItemProduto {
   id: string;
@@ -123,7 +124,7 @@ export default function NovoOrcamentoPage() {
     // Verificar se já existe
     const jaExiste = itens.find(item => item.itemProdutoId === produto.id);
     if (jaExiste) {
-      alert("Este produto já foi adicionado ao orçamento");
+      showWarning("Este produto já foi adicionado ao orçamento");
       return;
     }
 

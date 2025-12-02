@@ -16,23 +16,40 @@ const maoDeObraSchema = z.object({
 });
 
 // GET - Listar todos os tipos de mão de obra
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const tiposMaoDeObra = await prisma.tipoMaoDeObra.findMany({
-      orderBy: { nome: "asc" },
-      include: {
-        _count: {
-          select: {
-            composicoesMaoDeObra: true,
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const sortBy = searchParams.get("sortBy") || "nome";
+    const order = searchParams.get("order") || "asc";
+    const skip = (page - 1) * limit;
+
+    // Validar campos de ordenação permitidos
+    const allowedSortFields = ['nome', 'codigo', 'custoHora', 'incluiMaquina', 'custoMaquinaHora', 'ativo', 'createdAt'];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'nome';
+    const validOrder = (order === 'asc' || order === 'desc') ? order : 'asc';
+
+    const [tiposMaoDeObra, total] = await Promise.all([
+      prisma.tipoMaoDeObra.findMany({
+        skip,
+        take: limit,
+        orderBy: { [validSortBy]: validOrder },
+        include: {
+          _count: {
+            select: {
+              composicoesMaoDeObra: true,
+            },
           },
         },
-      },
-    });
+      }),
+      prisma.tipoMaoDeObra.count()
+    ]);
 
     // Calcular custo total por hora
     const tiposComCustoTotal = tiposMaoDeObra.map((tipo) => ({
@@ -43,7 +60,15 @@ export async function GET() {
       produtosVinculados: tipo._count.composicoesMaoDeObra,
     }));
 
-    return NextResponse.json(tiposComCustoTotal);
+    return NextResponse.json({
+      data: tiposComCustoTotal,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     console.error("Erro ao buscar tipos de mão de obra:", error);
     return NextResponse.json(

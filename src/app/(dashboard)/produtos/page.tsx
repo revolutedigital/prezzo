@@ -8,6 +8,23 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
   Plus,
   Search,
   Package,
@@ -19,9 +36,17 @@ import {
   Copy,
   Edit,
   Eye,
+  Home,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  FileDown,
+  FileText,
 } from "lucide-react";
 import { formatCurrency, cn } from "@/lib/utils";
 import { ProdutosSkeleton } from "@/components/produtos/produtos-skeleton";
+import { showInfo } from "@/lib/toast";
+import { PDFPreviewDialog } from "@/components/ui/pdf-preview-dialog";
 
 interface TipoProduto {
   id: string;
@@ -43,6 +68,108 @@ export default function ProdutosPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [categoria, setCategoria] = useState("");
   const [ativo, setAtivo] = useState("true");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [sortBy, setSortBy] = useState("nome");
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [exportando, setExportando] = useState(false);
+  const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
+  const ITEMS_PER_PAGE = 20;
+
+  const handleExportExcel = async () => {
+    try {
+      setExportando(true);
+      const response = await fetch("/api/export/produtos");
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `produtos-${new Date().toISOString().split("T")[0]}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        showInfo("Produtos exportados com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao exportar:", error);
+    } finally {
+      setExportando(false);
+    }
+  };
+
+  const handlePreviewPDF = async () => {
+    try {
+      setExportando(true);
+      const response = await fetch("/api/export/relatorio-custos");
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        setPdfUrl(url);
+        setPdfPreviewOpen(true);
+      }
+    } catch (error) {
+      console.error("Erro ao gerar preview:", error);
+    } finally {
+      setExportando(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      setExportando(true);
+      const response = await fetch("/api/export/relatorio-custos");
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `relatorio-custos-${new Date().toISOString().split("T")[0]}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        showInfo("Relatório exportado com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao exportar:", error);
+    } finally {
+      setExportando(false);
+    }
+  };
+
+  // Helper to generate page numbers with ellipsis
+  const generatePageNumbers = () => {
+    const pages = [];
+    const maxVisible = 7;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) pages.push(i);
+        pages.push('ellipsis');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1);
+        pages.push('ellipsis');
+        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('ellipsis');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('ellipsis');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
 
   // Debounce search (300ms)
   useEffect(() => {
@@ -52,55 +179,38 @@ export default function ProdutosPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch, categoria, ativo, sortBy, order]);
+
   const loadTiposProduto = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       if (debouncedSearch) params.append("search", debouncedSearch);
+      params.append("page", currentPage.toString());
+      params.append("limit", ITEMS_PER_PAGE.toString());
+      params.append("sortBy", sortBy);
+      params.append("order", order);
 
       const response = await fetch(`/api/tipos-produto?${params}`);
       if (response.ok) {
-        const data = await response.json();
-        setTiposProduto(data);
+        const result = await response.json();
+        setTiposProduto(result.data);
+        setTotalPages(result.pagination.totalPages);
+        setTotalItems(result.pagination.total);
       }
     } catch (error) {
       console.error("Erro ao carregar tipos de produto:", error);
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch]);
+  }, [debouncedSearch, currentPage, sortBy, order, ITEMS_PER_PAGE]);
 
   useEffect(() => {
     loadTiposProduto();
   }, [loadTiposProduto]);
-
-  // Stats calculadas
-  const stats = useMemo(() => {
-    const filteredByStatus = ativo
-      ? tiposProduto.filter(t => t.ativo === (ativo === "true"))
-      : tiposProduto;
-
-    const filteredByCategory = categoria
-      ? filteredByStatus.filter(t => t.categoria === categoria)
-      : filteredByStatus;
-
-    const totalVariacoes = filteredByCategory.reduce((acc, t) => acc + t._count.variacoes, 0);
-    const ativos = tiposProduto.filter(t => t.ativo);
-    const inativos = tiposProduto.filter(t => t.ativo === false);
-    const comVariacoes = tiposProduto.filter(t => t._count.variacoes > 0);
-
-    return {
-      total: tiposProduto.length,
-      filtered: filteredByCategory.length,
-      ativos: ativos.length,
-      inativos: inativos.length,
-      totalVariacoes,
-      mediaVariacoes: filteredByCategory.length > 0
-        ? (totalVariacoes / filteredByCategory.length).toFixed(1)
-        : "0",
-      comVariacoes: comVariacoes.length,
-    };
-  }, [tiposProduto, ativo, categoria]);
 
   // Categorias únicas
   const categorias = useMemo(
@@ -123,41 +233,119 @@ export default function ProdutosPage() {
     return filtered;
   }, [tiposProduto, ativo, categoria]);
 
+  // Stats calculadas
+  const stats = useMemo(() => {
+    const filteredByStatus = ativo
+      ? tiposProduto.filter(t => t.ativo === (ativo === "true"))
+      : tiposProduto;
+
+    const filteredByCategory = categoria
+      ? filteredByStatus.filter(t => t.categoria === categoria)
+      : filteredByStatus;
+
+    const totalVariacoes = tiposProduto.reduce((acc, t) => acc + t._count.variacoes, 0);
+    const ativos = tiposProduto.filter(t => t.ativo);
+    const inativos = tiposProduto.filter(t => t.ativo === false);
+    const comVariacoes = tiposProduto.filter(t => t._count.variacoes > 0);
+
+    return {
+      total: totalItems,
+      filtered: produtosExibidos.length,
+      ativos: ativos.length,
+      inativos: inativos.length,
+      totalVariacoes,
+      mediaVariacoes: produtosExibidos.length > 0
+        ? (totalVariacoes / produtosExibidos.length).toFixed(1)
+        : "0",
+      comVariacoes: comVariacoes.length,
+    };
+  }, [tiposProduto, ativo, categoria, totalItems, produtosExibidos.length]);
+
   if (loading) {
     return <ProdutosSkeleton />;
   }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Breadcrumb */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">
+                <Home className="h-4 w-4" />
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Produtos</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-            <Package className="h-8 w-8 text-primary" />
+          <h2 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
+            <Package className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             Produtos
           </h2>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
             Gerencie tipos de produtos e suas variações com eficiência
           </p>
         </div>
-        <Link href="/produtos/novo">
-          <Button className="transition-all duration-300 hover:shadow-lg">
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Tipo de Produto
+        <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+          <Button
+            variant="outline"
+            onClick={handleExportExcel}
+            disabled={exportando || tiposProduto.length === 0}
+            className="transition-all duration-300 hover:shadow-md flex-1 sm:flex-none"
+            size="sm"
+          >
+            <FileDown className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Exportar Excel</span>
           </Button>
-        </Link>
+          <Button
+            variant="outline"
+            onClick={handlePreviewPDF}
+            disabled={exportando || tiposProduto.length === 0}
+            className="transition-all duration-300 hover:shadow-md flex-1 sm:flex-none"
+            size="sm"
+          >
+            <Eye className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Preview PDF</span>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleExportPDF}
+            disabled={exportando || tiposProduto.length === 0}
+            className="transition-all duration-300 hover:shadow-md flex-1 sm:flex-none"
+            size="sm"
+          >
+            <FileText className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Baixar PDF</span>
+          </Button>
+          <Link href="/produtos/novo" className="flex-1 sm:flex-none">
+            <Button className="transition-all duration-300 hover:shadow-lg w-full" size="sm">
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Novo Tipo de Produto</span>
+              <span className="sm:hidden">Novo</span>
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tipos de Produto</CardTitle>
-            <Package className="h-4 w-4 text-blue-500" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Tipos de Produto</CardTitle>
+            <Package className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               {stats.ativos} ativos, {stats.inativos} inativos
             </p>
           </CardContent>
@@ -165,12 +353,12 @@ export default function ProdutosPage() {
 
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1 border-purple-500/50 bg-gradient-to-br from-purple-500/10 to-transparent">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Variações</CardTitle>
-            <Layers className="h-4 w-4 text-purple-600" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Total de Variações</CardTitle>
+            <Layers className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{stats.totalVariacoes}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-xl sm:text-2xl font-bold text-purple-600">{stats.totalVariacoes}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               Média de {stats.mediaVariacoes} por produto
             </p>
           </CardContent>
@@ -178,12 +366,12 @@ export default function ProdutosPage() {
 
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Com Variações</CardTitle>
-            <Sparkles className="h-4 w-4 text-amber-500" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Com Variações</CardTitle>
+            <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.comVariacoes}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-xl sm:text-2xl font-bold">{stats.comVariacoes}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               {stats.total > 0
                 ? `${Math.round((stats.comVariacoes / stats.total) * 100)}% do total`
                 : "Nenhum produto"}
@@ -193,12 +381,12 @@ export default function ProdutosPage() {
 
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Categorias</CardTitle>
-            <Tag className="h-4 w-4 text-green-500" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Categorias</CardTitle>
+            <Tag className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{categorias.length}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-xl sm:text-2xl font-bold">{categorias.length}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               {categorias.length > 0 ? "categorias diferentes" : "Nenhuma categoria"}
             </p>
           </CardContent>
@@ -206,7 +394,7 @@ export default function ProdutosPage() {
       </div>
 
       {/* Filtros */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -223,23 +411,41 @@ export default function ProdutosPage() {
             </div>
           )}
         </div>
-        <NativeSelect
-          value={categoria || ""}
-          onChange={(e) => setCategoria(e.target.value)}
-          className="w-48"
-        >
-          <option value="">Todas as categorias</option>
-          {categorias.map((cat) => (
-            <option key={cat} value={cat || ""}>
-              {cat}
-            </option>
-          ))}
-        </NativeSelect>
-        <NativeSelect value={ativo} onChange={(e) => setAtivo(e.target.value)} className="w-32">
-          <option value="">Todos</option>
-          <option value="true">Ativos</option>
-          <option value="false">Inativos</option>
-        </NativeSelect>
+        <div className="flex gap-2">
+          <NativeSelect
+            value={categoria || ""}
+            onChange={(e) => setCategoria(e.target.value)}
+            className="w-full sm:w-48"
+          >
+            <option value="">Todas as categorias</option>
+            {categorias.map((cat) => (
+              <option key={cat} value={cat || ""}>
+                {cat}
+              </option>
+            ))}
+          </NativeSelect>
+          <NativeSelect value={ativo} onChange={(e) => setAtivo(e.target.value)} className="w-full sm:w-32">
+            <option value="">Todos</option>
+            <option value="true">Ativos</option>
+            <option value="false">Inativos</option>
+          </NativeSelect>
+        </div>
+        <div className="flex gap-2">
+          <NativeSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="flex-1 sm:w-40">
+            <option value="nome">Nome</option>
+            <option value="codigo">Código</option>
+            <option value="categoria">Categoria</option>
+            <option value="createdAt">Data</option>
+          </NativeSelect>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
+            className="shrink-0"
+          >
+            {order === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+          </Button>
+        </div>
       </div>
 
       {/* Empty State */}
@@ -332,7 +538,7 @@ export default function ProdutosPage() {
                       onClick={(e) => {
                         e.preventDefault();
                         // TODO: Implementar duplicação
-                        alert("Funcionalidade em desenvolvimento");
+                        showInfo("Funcionalidade em desenvolvimento");
                       }}
                     >
                       <Copy className="mr-2 h-3 w-3" />
@@ -352,10 +558,47 @@ export default function ProdutosPage() {
             ))}
           </div>
 
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+
+                {generatePageNumbers().map((page, idx) => (
+                  <PaginationItem key={idx}>
+                    {page === 'ellipsis' ? (
+                      <PaginationEllipsis />
+                    ) : (
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page as number)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    )}
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+
           {/* Footer Info */}
           <div className="flex justify-between items-center text-sm text-muted-foreground">
             <span>
-              Mostrando {produtosExibidos.length} de {stats.total} tipo(s) de produto
+              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s) de produto
               {(debouncedSearch || categoria || ativo) && " (com filtros)"}
             </span>
             <div className="flex gap-2">
@@ -369,6 +612,15 @@ export default function ProdutosPage() {
           </div>
         </>
       )}
+
+      {/* PDF Preview Dialog */}
+      <PDFPreviewDialog
+        open={pdfPreviewOpen}
+        onOpenChange={setPdfPreviewOpen}
+        title="Relatório de Custos de Produtos"
+        pdfUrl={pdfUrl}
+        filename={`relatorio-custos-${new Date().toISOString().split("T")[0]}.pdf`}
+      />
     </div>
   );
 }

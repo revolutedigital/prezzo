@@ -47,10 +47,34 @@ import {
   Filter,
   Download,
   Sparkles,
+  Home,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+import Link from "next/link";
 import { formatCurrency, cn } from "@/lib/utils";
 import { MateriaPrimaForm } from "./materia-prima-form";
 import { MateriasPrimasSkeleton } from "@/components/materias-primas/materias-primas-skeleton";
+import { showSuccess, showError } from "@/lib/toast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface MateriaPrima {
   id: string;
@@ -77,8 +101,14 @@ export default function MateriasPrimasPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [categoria, setCategoria] = useState("");
   const [ativo, setAtivo] = useState("true");
+  const [sortBy, setSortBy] = useState("nome");
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const ITEMS_PER_PAGE = 50;
 
   // Modals
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -93,6 +123,41 @@ export default function MateriasPrimasPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Helper to generate page numbers with ellipsis
+  const generatePageNumbers = () => {
+    const pages = [];
+    const maxVisible = 7;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) pages.push(i);
+        pages.push('ellipsis');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1);
+        pages.push('ellipsis');
+        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('ellipsis');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('ellipsis');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch, categoria, ativo, sortBy, order]);
+
   // Carregar matérias-primas
   const loadMateriasPrimas = useCallback(async () => {
     try {
@@ -101,18 +166,24 @@ export default function MateriasPrimasPage() {
       if (debouncedSearch) params.append("search", debouncedSearch);
       if (categoria) params.append("categoria", categoria);
       if (ativo) params.append("ativo", ativo);
+      params.append("page", currentPage.toString());
+      params.append("limit", ITEMS_PER_PAGE.toString());
+      params.append("sortBy", sortBy);
+      params.append("order", order);
 
       const response = await fetch(`/api/materias-primas?${params}`);
       if (response.ok) {
-        const data = await response.json();
-        setMateriasPrimas(data);
+        const result = await response.json();
+        setMateriasPrimas(result.data);
+        setTotalPages(result.pagination.totalPages);
+        setTotalItems(result.pagination.total);
       }
     } catch (error) {
       console.error("Erro ao carregar matérias-primas:", error);
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, categoria, ativo]);
+  }, [debouncedSearch, categoria, ativo, currentPage, sortBy, order]);
 
   useEffect(() => {
     loadMateriasPrimas();
@@ -154,10 +225,11 @@ export default function MateriasPrimasPage() {
         )
       );
       setSelectedIds([]);
+      showSuccess(`Status atualizado para ${selectedIds.length} matéria(s)-prima(s)!`);
       await loadMateriasPrimas();
     } catch (error) {
       console.error("Erro ao atualizar status:", error);
-      alert("Erro ao atualizar status dos materiais");
+      showError("Erro ao atualizar status dos materiais");
     }
   };
 
@@ -171,16 +243,17 @@ export default function MateriasPrimasPage() {
       });
 
       if (response.ok) {
+        showSuccess("Matéria-prima excluída com sucesso!");
         await loadMateriasPrimas();
         setIsDeleteOpen(false);
         setSelectedMaterial(null);
       } else {
         const error = await response.json();
-        alert(error.error || "Erro ao excluir matéria-prima");
+        showError(error.message || error.error || "Erro ao excluir matéria-prima");
       }
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      alert("Erro ao excluir matéria-prima");
+      showError("Erro ao excluir matéria-prima");
     }
   };
 
@@ -205,6 +278,23 @@ export default function MateriasPrimasPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Breadcrumb */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">
+                <Home className="h-4 w-4" />
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Matérias-Primas</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -322,6 +412,22 @@ export default function MateriasPrimasPage() {
           <option value="true">Ativos</option>
           <option value="false">Inativos</option>
         </NativeSelect>
+        <NativeSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="w-40">
+          <option value="nome">Nome</option>
+          <option value="codigo">Código</option>
+          <option value="custoUnitario">Custo</option>
+          <option value="fornecedor">Fornecedor</option>
+          <option value="categoria">Categoria</option>
+          <option value="createdAt">Data</option>
+        </NativeSelect>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
+          className="shrink-0"
+        >
+          {order === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+        </Button>
         <div className="flex gap-1 border rounded-md p-1">
           <Button
             variant={viewMode === "table" ? "default" : "ghost"}
@@ -607,11 +713,58 @@ export default function MateriasPrimasPage() {
         </Card>
       )}
 
+      {/* Paginação */}
+      {!loading && materiasPrimas.length > 0 && totalPages > 1 && (
+        <div className="flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  className={
+                    currentPage === 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+
+              {generatePageNumbers().map((page, idx) => (
+                <PaginationItem key={idx}>
+                  {page === "ellipsis" ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      onClick={() => setCurrentPage(page as number)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
+
       {/* Footer Info */}
       {materiasPrimas.length > 0 && (
         <div className="flex justify-between items-center text-sm text-muted-foreground">
           <span>
-            Mostrando {materiasPrimas.length} matéria(s)-prima(s)
+            Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} matéria(s)-prima(s)
             {(debouncedSearch || categoria || ativo) && " com filtros aplicados"}
           </span>
           <Button variant="outline" size="sm">
@@ -650,42 +803,20 @@ export default function MateriasPrimasPage() {
       </Dialog>
 
       {/* Modal de Confirmação de Exclusão */}
-      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent onClose={() => setIsDeleteOpen(false)}>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-              Confirmar Exclusão
-            </DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja excluir a matéria-prima{" "}
-              <strong>{selectedMaterial?.nome}</strong>?
-              {selectedMaterial && selectedMaterial._count.composicoes > 0 && (
-                <span className="block mt-2 text-amber-600 font-medium">
-                  ⚠️ Esta matéria-prima está sendo usada em{" "}
-                  {selectedMaterial._count.composicoes} produto(s)!
-                </span>
-              )}
-              <span className="block mt-2">Esta ação não pode ser desfeita.</span>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsDeleteOpen(false);
-                setSelectedMaterial(null);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Excluir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        onConfirm={handleDelete}
+        title="Confirmar Exclusão"
+        description={`Tem certeza que deseja excluir a matéria-prima "${selectedMaterial?.nome}"?${
+          selectedMaterial && selectedMaterial._count.composicoes > 0
+            ? `\n\n⚠️ Esta matéria-prima está sendo usada em ${selectedMaterial._count.composicoes} produto(s)!`
+            : ""
+        }\n\nEsta ação não pode ser desfeita.`}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="destructive"
+      />
     </div>
   );
 }

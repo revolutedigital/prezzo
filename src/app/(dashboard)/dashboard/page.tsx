@@ -143,40 +143,43 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header com CTA */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
             Dashboard
-            <Sparkles className="h-6 w-6 text-primary" />
+            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
           </h2>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
             Visão geral do seu sistema de precificação
           </p>
         </div>
-        <div className="flex gap-2">
-          <Link href="/materias-primas">
-            <Button variant="outline" size="sm" className="gap-2">
+        <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+          <Link href="/materias-primas" className="flex-1 sm:flex-none">
+            <Button variant="outline" size="sm" className="gap-2 w-full">
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Matéria-Prima</span>
+              <span className="sm:hidden">MP</span>
             </Button>
           </Link>
-          <Link href="/produtos/novo">
-            <Button variant="outline" size="sm" className="gap-2">
+          <Link href="/produtos/novo" className="flex-1 sm:flex-none">
+            <Button variant="outline" size="sm" className="gap-2 w-full">
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Produto</span>
+              <span className="sm:hidden">Prod</span>
             </Button>
           </Link>
-          <Link href="/orcamentos/novo">
-            <Button size="sm" className="gap-2 shadow-lg shadow-primary/25">
+          <Link href="/orcamentos/novo" className="flex-1 sm:flex-none">
+            <Button size="sm" className="gap-2 shadow-lg shadow-primary/25 w-full">
               <Plus className="h-4 w-4" />
-              Orçamento
+              <span className="hidden sm:inline">Orçamento</span>
+              <span className="sm:hidden">Orç</span>
             </Button>
           </Link>
         </div>
       </div>
 
       {/* Stats Cards - Linha 1 com hover effects */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
         <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
           <Link href="/materias-primas">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

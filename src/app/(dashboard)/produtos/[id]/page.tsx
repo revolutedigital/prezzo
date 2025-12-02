@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -18,13 +18,14 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ArrowLeft, Plus, Edit, Trash2, Package } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { VariacaoForm } from "./variacao-form";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface TipoProduto {
   id: string;
@@ -60,7 +61,7 @@ export default function ProdutoDetalhesPage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedVariacao, setSelectedVariacao] = useState<Variacao | null>(null);
 
-  const loadTipoProduto = async () => {
+  const loadTipoProduto = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/tipos-produto/${params.id}`);
@@ -80,11 +81,11 @@ export default function ProdutoDetalhesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id]);
 
   useEffect(() => {
     loadTipoProduto();
-  }, [params.id]);
+  }, [loadTipoProduto]);
 
   const handleDeleteVariacao = async () => {
     if (!selectedVariacao) return;
@@ -95,16 +96,17 @@ export default function ProdutoDetalhesPage() {
       });
 
       if (response.ok) {
+        showSuccess("Variação excluída com sucesso!");
         await loadTipoProduto();
         setIsDeleteOpen(false);
         setSelectedVariacao(null);
       } else {
         const error = await response.json();
-        alert(error.error || "Erro ao excluir variação");
+        showError(error.message || error.error || "Erro ao excluir variação");
       }
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      alert("Erro ao excluir variação");
+      showError("Erro ao excluir variação");
     }
   };
 
@@ -325,32 +327,16 @@ export default function ProdutoDetalhesPage() {
       </Dialog>
 
       {/* Modal de Confirmação de Exclusão */}
-      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent onClose={() => setIsDeleteOpen(false)}>
-          <DialogHeader>
-            <DialogTitle>Confirmar Exclusão</DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja excluir a variação{" "}
-              <strong>{selectedVariacao?.nome}</strong>?
-              Esta ação não pode ser desfeita.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsDeleteOpen(false);
-                setSelectedVariacao(null);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteVariacao}>
-              Excluir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        onConfirm={handleDeleteVariacao}
+        title="Confirmar Exclusão"
+        description={`Tem certeza que deseja excluir a variação "${selectedVariacao?.nome}"? Esta ação não pode ser desfeita.`}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="destructive"
+      />
     </div>
   );
 }

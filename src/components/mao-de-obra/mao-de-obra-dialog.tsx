@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -25,19 +25,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
+import { showSuccess, showError } from "@/lib/toast";
+import { maoDeObraSchema, type MaoDeObraFormData } from "@/schemas/mao-de-obra.schema";
 
-const formSchema = z.object({
-  nome: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
-  codigo: z.string().optional(),
-  custoHora: z.coerce.number().positive("Custo por hora deve ser positivo"),
-  incluiMaquina: z.boolean().default(false),
-  custoMaquinaHora: z.coerce.number().positive().optional().nullable(),
-  descricao: z.string().optional(),
-  ativo: z.boolean().default(true),
-});
-
-type FormData = z.infer<typeof formSchema>;
+type FormData = MaoDeObraFormData;
 
 interface MaoDeObraDialogProps {
   open: boolean;
@@ -56,7 +47,7 @@ export function MaoDeObraDialog({
   const isEditing = !!tipo;
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(maoDeObraSchema),
     defaultValues: {
       nome: "",
       codigo: "",
@@ -124,7 +115,7 @@ export function MaoDeObraDialog({
         throw new Error(error.error || "Erro ao salvar");
       }
 
-      toast.success(
+      showSuccess(
         isEditing
           ? "Tipo atualizado com sucesso"
           : "Tipo criado com sucesso"
@@ -133,7 +124,7 @@ export function MaoDeObraDialog({
       onSuccess();
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || "Erro ao salvar tipo de mão de obra");
+      showError(error.message || "Erro ao salvar tipo de mão de obra");
     } finally {
       setLoading(false);
     }
@@ -321,7 +312,14 @@ export function MaoDeObraDialog({
                 Cancelar
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Salvando..." : isEditing ? "Atualizar" : "Criar"}
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  isEditing ? "Atualizar" : "Criar"
+                )}
               </Button>
             </DialogFooter>
           </form>

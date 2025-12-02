@@ -28,19 +28,34 @@ import {
   List,
   AlertCircle,
   CheckCircle2,
+  Home,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import Link from "next/link";
 import { MaoDeObraDialog } from "@/components/mao-de-obra/mao-de-obra-dialog";
 import { MaoDeObraSkeleton } from "@/components/mao-de-obra/mao-de-obra-skeleton";
-import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { showSuccess, showError } from "@/lib/toast";
 import { formatCurrency, cn } from "@/lib/utils";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface TipoMaoDeObra {
   id: string;
@@ -69,7 +84,13 @@ export default function MaoDeObraPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filtroMaquina, setFiltroMaquina] = useState("");
   const [ativo, setAtivo] = useState("true");
+  const [sortBy, setSortBy] = useState("nome");
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const ITEMS_PER_PAGE = 50;
 
   // Debounce search
   useEffect(() => {
@@ -79,20 +100,63 @@ export default function MaoDeObraPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Helper to generate page numbers with ellipsis
+  const generatePageNumbers = () => {
+    const pages = [];
+    const maxVisible = 7;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) pages.push(i);
+        pages.push('ellipsis');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1);
+        pages.push('ellipsis');
+        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('ellipsis');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('ellipsis');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch, filtroMaquina, ativo, sortBy, order]);
+
   const carregarTipos = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/mao-de-obra");
+      const params = new URLSearchParams();
+      params.append("page", currentPage.toString());
+      params.append("limit", ITEMS_PER_PAGE.toString());
+      params.append("sortBy", sortBy);
+      params.append("order", order);
+
+      const response = await fetch(`/api/mao-de-obra?${params}`);
       if (!response.ok) throw new Error("Erro ao carregar tipos");
-      const data = await response.json();
-      setTipos(data);
+      const result = await response.json();
+      setTipos(result.data);
+      setTotalPages(result.pagination.totalPages);
+      setTotalItems(result.pagination.total);
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao carregar tipos de mão de obra");
+      showError("Erro ao carregar tipos de mão de obra");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentPage, sortBy, order]);
 
   useEffect(() => {
     carregarTipos();
@@ -107,7 +171,7 @@ export default function MaoDeObraPage() {
     const vinculados = tipos.filter((t) => t.produtosVinculados > 0);
 
     return {
-      total: tipos.length,
+      total: totalItems,
       ativos: ativos.length,
       inativos: tipos.length - ativos.length,
       comMaquina: comMaquina.length,
@@ -115,35 +179,7 @@ export default function MaoDeObraPage() {
       totalCusto,
       vinculados: vinculados.length,
     };
-  }, [tipos]);
-
-  // Filtrar tipos
-  const tiposFiltrados = useMemo(() => {
-    let filtered = tipos;
-
-    // Filtro de busca
-    if (debouncedSearch) {
-      filtered = filtered.filter(
-        (t) =>
-          t.nome.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-          t.codigo?.toLowerCase().includes(debouncedSearch.toLowerCase())
-      );
-    }
-
-    // Filtro de máquina
-    if (filtroMaquina) {
-      filtered = filtered.filter((t) =>
-        filtroMaquina === "true" ? t.incluiMaquina : !t.incluiMaquina
-      );
-    }
-
-    // Filtro de ativo
-    if (ativo) {
-      filtered = filtered.filter((t) => t.ativo === (ativo === "true"));
-    }
-
-    return filtered;
-  }, [tipos, debouncedSearch, filtroMaquina, ativo]);
+  }, [tipos, totalItems]);
 
   const handleNovo = () => {
     setTipoEditando(null);
@@ -173,13 +209,13 @@ export default function MaoDeObraPage() {
         throw new Error(error.error || "Erro ao excluir");
       }
 
-      toast.success("Tipo de mão de obra excluído com sucesso");
+      showSuccess("Tipo de mão de obra excluído com sucesso");
       setDeleteDialogOpen(false);
       setTipoParaDeletar(null);
       carregarTipos();
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || "Erro ao excluir tipo de mão de obra");
+      showError(error.message || "Erro ao excluir tipo de mão de obra");
     }
   };
 
@@ -195,6 +231,23 @@ export default function MaoDeObraPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Breadcrumb */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">
+                <Home className="h-4 w-4" />
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Mão de Obra</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -303,6 +356,21 @@ export default function MaoDeObraPage() {
           <option value="true">Ativos</option>
           <option value="false">Inativos</option>
         </NativeSelect>
+        <NativeSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="w-40">
+          <option value="nome">Nome</option>
+          <option value="codigo">Código</option>
+          <option value="custoHora">Custo/Hora</option>
+          <option value="custoMaquinaHora">Custo Máquina</option>
+          <option value="createdAt">Data</option>
+        </NativeSelect>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
+          className="shrink-0"
+        >
+          {order === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+        </Button>
         <div className="flex gap-1 border rounded-md p-1">
           <Button
             variant={viewMode === "table" ? "default" : "ghost"}
@@ -324,7 +392,7 @@ export default function MaoDeObraPage() {
       </div>
 
       {/* Empty State */}
-      {tiposFiltrados.length === 0 ? (
+      {tipos.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Wrench className="h-16 w-16 text-muted-foreground/50 mb-4" />
@@ -344,7 +412,7 @@ export default function MaoDeObraPage() {
         /* Cards View */
         <>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {tiposFiltrados.map((tipo) => (
+            {tipos.map((tipo) => (
               <Card
                 key={tipo.id}
                 className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden"
@@ -448,11 +516,57 @@ export default function MaoDeObraPage() {
             ))}
           </div>
 
+          {/* Paginação */}
+          {!loading && tipos.length > 0 && totalPages > 1 && (
+            <div className="flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+
+                  {generatePageNumbers().map((page, idx) => (
+                    <PaginationItem key={idx}>
+                      {page === "ellipsis" ? (
+                        <PaginationEllipsis />
+                      ) : (
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page as number)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+
           {/* Footer Info */}
           <div className="flex justify-between items-center text-sm text-muted-foreground">
             <span>
-              Mostrando {tiposFiltrados.length} de {stats.total} tipo(s)
-              {(debouncedSearch || filtroMaquina || ativo) && " (com filtros)"}
+              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s)
             </span>
             <Button variant="outline" size="sm" onClick={handleNovo}>
               <Plus className="mr-2 h-4 w-4" />
@@ -487,7 +601,7 @@ export default function MaoDeObraPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {tiposFiltrados.map((tipo) => (
+                    {tipos.map((tipo) => (
                       <TableRow
                         key={tipo.id}
                         className="hover:bg-muted/50 transition-colors"
@@ -551,11 +665,57 @@ export default function MaoDeObraPage() {
             </CardContent>
           </Card>
 
+          {/* Paginação */}
+          {!loading && tipos.length > 0 && totalPages > 1 && (
+            <div className="flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+
+                  {generatePageNumbers().map((page, idx) => (
+                    <PaginationItem key={idx}>
+                      {page === "ellipsis" ? (
+                        <PaginationEllipsis />
+                      ) : (
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page as number)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+
           {/* Footer Info */}
           <div className="flex justify-between items-center text-sm text-muted-foreground">
             <span>
-              Mostrando {tiposFiltrados.length} de {stats.total} tipo(s)
-              {(debouncedSearch || filtroMaquina || ativo) && " (com filtros)"}
+              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s)
             </span>
           </div>
         </>
@@ -570,41 +730,20 @@ export default function MaoDeObraPage() {
       />
 
       {/* Dialog de Confirmação de Exclusão */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-              Confirmar Exclusão
-            </DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja excluir o tipo de mão de obra{" "}
-              <strong>{tipoParaDeletar?.nome}</strong>?
-              {tipoParaDeletar && tipoParaDeletar.produtosVinculados > 0 && (
-                <span className="block mt-2 text-amber-600 font-medium">
-                  ⚠️ Este tipo está vinculado a {tipoParaDeletar.produtosVinculados} produto(s)!
-                </span>
-              )}
-              <span className="block mt-2">Esta ação não pode ser desfeita.</span>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDeleteDialogOpen(false);
-                setTipoParaDeletar(null);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={handleExcluir}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Excluir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleExcluir}
+        title="Confirmar Exclusão"
+        description={`Tem certeza que deseja excluir o tipo de mão de obra "${tipoParaDeletar?.nome}"?${
+          tipoParaDeletar && tipoParaDeletar.produtosVinculados > 0
+            ? `\n\n⚠️ Este tipo está vinculado a ${tipoParaDeletar.produtosVinculados} produto(s)!`
+            : ""
+        }\n\nEsta ação não pode ser desfeita.`}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="destructive"
+      />
     </div>
   );
 }

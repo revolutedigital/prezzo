@@ -28,6 +28,10 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const categoria = searchParams.get("categoria") || "";
     const ativo = searchParams.get("ativo");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const sortBy = searchParams.get("sortBy") || "nome";
+    const order = searchParams.get("order") || "asc";
 
     const where: any = {};
 
@@ -50,17 +54,37 @@ export async function GET(request: NextRequest) {
       where.ativo = ativo === "true";
     }
 
-    const materiasPrimas = await prisma.materiaPrima.findMany({
-      where,
-      orderBy: { nome: "asc" },
-      include: {
-        _count: {
-          select: { composicoes: true }
+    const skip = (page - 1) * limit;
+
+    // Validar campos de ordenação permitidos
+    const allowedSortFields = ['nome', 'codigo', 'unidadeMedida', 'custoUnitario', 'fornecedor', 'categoria', 'ativo', 'createdAt'];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'nome';
+    const validOrder = (order === 'asc' || order === 'desc') ? order : 'asc';
+
+    const [materiasPrimas, total] = await Promise.all([
+      prisma.materiaPrima.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { [validSortBy]: validOrder },
+        include: {
+          _count: {
+            select: { composicoes: true }
+          }
         }
+      }),
+      prisma.materiaPrima.count({ where })
+    ]);
+
+    return NextResponse.json({
+      data: materiasPrimas,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
       }
     });
-
-    return NextResponse.json(materiasPrimas);
   } catch (error) {
     console.error("Erro ao buscar matérias-primas:", error);
     return NextResponse.json(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -14,10 +14,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeft, Download, Send, Edit, Trash2, FileText } from "lucide-react";
+import { ArrowLeft, Download, Send, Edit, Trash2, FileText, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { showError } from "@/lib/toast";
 
 interface Orcamento {
   id: string;
@@ -73,8 +74,9 @@ export default function OrcamentoDetalhesPage() {
   const router = useRouter();
   const [orcamento, setOrcamento] = useState<Orcamento | null>(null);
   const [loading, setLoading] = useState(true);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
 
-  const loadOrcamento = async () => {
+  const loadOrcamento = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/orcamentos/${params.id}`);
@@ -90,11 +92,11 @@ export default function OrcamentoDetalhesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id, router]);
 
   useEffect(() => {
     loadOrcamento();
-  }, [params.id]);
+  }, [loadOrcamento]);
 
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), "dd/MM/yyyy", { locale: ptBR });
@@ -109,6 +111,7 @@ export default function OrcamentoDetalhesPage() {
   };
 
   const handleDownloadPDF = async () => {
+    setDownloadingPDF(true);
     try {
       const response = await fetch(`/api/orcamentos/${params.id}/pdf`);
       if (response.ok) {
@@ -122,11 +125,13 @@ export default function OrcamentoDetalhesPage() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } else {
-        alert('Erro ao gerar PDF');
+        showError('Erro ao gerar PDF');
       }
     } catch (error) {
       console.error('Erro ao baixar PDF:', error);
-      alert('Erro ao gerar PDF');
+      showError('Erro ao gerar PDF');
+    } finally {
+      setDownloadingPDF(false);
     }
   };
 
@@ -188,9 +193,18 @@ export default function OrcamentoDetalhesPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
-            <Download className="mr-2 h-4 w-4" />
-            PDF
+          <Button variant="outline" size="sm" onClick={handleDownloadPDF} disabled={downloadingPDF}>
+            {downloadingPDF ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Gerando...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                PDF
+              </>
+            )}
           </Button>
           {orcamento.status === "rascunho" && (
             <>

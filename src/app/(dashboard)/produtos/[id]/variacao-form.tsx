@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface VariacaoFormProps {
   tipoProdutoId: string;
@@ -193,14 +194,19 @@ export function VariacaoForm({
       });
 
       if (response.ok) {
+        showSuccess(variacao ? "Variação atualizada com sucesso!" : "Variação criada com sucesso!");
         onSuccess();
       } else {
         const data = await response.json();
-        setError(data.error || "Erro ao salvar variação");
+        const errorMsg = data.error || "Erro ao salvar variação";
+        setError(errorMsg);
+        showError(errorMsg);
       }
     } catch (error) {
       console.error("Erro ao salvar:", error);
-      setError("Erro ao salvar variação");
+      const errorMsg = "Erro ao salvar variação";
+      setError(errorMsg);
+      showError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -438,7 +444,14 @@ export function VariacaoForm({
           Cancelar
         </Button>
         <Button type="submit" disabled={loading || composicao.length === 0}>
-          {loading ? "Salvando..." : variacao ? "Atualizar" : "Criar Variação"}
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            variacao ? "Atualizar" : "Criar Variação"
+          )}
         </Button>
       </div>
     </form>

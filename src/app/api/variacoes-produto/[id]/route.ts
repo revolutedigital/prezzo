@@ -79,3 +79,68 @@ export async function GET(
     );
   }
 }
+
+// DELETE - Excluir variação de produto
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    // Buscar a variação para verificar se existe
+    const variacao = await prisma.variacaoProduto.findUnique({
+      where: { id },
+      include: {
+        tipoProduto: true,
+        _count: {
+          select: {
+            itensProduto: true,
+          },
+        },
+      },
+    });
+
+    if (!variacao) {
+      return NextResponse.json(
+        { error: "Variação não encontrada" },
+        { status: 404 }
+      );
+    }
+
+    // Validação: Não permitir excluir variação que está em produtos finais
+    if (variacao._count.itensProduto > 0) {
+      return NextResponse.json(
+        {
+          error: "Não é possível excluir esta variação",
+          message: `Esta variação está sendo usada em ${variacao._count.itensProduto} produto(s) final(is). Remova-a dos produtos antes de excluir.`,
+          dependencias: {
+            itensProduto: variacao._count.itensProduto,
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    // Excluir a variação (composições serão excluídas em cascata)
+    await prisma.variacaoProduto.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Variação excluída com sucesso",
+    });
+  } catch (error) {
+    console.error("Erro ao excluir variação:", error);
+    return NextResponse.json(
+      { error: "Erro ao excluir variação" },
+      { status: 500 }
+    );
+  }
+}
