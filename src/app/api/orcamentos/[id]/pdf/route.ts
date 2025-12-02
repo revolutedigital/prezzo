@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { renderToStream } from "@react-pdf/renderer";
-import { OrcamentoPDF } from "@/lib/pdf-template";
+import { generateOrcamentoPDF } from "@/lib/pdf-template";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -31,14 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Gerar PDF
-    const stream = await renderToStream(OrcamentoPDF({ orcamento: orcamento as any }) as any);
-
-    // Converter stream para buffer
-    const chunks: any[] = [];
-    for await (const chunk of stream) {
-      chunks.push(chunk);
-    }
-    const buffer = Buffer.concat(chunks as any);
+    const buffer = generateOrcamentoPDF({ orcamento: orcamento as any });
 
     // Retornar PDF
     return new NextResponse(buffer, {

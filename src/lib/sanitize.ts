@@ -1,23 +1,16 @@
-import DOMPurify from "dompurify";
 import validator from "validator";
 
 /**
  * Sanitiza HTML removendo scripts e tags perigosas
  */
 export function sanitizeHtml(dirty: string): string {
-  if (typeof window === "undefined") {
-    // Server-side: retorna string escapada
-    return dirty
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#x27;");
-  }
-  return DOMPurify.sanitize(dirty, {
-    ALLOWED_TAGS: ["b", "i", "em", "strong", "p", "br"],
-    ALLOWED_ATTR: [],
-  });
+  // Server-side: retorna string escapada
+  return dirty
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
 }
 
 /**
