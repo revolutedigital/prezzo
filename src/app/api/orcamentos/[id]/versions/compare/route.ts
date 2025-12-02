@@ -3,13 +3,17 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { compareOrcamentoVersions } from "@/lib/orcamento-versioning";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
   const searchParams = request.nextUrl.searchParams;
   const version1 = searchParams.get("v1");
   const version2 = searchParams.get("v2");
@@ -20,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
   try {
     const comparison = await compareOrcamentoVersions(
-      params.id,
+      id,
       parseInt(version1),
       parseInt(version2)
     );
