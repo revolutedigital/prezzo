@@ -103,6 +103,34 @@ export default function DashboardPage() {
     loadStats();
   }, []);
 
+  // Dados para gráfico de pizza (memoizado) - ANTES dos early returns
+  const pieData = useMemo(
+    () =>
+      stats
+        ? [
+            { name: "Rascunho", value: stats.resumo.orcamentosRascunho, color: COLORS[0] },
+            { name: "Enviado", value: stats.resumo.orcamentosEnviados, color: COLORS[2] },
+            { name: "Aprovado", value: stats.resumo.orcamentosAprovados, color: COLORS[1] },
+          ].filter((item) => item.value > 0)
+        : [],
+    [stats]
+  );
+
+  // Formatar dados de orçamentos por mês (memoizado) - ANTES dos early returns
+  const chartData = useMemo(
+    () =>
+      stats?.orcamentosPorMes.map((item) => {
+        const [ano, mes] = item.mes.split("-");
+        const data = new Date(parseInt(ano), parseInt(mes) - 1);
+        return {
+          mes: format(data, "MMM/yy", { locale: ptBR }),
+          quantidade: item.count,
+          valor: item.value,
+        };
+      }) || [],
+    [stats]
+  );
+
   if (loading) {
     return <DashboardSkeleton />;
   }
@@ -119,36 +147,6 @@ export default function DashboardPage() {
       </div>
     );
   }
-
-  // Dados para gráfico de pizza (memoizado)
-  const pieData = useMemo(
-    () =>
-      [
-        { name: "Rascunho", value: stats.resumo.orcamentosRascunho, color: COLORS[0] },
-        { name: "Enviado", value: stats.resumo.orcamentosEnviados, color: COLORS[2] },
-        { name: "Aprovado", value: stats.resumo.orcamentosAprovados, color: COLORS[1] },
-      ].filter((item) => item.value > 0),
-    [
-      stats.resumo.orcamentosRascunho,
-      stats.resumo.orcamentosEnviados,
-      stats.resumo.orcamentosAprovados,
-    ]
-  );
-
-  // Formatar dados de orçamentos por mês (memoizado)
-  const chartData = useMemo(
-    () =>
-      stats.orcamentosPorMes.map((item) => {
-        const [ano, mes] = item.mes.split("-");
-        const data = new Date(parseInt(ano), parseInt(mes) - 1);
-        return {
-          mes: format(data, "MMM/yy", { locale: ptBR }),
-          quantidade: item.count,
-          valor: item.value,
-        };
-      }),
-    [stats.orcamentosPorMes]
-  );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
