@@ -42,11 +42,16 @@ import {
   ArrowDown,
   FileDown,
   FileText,
+  PackageOpen,
 } from "lucide-react";
 import { formatCurrency, cn } from "@/lib/utils";
 import { ProdutosSkeleton } from "@/components/produtos/produtos-skeleton";
 import { showInfo } from "@/lib/toast";
 import { PDFPreviewDialog } from "@/components/ui/pdf-preview-dialog";
+import { SearchInput } from "@/components/ui/search-input";
+import { LoadingButton } from "@/components/ui/loading-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Spinner } from "@/components/ui/spinner";
 
 interface TipoProduto {
   id: string;
@@ -262,7 +267,11 @@ export default function ProdutosPage() {
   }, [tiposProduto, ativo, categoria, totalItems, produtosExibidos.length]);
 
   if (loading) {
-    return <ProdutosSkeleton />;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Spinner size="xl" text="Carregando produtos..." />
+      </div>
+    );
   }
 
   return (
@@ -296,36 +305,39 @@ export default function ProdutosPage() {
           </p>
         </div>
         <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-          <Button
+          <LoadingButton
             variant="outline"
             onClick={handleExportExcel}
-            disabled={exportando || tiposProduto.length === 0}
+            loading={exportando}
+            disabled={tiposProduto.length === 0}
             className="transition-all duration-300 hover:shadow-md flex-1 sm:flex-none"
             size="sm"
           >
             <FileDown className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">Exportar Excel</span>
-          </Button>
-          <Button
+          </LoadingButton>
+          <LoadingButton
             variant="outline"
             onClick={handlePreviewPDF}
-            disabled={exportando || tiposProduto.length === 0}
+            loading={exportando}
+            disabled={tiposProduto.length === 0}
             className="transition-all duration-300 hover:shadow-md flex-1 sm:flex-none"
             size="sm"
           >
             <Eye className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">Preview PDF</span>
-          </Button>
-          <Button
+          </LoadingButton>
+          <LoadingButton
             variant="outline"
             onClick={handleExportPDF}
-            disabled={exportando || tiposProduto.length === 0}
+            loading={exportando}
+            disabled={tiposProduto.length === 0}
             className="transition-all duration-300 hover:shadow-md flex-1 sm:flex-none"
             size="sm"
           >
             <FileText className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">Baixar PDF</span>
-          </Button>
+          </LoadingButton>
           <Link href="/produtos/novo" className="flex-1 sm:flex-none">
             <Button className="transition-all duration-300 hover:shadow-lg w-full" size="sm">
               <Plus className="h-4 w-4 sm:mr-2" />
@@ -395,21 +407,14 @@ export default function ProdutosPage() {
 
       {/* Filtros */}
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
+        <div className="flex-1">
+          <SearchInput
             placeholder="Buscar produtos por nome ou código..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+            onClear={() => setSearch("")}
+            className="transition-all duration-300"
           />
-          {search && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <span className="text-xs text-muted-foreground animate-pulse">
-                Buscando...
-              </span>
-            </div>
-          )}
         </div>
         <div className="flex gap-2">
           <NativeSelect
@@ -450,23 +455,20 @@ export default function ProdutosPage() {
 
       {/* Empty State */}
       {produtosExibidos.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <Package className="h-16 w-16 text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
-            <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
-              {debouncedSearch || categoria || ativo !== "true"
-                ? "Tente ajustar os filtros para encontrar o que procura"
-                : "Comece criando seu primeiro tipo de produto"}
-            </p>
-            <Link href="/produtos/novo">
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Criar Primeiro Produto
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={PackageOpen}
+          title="Nenhum produto encontrado"
+          description={
+            debouncedSearch || categoria || ativo !== "true"
+              ? "Tente ajustar os filtros para encontrar o que procura"
+              : "Comece criando seu primeiro tipo de produto"
+          }
+          action={{
+            label: "Criar Primeiro Produto",
+            onClick: () => window.location.href = "/produtos/novo",
+            icon: Plus,
+          }}
+        />
       ) : (
         <>
           {/* Grid de Cards */}
