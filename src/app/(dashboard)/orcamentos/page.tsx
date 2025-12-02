@@ -4,11 +4,14 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SearchInput } from "@/components/ui/search-input";
+import { LoadingButton } from "@/components/ui/loading-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -18,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Plus, Search, Eye, Edit, Trash2, FileText, Download, Send, Home, ArrowUp, ArrowDown, FileDown } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, FileText, Home, ArrowUp, ArrowDown, FileDown } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -256,16 +259,17 @@ export default function OrcamentosPage() {
           </p>
         </div>
         <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-          <Button
+          <LoadingButton
             variant="outline"
             onClick={handleExportExcel}
-            disabled={exportando || orcamentos.length === 0}
+            loading={exportando}
+            disabled={orcamentos.length === 0}
             className="transition-all duration-300 hover:shadow-md flex-1 sm:flex-none"
             size="sm"
           >
             <FileDown className="h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">Exportar Excel</span>
-          </Button>
+          </LoadingButton>
           <Link href="/orcamentos/novo" className="flex-1 sm:flex-none">
             <Button className="transition-all duration-300 hover:shadow-lg w-full" size="sm">
               <Plus className="h-4 w-4 sm:mr-2" />
@@ -341,14 +345,14 @@ export default function OrcamentosPage() {
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex-1">
               <Label htmlFor="search" className="text-xs sm:text-sm">Buscar</Label>
-              <div className="relative mt-1.5">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
+              <div className="mt-1.5">
+                <SearchInput
                   id="search"
                   placeholder="Número, cliente, email ou CNPJ..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
+                  onClear={() => setSearchTerm("")}
+                  className="transition-all duration-300"
                 />
               </div>
             </div>
@@ -416,23 +420,24 @@ export default function OrcamentosPage() {
       <Card>
         <CardContent className="pt-6">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Carregando orçamentos...</p>
+            <div className="flex items-center justify-center min-h-[40vh]">
+              <Spinner size="xl" text="Carregando orçamentos..." />
             </div>
           ) : orcamentos.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum orçamento encontrado</h3>
-              <p className="text-muted-foreground mb-4">
-                Comece criando seu primeiro orçamento
-              </p>
-              <Link href="/orcamentos/novo">
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Novo Orçamento
-                </Button>
-              </Link>
-            </div>
+            <EmptyState
+              icon={FileText}
+              title="Nenhum orçamento encontrado"
+              description={
+                searchTerm || statusFilter
+                  ? "Tente ajustar os filtros para encontrar o que procura"
+                  : "Comece criando seu primeiro orçamento"
+              }
+              action={{
+                label: "Criar Primeiro Orçamento",
+                onClick: () => window.location.href = "/orcamentos/novo",
+                icon: Plus,
+              }}
+            />
           ) : (
             <div className="overflow-x-auto -mx-6 sm:mx-0">
             <Table>

@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SearchInput } from "@/components/ui/search-input";
+import { LoadingButton } from "@/components/ui/loading-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -32,13 +35,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Plus,
-  Search,
   Edit,
   Trash2,
   Package,
   DollarSign,
   Boxes,
-  AlertCircle,
   LayoutGrid,
   List,
   MoreVertical,
@@ -55,7 +56,6 @@ import {
 import Link from "next/link";
 import { formatCurrency, cn } from "@/lib/utils";
 import { MateriaPrimaForm } from "./materia-prima-form";
-import { MateriasPrimasSkeleton } from "@/components/materias-primas/materias-primas-skeleton";
 import { showSuccess, showError } from "@/lib/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
@@ -273,7 +273,11 @@ export default function MateriasPrimasPage() {
   };
 
   if (loading) {
-    return <MateriasPrimasSkeleton viewMode={viewMode} />;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Spinner size="xl" text="Carregando matérias-primas..." />
+      </div>
+    );
   }
 
   return (
@@ -379,21 +383,14 @@ export default function MateriasPrimasPage() {
 
       {/* Filtros e View Toggle */}
       <div className="flex gap-4 items-center">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
+        <div className="flex-1">
+          <SearchInput
             placeholder="Buscar por nome, código ou fornecedor..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+            onClear={() => setSearch("")}
+            className="transition-all duration-300"
           />
-          {search && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <span className="text-xs text-muted-foreground animate-pulse">
-                Buscando...
-              </span>
-            </div>
-          )}
         </div>
         <NativeSelect
           value={categoria || ""}
@@ -488,26 +485,23 @@ export default function MateriasPrimasPage() {
 
       {/* Empty State */}
       {materiasPrimas.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <Package className="h-16 w-16 text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhuma matéria-prima encontrada</h3>
-            <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
-              {debouncedSearch || categoria || ativo !== "true"
-                ? "Tente ajustar os filtros para encontrar o que procura"
-                : "Comece cadastrando sua primeira matéria-prima para montar produtos"}
-            </p>
-            <Button
-              onClick={() => {
-                setSelectedMaterial(null);
-                setIsFormOpen(true);
-              }}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Cadastrar Primeira Matéria-Prima
-            </Button>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Package}
+          title="Nenhuma matéria-prima encontrada"
+          description={
+            debouncedSearch || categoria || ativo !== "true"
+              ? "Tente ajustar os filtros para encontrar o que procura"
+              : "Comece cadastrando sua primeira matéria-prima para montar produtos"
+          }
+          action={{
+            label: "Cadastrar Primeira Matéria-Prima",
+            onClick: () => {
+              setSelectedMaterial(null);
+              setIsFormOpen(true);
+            },
+            icon: Plus,
+          }}
+        />
       ) : viewMode === "cards" ? (
         /* Cards View */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

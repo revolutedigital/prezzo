@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,6 +13,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { SearchInput } from "@/components/ui/search-input";
+import { LoadingButton } from "@/components/ui/loading-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Plus,
   Pencil,
@@ -23,10 +26,8 @@ import {
   Users,
   Cog,
   TrendingUp,
-  Search,
   LayoutGrid,
   List,
-  AlertCircle,
   CheckCircle2,
   Home,
   ArrowUpDown,
@@ -35,7 +36,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { MaoDeObraDialog } from "@/components/mao-de-obra/mao-de-obra-dialog";
-import { MaoDeObraSkeleton } from "@/components/mao-de-obra/mao-de-obra-skeleton";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { showSuccess, showError } from "@/lib/toast";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -226,7 +226,11 @@ export default function MaoDeObraPage() {
   };
 
   if (loading) {
-    return <MaoDeObraSkeleton viewMode={viewMode} />;
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Spinner size="xl" text="Carregando mão de obra..." />
+      </div>
+    );
   }
 
   return (
@@ -328,19 +332,14 @@ export default function MaoDeObraPage() {
 
       {/* Filtros e View Toggle */}
       <div className="flex gap-4 items-center">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
+        <div className="flex-1">
+          <SearchInput
             placeholder="Buscar por nome ou código..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+            onClear={() => setSearch("")}
+            className="transition-all duration-300"
           />
-          {search && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <span className="text-xs text-muted-foreground animate-pulse">Buscando...</span>
-            </div>
-          )}
         </div>
         <NativeSelect
           value={filtroMaquina}
@@ -393,21 +392,20 @@ export default function MaoDeObraPage() {
 
       {/* Empty State */}
       {tipos.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <Wrench className="h-16 w-16 text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhum tipo encontrado</h3>
-            <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
-              {debouncedSearch || filtroMaquina || ativo !== "true"
-                ? "Tente ajustar os filtros para encontrar o que procura"
-                : "Comece adicionando seu primeiro tipo de mão de obra"}
-            </p>
-            <Button onClick={handleNovo}>
-              <Plus className="mr-2 h-4 w-4" />
-              Criar Primeiro Tipo
-            </Button>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Wrench}
+          title="Nenhum tipo encontrado"
+          description={
+            debouncedSearch || filtroMaquina || ativo !== "true"
+              ? "Tente ajustar os filtros para encontrar o que procura"
+              : "Comece adicionando seu primeiro tipo de mão de obra"
+          }
+          action={{
+            label: "Criar Primeiro Tipo",
+            onClick: handleNovo,
+            icon: Plus,
+          }}
+        />
       ) : viewMode === "cards" ? (
         /* Cards View */
         <>
