@@ -47,10 +47,7 @@ export async function PATCH(
     }
 
     console.error("Erro ao atualizar composição:", error);
-    return NextResponse.json(
-      { error: "Erro ao atualizar composição" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao atualizar composição" }, { status: 500 });
   }
 }
 
@@ -72,10 +69,7 @@ export async function DELETE(
     });
 
     if (!composicao) {
-      return NextResponse.json(
-        { error: "Composição não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Composição não encontrada" }, { status: 404 });
     }
 
     await prisma.composicaoMaoDeObra.delete({
@@ -85,9 +79,6 @@ export async function DELETE(
     return NextResponse.json({ message: "Mão de obra removida da composição" });
   } catch (error) {
     console.error("Erro ao remover mão de obra:", error);
-    return NextResponse.json(
-      { error: "Erro ao remover mão de obra" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao remover mão de obra" }, { status: 500 });
   }
 }

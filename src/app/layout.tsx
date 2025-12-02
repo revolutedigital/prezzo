@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/session-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
+import { ReactQueryProvider } from "@/lib/react-query";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,12 +35,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable}`}
+    >
       <body className="font-sans antialiased">
         <ThemeProvider>
           <AuthProvider>
-            {children}
-            <ToastProvider />
+            <ReactQueryProvider>
+              {children}
+              <ToastProvider />
+            </ReactQueryProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

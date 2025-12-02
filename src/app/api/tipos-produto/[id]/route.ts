@@ -13,10 +13,7 @@ const tipoProdutoSchema = z.object({
 });
 
 // GET - Buscar tipo de produto por ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -32,39 +29,30 @@ export async function GET(
           include: {
             composicao: {
               include: {
-                materiaPrima: true
-              }
+                materiaPrima: true,
+              },
             },
             _count: {
-              select: { composicao: true }
-            }
-          }
-        }
-      }
+              select: { composicao: true },
+            },
+          },
+        },
+      },
     });
 
     if (!tipoProduto) {
-      return NextResponse.json(
-        { error: "Tipo de produto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tipo de produto não encontrado" }, { status: 404 });
     }
 
     return NextResponse.json(tipoProduto);
   } catch (error) {
     console.error("Erro ao buscar tipo de produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar tipo de produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar tipo de produto" }, { status: 500 });
   }
 }
 
 // PUT - Atualizar tipo de produto
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -77,26 +65,20 @@ export async function PUT(
     const validatedData = tipoProdutoSchema.parse(body);
 
     const existing = await prisma.tipoProduto.findUnique({
-      where: { id: id }
+      where: { id: id },
     });
 
     if (!existing) {
-      return NextResponse.json(
-        { error: "Tipo de produto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tipo de produto não encontrado" }, { status: 404 });
     }
 
     if (validatedData.codigo && validatedData.codigo !== existing.codigo) {
       const codigoExists = await prisma.tipoProduto.findUnique({
-        where: { codigo: validatedData.codigo }
+        where: { codigo: validatedData.codigo },
       });
 
       if (codigoExists) {
-        return NextResponse.json(
-          { error: "Código já cadastrado" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Código já cadastrado" }, { status: 400 });
       }
     }
 
@@ -108,24 +90,17 @@ export async function PUT(
         categoria: validatedData.categoria,
         descricao: validatedData.descricao,
         ativo: validatedData.ativo ?? existing.ativo,
-      }
+      },
     });
 
     return NextResponse.json(tipoProduto);
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao atualizar tipo de produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao atualizar tipo de produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao atualizar tipo de produto" }, { status: 500 });
   }
 }
 
@@ -146,16 +121,13 @@ export async function DELETE(
       where: { id: id },
       include: {
         _count: {
-          select: { variacoes: true }
-        }
-      }
+          select: { variacoes: true },
+        },
+      },
     });
 
     if (!tipoProduto) {
-      return NextResponse.json(
-        { error: "Tipo de produto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tipo de produto não encontrado" }, { status: 404 });
     }
 
     if (tipoProduto._count.variacoes > 0) {
@@ -168,16 +140,12 @@ export async function DELETE(
     }
 
     await prisma.tipoProduto.delete({
-      where: { id: id }
+      where: { id: id },
     });
 
     return NextResponse.json({ message: "Tipo de produto excluído com sucesso" });
-
   } catch (error) {
     console.error("Erro ao deletar tipo de produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao deletar tipo de produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao deletar tipo de produto" }, { status: 500 });
   }
 }

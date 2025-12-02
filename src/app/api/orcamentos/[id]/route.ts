@@ -9,26 +9,31 @@ const orcamentoUpdateSchema = z.object({
   clienteEmail: z.string().email("Email inválido").optional().or(z.literal("")),
   clienteTelefone: z.string().optional(),
   clienteCNPJ: z.string().optional(),
-  validade: z.string().transform((val) => new Date(val)).optional(),
+  validade: z
+    .string()
+    .transform((val) => new Date(val))
+    .optional(),
   observacoes: z.string().optional(),
   desconto: z.number().min(0).optional(),
   descontoTipo: z.enum(["percentual", "valor"]).optional(),
   status: z.enum(["rascunho", "enviado", "aprovado", "rejeitado", "expirado"]).optional(),
-  itens: z.array(z.object({
-    id: z.string().optional(), // Se existir, é update; se não, é create
-    itemProdutoId: z.string(),
-    descricao: z.string(),
-    quantidade: z.number().positive(),
-    precoUnitario: z.number().positive(),
-    desconto: z.number().min(0).default(0),
-  })).min(1, "Adicione pelo menos um item").optional(),
+  itens: z
+    .array(
+      z.object({
+        id: z.string().optional(), // Se existir, é update; se não, é create
+        itemProdutoId: z.string(),
+        descricao: z.string(),
+        quantidade: z.number().positive(),
+        precoUnitario: z.number().positive(),
+        desconto: z.number().min(0).default(0),
+      })
+    )
+    .min(1, "Adicione pelo menos um item")
+    .optional(),
 });
 
 // GET - Buscar orçamento por ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -46,41 +51,32 @@ export async function GET(
               include: {
                 variacaoProduto: {
                   include: {
-                    tipoProduto: true
-                  }
-                }
-              }
-            }
+                    tipoProduto: true,
+                  },
+                },
+              },
+            },
           },
           orderBy: {
-            ordem: "asc"
-          }
-        }
-      }
+            ordem: "asc",
+          },
+        },
+      },
     });
 
     if (!orcamento) {
-      return NextResponse.json(
-        { error: "Orçamento não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Orçamento não encontrado" }, { status: 404 });
     }
 
     return NextResponse.json(orcamento);
   } catch (error) {
     console.error("Erro ao buscar orçamento:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar orçamento" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar orçamento" }, { status: 500 });
   }
 }
 
 // PUT - Atualizar orçamento
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -92,21 +88,18 @@ export async function PUT(
     // Verificar se orçamento existe
     const orcamentoExistente = await prisma.orcamento.findUnique({
       where: { id: id },
-      include: { itens: true }
+      include: { itens: true },
     });
 
     if (!orcamentoExistente) {
-      return NextResponse.json(
-        { error: "Orçamento não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Orçamento não encontrado" }, { status: 404 });
     }
 
     // Verificar se pode editar (apenas rascunhos podem ser editados completamente)
     if (orcamentoExistente.status !== "rascunho" && request.method === "PUT") {
       const body = await request.json();
       // Se não for rascunho, só permitir atualização de status
-      if (Object.keys(body).some(key => key !== "status")) {
+      if (Object.keys(body).some((key) => key !== "status")) {
         return NextResponse.json(
           { error: "Apenas o status pode ser alterado em orçamentos enviados" },
           { status: 400 }
@@ -121,13 +114,18 @@ export async function PUT(
     let updateData: any = {};
 
     if (validatedData.clienteNome !== undefined) updateData.clienteNome = validatedData.clienteNome;
-    if (validatedData.clienteEmail !== undefined) updateData.clienteEmail = validatedData.clienteEmail || null;
-    if (validatedData.clienteTelefone !== undefined) updateData.clienteTelefone = validatedData.clienteTelefone || null;
-    if (validatedData.clienteCNPJ !== undefined) updateData.clienteCNPJ = validatedData.clienteCNPJ || null;
+    if (validatedData.clienteEmail !== undefined)
+      updateData.clienteEmail = validatedData.clienteEmail || null;
+    if (validatedData.clienteTelefone !== undefined)
+      updateData.clienteTelefone = validatedData.clienteTelefone || null;
+    if (validatedData.clienteCNPJ !== undefined)
+      updateData.clienteCNPJ = validatedData.clienteCNPJ || null;
     if (validatedData.validade !== undefined) updateData.validade = validatedData.validade;
-    if (validatedData.observacoes !== undefined) updateData.observacoes = validatedData.observacoes || null;
+    if (validatedData.observacoes !== undefined)
+      updateData.observacoes = validatedData.observacoes || null;
     if (validatedData.desconto !== undefined) updateData.desconto = validatedData.desconto;
-    if (validatedData.descontoTipo !== undefined) updateData.descontoTipo = validatedData.descontoTipo;
+    if (validatedData.descontoTipo !== undefined)
+      updateData.descontoTipo = validatedData.descontoTipo;
     if (validatedData.status !== undefined) updateData.status = validatedData.status;
 
     // Se itens foram atualizados, recalcular totais
@@ -161,7 +159,7 @@ export async function PUT(
       // Deletar itens antigos e criar novos
       updateData.itens = {
         deleteMany: {},
-        create: itensComTotal
+        create: itensComTotal,
       };
     }
 
@@ -176,34 +174,27 @@ export async function PUT(
               include: {
                 variacaoProduto: {
                   include: {
-                    tipoProduto: true
-                  }
-                }
-              }
-            }
+                    tipoProduto: true,
+                  },
+                },
+              },
+            },
           },
           orderBy: {
-            ordem: "asc"
-          }
-        }
-      }
+            ordem: "asc",
+          },
+        },
+      },
     });
 
     return NextResponse.json(orcamentoAtualizado);
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao atualizar orçamento:", error);
-    return NextResponse.json(
-      { error: "Erro ao atualizar orçamento" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao atualizar orçamento" }, { status: 500 });
   }
 }
 
@@ -226,10 +217,7 @@ export async function DELETE(
     });
 
     if (!orcamento) {
-      return NextResponse.json(
-        { error: "Orçamento não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Orçamento não encontrado" }, { status: 404 });
     }
 
     // Verificar se pode deletar (apenas rascunhos e rejeitados podem ser deletados)
@@ -242,16 +230,12 @@ export async function DELETE(
 
     // Deletar orçamento (itens serão deletados em cascata)
     await prisma.orcamento.delete({
-      where: { id: id }
+      where: { id: id },
     });
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
     console.error("Erro ao excluir orçamento:", error);
-    return NextResponse.json(
-      { error: "Erro ao excluir orçamento" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao excluir orçamento" }, { status: 500 });
   }
 }

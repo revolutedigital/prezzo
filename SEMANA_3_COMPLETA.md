@@ -3,6 +3,7 @@
 ## 🎯 O que foi implementado:
 
 ### 🐳 Docker Setup
+
 - ✅ PostgreSQL rodando na porta **8000**
 - ✅ Next.js rodando na porta **8001**
 - ✅ Migrations executadas com sucesso
@@ -11,12 +12,14 @@
 - ✅ Dockerfile.dev para desenvolvimento
 
 ### 🎨 Componentes UI Criados
+
 - ✅ [Table](src/components/ui/table.tsx) - Componente de tabela completo
 - ✅ [Dialog](src/components/ui/dialog.tsx) - Modal customizado
 - ✅ [Select](src/components/ui/select.tsx) - Select estilizado
 - ✅ [Badge](src/components/ui/badge.tsx) - Tags de status
 
 ### 🔌 API Routes Completas
+
 - ✅ [GET /api/materias-primas](src/app/api/materias-primas/route.ts) - Listar com filtros
 - ✅ [POST /api/materias-primas](src/app/api/materias-primas/route.ts) - Criar nova
 - ✅ [GET /api/materias-primas/[id]](src/app/api/materias-primas/[id]/route.ts) - Buscar por ID
@@ -24,6 +27,7 @@
 - ✅ [DELETE /api/materias-primas/[id]](src/app/api/materias-primas/[id]/route.ts) - Deletar
 
 **Recursos da API:**
+
 - Validação com Zod
 - Filtros de busca (nome, código, fornecedor)
 - Filtro por categoria
@@ -33,10 +37,12 @@
 - Autenticação obrigatória
 
 ### 📄 Páginas Criadas
-- ✅ [Listagem de Matérias-Primas](src/app/(dashboard)/materias-primas/page.tsx)
-- ✅ [Formulário de Cadastro/Edição](src/app/(dashboard)/materias-primas/materia-prima-form.tsx)
+
+- ✅ [Listagem de Matérias-Primas](<src/app/(dashboard)/materias-primas/page.tsx>)
+- ✅ [Formulário de Cadastro/Edição](<src/app/(dashboard)/materias-primas/materia-prima-form.tsx>)
 
 **Funcionalidades da Página:**
+
 - Tabela completa com todas as matérias-primas
 - Busca em tempo real
 - Filtros por categoria e status
@@ -49,7 +55,9 @@
 - Formatação de moeda brasileira
 
 ### 📝 Formulário Completo
+
 **Campos:**
+
 - Nome (obrigatório)
 - Código (opcional)
 - Unidade de Medida (select com 8 opções)
@@ -59,12 +67,14 @@
 - Status (Ativo/Inativo)
 
 **Validações:**
+
 - Nome mínimo 2 caracteres
 - Custo não pode ser negativo
 - Código único (se fornecido)
 - Unidade de medida obrigatória
 
 ### 🔒 Segurança
+
 - Todas as rotas protegidas por autenticação
 - Validação de dados com Zod
 - Verificação de uso antes de deletar
@@ -76,6 +86,7 @@
 ## 📁 Arquivos Criados/Modificados
 
 ### Novos Arquivos:
+
 ```
 src/
 ├── components/ui/
@@ -100,6 +111,7 @@ DOCKER_SETUP.md            ✅ NOVO
 ```
 
 ### Arquivos Modificados:
+
 ```
 package.json               ✅ Scripts com porta 8001
 .env                       ✅ URLs atualizadas
@@ -111,15 +123,18 @@ README.md                  ✅ Instruções Docker
 ## 🧪 Como Testar
 
 ### 1. Acessar o Sistema
+
 ```
 http://localhost:8001
 ```
 
 ### 2. Fazer Login
+
 - Acesse `/register` para criar uma conta
 - Ou `/login` se já tiver conta
 
 ### 3. Testar CRUD de Matérias-Primas
+
 - Click em "Matérias-Primas" no menu lateral
 - Click em "Nova Matéria-Prima"
 - Preencha o formulário:
@@ -132,6 +147,7 @@ http://localhost:8001
 - Salvar
 
 **Testes adicionais:**
+
 - ✅ Buscar por nome
 - ✅ Filtrar por categoria
 - ✅ Filtrar por status
@@ -144,6 +160,7 @@ http://localhost:8001
 ## 🎨 Screenshots de Referência
 
 ### Tela de Listagem:
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ Matérias-Primas                    [+ Nova Matéria]    │
@@ -159,6 +176,7 @@ Total: 2 matéria(s)-prima(s)
 ```
 
 ### Modal de Cadastro:
+
 ```
 ┌─────────────────────────────────────┐
 │ Nova Matéria-Prima              [X] │
@@ -177,12 +195,14 @@ Total: 2 matéria(s)-prima(s)
 ## 📊 Estatísticas do Módulo
 
 ### Linhas de Código:
+
 - API Routes: ~350 linhas
 - Componentes UI: ~400 linhas
 - Página + Form: ~400 linhas
 - **Total: ~1.150 linhas**
 
 ### Funcionalidades:
+
 - 5 endpoints de API
 - 4 componentes UI novos
 - 1 página completa
@@ -195,6 +215,7 @@ Total: 2 matéria(s)-prima(s)
 ## 🎯 Próximos Passos - Semana 4
 
 ### Sistema de Produtos e Variações (Semana 4)
+
 - [ ] CRUD de Tipos de Produto
 - [ ] CRUD de Variações
 - [ ] Interface de Composição
@@ -210,6 +231,7 @@ Total: 2 matéria(s)-prima(s)
 ## 💡 Melhorias Futuras (Opcional)
 
 ### Para o Módulo de Matérias-Primas:
+
 - [ ] Paginação na listagem
 - [ ] Exportar para Excel/CSV
 - [ ] Importação em lote (CSV)
@@ -226,12 +248,14 @@ Total: 2 matéria(s)-prima(s)
 ## ✅ Checklist de Conclusão
 
 ### Docker:
+
 - [x] PostgreSQL rodando (porta 8000)
 - [x] Next.js rodando (porta 8001)
 - [x] Migrations executadas
 - [x] Documentação criada
 
 ### CRUD:
+
 - [x] Criar matéria-prima
 - [x] Listar matérias-primas
 - [x] Buscar matéria-prima
@@ -241,6 +265,7 @@ Total: 2 matéria(s)-prima(s)
 - [x] Validações implementadas
 
 ### UI/UX:
+
 - [x] Página responsiva
 - [x] Modais funcionando
 - [x] Formulário validado
@@ -249,6 +274,7 @@ Total: 2 matéria(s)-prima(s)
 - [x] Error handling
 
 ### Documentação:
+
 - [x] Código comentado
 - [x] README atualizado
 - [x] Docker documentado

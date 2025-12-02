@@ -5,6 +5,7 @@
 A **Semana 6** foi concluída com sucesso, finalizando o **MVP completo do Prezzo**!
 
 ### O que foi implementado:
+
 - ✅ Geração de PDF profissional
 - ✅ Download direto de orçamentos
 - ✅ Dashboard completo com gráficos
@@ -61,6 +62,7 @@ A **Semana 6** foi concluída com sucesso, finalizando o **MVP completo do Prezz
    - Validade do orçamento
 
 **Características:**
+
 - 📄 Design profissional
 - 🎨 Cores da marca (azul/verde)
 - 📊 Tabelas bem formatadas
@@ -71,10 +73,11 @@ A **Semana 6** foi concluída com sucesso, finalizando o **MVP completo do Prezz
 #### API Route de PDF ([src/app/api/orcamentos/[id]/pdf/route.ts](src/app/api/orcamentos/[id]/pdf/route.ts))
 
 ```typescript
-GET /api/orcamentos/[id]/pdf
+GET / api / orcamentos / [id] / pdf;
 ```
 
 **Funcionalidades:**
+
 - ✅ Autenticação obrigatória
 - ✅ Busca orçamento com todos os dados
 - ✅ Gera PDF usando `renderToStream`
@@ -82,6 +85,7 @@ GET /api/orcamentos/[id]/pdf
 - ✅ Nome do arquivo: `orcamento-YYYY-NNNN.pdf`
 
 **Processo:**
+
 ```
 1. Verificar sessão do usuário
 2. Buscar orçamento do banco de dados
@@ -93,6 +97,7 @@ GET /api/orcamentos/[id]/pdf
 #### Integração no Frontend
 
 **Página de Detalhes Atualizada:**
+
 - Botão "PDF" funcional
 - Download automático ao clicar
 - Nome do arquivo personalizadocom número do orçamento
@@ -103,7 +108,7 @@ const handleDownloadPDF = async () => {
   const response = await fetch(`/api/orcamentos/${id}/pdf`);
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.download = `orcamento-${numero}.pdf`;
   a.click();
 };
@@ -116,13 +121,15 @@ const handleDownloadPDF = async () => {
 #### API de Estatísticas ([src/app/api/dashboard/stats/route.ts](src/app/api/dashboard/stats/route.ts))
 
 **Endpoint:**
+
 ```typescript
-GET /api/dashboard/stats
+GET / api / dashboard / stats;
 ```
 
 **Dados Retornados:**
 
 **1. Resumo Geral:**
+
 ```json
 {
   "totalMateriasPrimas": 15,
@@ -132,40 +139,43 @@ GET /api/dashboard/stats
   "orcamentosAprovados": 12,
   "orcamentosEnviados": 18,
   "orcamentosRascunho": 15,
-  "valorTotalAprovado": 125000.00,
+  "valorTotalAprovado": 125000.0,
   "valorMedio": 10416.67,
   "taxaConversao": 40.0
 }
 ```
 
 **2. Orçamentos por Mês (últimos 6 meses):**
+
 ```json
 [
-  { "mes": "2025-01", "count": 8, "value": 32000.00 },
-  { "mes": "2025-02", "count": 12, "value": 45000.00 }
+  { "mes": "2025-01", "count": 8, "value": 32000.0 },
+  { "mes": "2025-02", "count": 12, "value": 45000.0 }
 ]
 ```
 
 **3. Top 5 Produtos Vendidos:**
+
 ```json
 [
   {
     "id": "...",
     "nome": "Filtro de Alumínio - Grade Simples",
     "quantidade": 45,
-    "valor": 22500.00
+    "valor": 22500.0
   }
 ]
 ```
 
 **4. Orçamentos Recentes (últimos 5):**
+
 ```json
 [
   {
     "id": "...",
     "numero": "2025-0042",
     "clienteNome": "Empresa ABC",
-    "total": 5400.00,
+    "total": 5400.0,
     "status": "aprovado",
     "createdAt": "2025-11-26T..."
   }
@@ -174,13 +184,14 @@ GET /api/dashboard/stats
 
 ---
 
-#### Frontend do Dashboard ([src/app/(dashboard)/dashboard/page.tsx](src/app/(dashboard)/dashboard/page.tsx))
+#### Frontend do Dashboard ([src/app/(dashboard)/dashboard/page.tsx](<src/app/(dashboard)/dashboard/page.tsx>))
 
 **Biblioteca de Gráficos:** Recharts
 
 **Layout Completo:**
 
 ##### 1. Header com Ações Rápidas
+
 - Botões para criar:
   - Matéria-Prima
   - Produto
@@ -189,20 +200,24 @@ GET /api/dashboard/stats
 ##### 2. Cards de Estatísticas (Linha 1)
 
 **Card 1 - Matérias-Primas:**
+
 - Total de matérias-primas ativas
 - Ícone: Package
 
 **Card 2 - Produtos:**
+
 - Total de tipos de produto
 - Quantidade de variações
 - Ícone: ShoppingCart
 
 **Card 3 - Orçamentos:**
+
 - Total de orçamentos
 - Quantidade aprovados
 - Ícone: FileText
 
 **Card 4 - Taxa de Conversão:**
+
 - Percentual de aprovação
 - Cálculo: (Aprovados / (Enviados + Aprovados)) × 100
 - Ícone: TrendingUp
@@ -210,11 +225,13 @@ GET /api/dashboard/stats
 ##### 3. Cards Financeiros (Linha 2)
 
 **Card 5 - Valor Total Aprovado:**
+
 - Soma de todos os orçamentos aprovados
 - Formato: R$ 125.000,00 (verde)
 - Ícone: DollarSign
 
 **Card 6 - Ticket Médio:**
+
 - Valor médio por orçamento aprovado
 - Cálculo: Total / Quantidade
 - Ícone: BarChart3
@@ -222,6 +239,7 @@ GET /api/dashboard/stats
 ##### 4. Gráficos (Grid 2 Colunas)
 
 **Gráfico 1 - Orçamentos por Mês (Line Chart):**
+
 - 📊 Dois eixos Y:
   - Esquerdo: Quantidade (azul)
   - Direito: Valor em R$ (verde)
@@ -229,6 +247,7 @@ GET /api/dashboard/stats
 - 🎯 Tooltip com formatação de moeda
 
 **Gráfico 2 - Distribuição de Orçamentos (Pie Chart):**
+
 - 🎨 Pizza colorida por status:
   - Rascunho (azul)
   - Enviado (amarelo)
@@ -239,12 +258,14 @@ GET /api/dashboard/stats
 ##### 5. Listas (Grid 2 Colunas)
 
 **Lista 1 - Top Produtos Vendidos:**
+
 - 🏆 Top 5 produtos
 - 🔢 Ranking visual (1, 2, 3...)
 - 📦 Quantidade vendida
 - 💰 Valor total gerado
 
 **Lista 2 - Orçamentos Recentes:**
+
 - 📋 Últimos 5 orçamentos
 - 🔢 Número + Cliente
 - 💵 Valor
@@ -257,35 +278,40 @@ GET /api/dashboard/stats
 ## 📊 Cálculos e KPIs
 
 ### Taxa de Conversão
+
 ```typescript
 const orcamentosValidos = enviados + aprovados;
 const taxa = (aprovados / orcamentosValidos) × 100;
 ```
 
 **Exemplo:**
+
 - Enviados: 18
 - Aprovados: 12
 - Taxa: (12 / 30) × 100 = **40%**
 
 ### Ticket Médio
+
 ```typescript
 const ticket = valorTotal / quantidadeAprovados;
 ```
 
 **Exemplo:**
+
 - Valor total: R$ 125.000,00
 - Quantidade: 12
 - Ticket: R$ 125.000 / 12 = **R$ 10.416,67**
 
 ### Análise Temporal
+
 ```typescript
 // Agrupar por mês (YYYY-MM)
 const mesesMap = new Map();
-orcamentos.forEach(orc => {
+orcamentos.forEach((orc) => {
   const mes = orc.createdAt.slice(0, 7);
   mesesMap.set(mes, {
     count: count + 1,
-    value: value + orc.total
+    value: value + orc.total,
   });
 });
 ```
@@ -297,6 +323,7 @@ orcamentos.forEach(orc => {
 ### Gráficos Recharts
 
 **1. LineChart:**
+
 ```tsx
 <LineChart data={chartData}>
   <CartesianGrid strokeDasharray="3 3" />
@@ -311,13 +338,10 @@ orcamentos.forEach(orc => {
 ```
 
 **2. PieChart:**
+
 ```tsx
 <PieChart>
-  <Pie
-    data={pieData}
-    label={(entry) => `${entry.name}: ${entry.value}`}
-    outerRadius={100}
-  >
+  <Pie data={pieData} label={(entry) => `${entry.name}: ${entry.value}`} outerRadius={100}>
     {pieData.map((entry, index) => (
       <Cell key={index} fill={entry.color} />
     ))}
@@ -327,6 +351,7 @@ orcamentos.forEach(orc => {
 ```
 
 ### Estados de Vazio
+
 - Mensagens amigáveis quando não há dados
 - Ícones ilustrativos
 - Sugestões de ação
@@ -401,12 +426,14 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 ## 🎯 Funcionalidades do MVP Completo
 
 ### ✅ Módulo 1 - Matérias-Primas
+
 - CRUD completo
 - Histórico de custos
 - Filtros e busca
 - Validação de uso
 
 ### ✅ Módulo 2 - Produtos
+
 - Tipos de produto
 - Variações
 - Composição com matérias-primas
@@ -415,6 +442,7 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 - Preview em tempo real
 
 ### ✅ Módulo 3 - Orçamentos
+
 - CRUD completo
 - Busca e seleção de produtos
 - Adição/remoção de itens
@@ -428,6 +456,7 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 - **Download direto**
 
 ### ✅ Módulo 4 - Dashboard
+
 - **6 Cards de KPIs:**
   - Matérias-primas
   - Produtos/Variações
@@ -448,6 +477,7 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 ## 📈 Estatísticas do MVP Completo
 
 ### Código:
+
 - **API Routes:** ~2.500 linhas
 - **Componentes UI:** ~900 linhas
 - **Páginas:** ~3.000 linhas
@@ -456,12 +486,14 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 - **Total: ~7.100 linhas de código TypeScript/React**
 
 ### Arquivos:
+
 - TypeScript/React: 48 arquivos
 - Configuração: 8 arquivos
 - Documentação: 8 arquivos
 - **Total: 64 arquivos**
 
 ### Endpoints:
+
 - Autenticação: 2
 - Matérias-Primas: 5
 - Tipos de Produto: 5
@@ -471,6 +503,7 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 - **Total: 24 endpoints REST**
 
 ### Funcionalidades:
+
 - 4 módulos principais
 - 12 páginas completas
 - 9 componentes UI
@@ -485,6 +518,7 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 ## 🎨 Tecnologias Utilizadas
 
 ### Frontend:
+
 - ✅ Next.js 15 (App Router)
 - ✅ React 19
 - ✅ TypeScript
@@ -494,6 +528,7 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 - ✅ **@react-pdf/renderer** (PDF)
 
 ### Backend:
+
 - ✅ Next.js API Routes
 - ✅ Prisma ORM
 - ✅ PostgreSQL
@@ -501,10 +536,12 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 - ✅ Zod (validação)
 
 ### DevOps:
+
 - ✅ Docker
 - ✅ docker-compose
 
 ### Libs Auxiliares:
+
 - ✅ bcryptjs
 - ✅ date-fns
 - ✅ lucide-react
@@ -538,6 +575,7 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 ### Sistema Pronto Para Produção:
 
 **O Prezzo agora possui:**
+
 - 📦 Gerenciamento completo de matérias-primas
 - 🏭 Criação de produtos compostos
 - 💰 Cálculo automático de custos
@@ -549,12 +587,14 @@ package.json                          ✅ (+ @react-pdf/renderer, recharts)
 - 🎯 **Insights sobre vendas**
 
 **Fluxo Completo Implementado:**
+
 ```
 Matéria-Prima → Produto → Composição → Custo → Preço →
 Orçamento → PDF → Envio → Acompanhamento → Dashboard
 ```
 
 **Pronto para:**
+
 - ✅ Usar em ambiente de produção
 - ✅ Gerenciar precificação real
 - ✅ Criar orçamentos profissionais
@@ -603,6 +643,7 @@ Orçamento → PDF → Envio → Acompanhamento → Dashboard
 ## 📊 Comparativo: Início vs Agora
 
 ### No Início (Semana 1):
+
 - ❌ Sem dados
 - ❌ Sem produtos
 - ❌ Sem orçamentos
@@ -610,6 +651,7 @@ Orçamento → PDF → Envio → Acompanhamento → Dashboard
 - ❌ Valores estáticos
 
 ### Agora (Semana 6):
+
 - ✅ Dados reais do banco
 - ✅ Produtos com composição
 - ✅ Orçamentos completos
@@ -628,6 +670,7 @@ Orçamento → PDF → Envio → Acompanhamento → Dashboard
 O Prezzo está agora totalmente funcional e pronto para uso em produção.
 
 **Principais conquistas:**
+
 - ✅ 6 semanas de desenvolvimento
 - ✅ 100% das funcionalidades do MVP implementadas
 - ✅ ~7.100 linhas de código
@@ -638,6 +681,7 @@ O Prezzo está agora totalmente funcional e pronto para uso em produção.
 - ✅ Dashboard com insights
 
 **Sistema operacional:**
+
 - 🚀 Rodando em http://localhost:8001
 - 🐘 PostgreSQL em Docker (porta 8000)
 - ✅ Zero erros de compilação

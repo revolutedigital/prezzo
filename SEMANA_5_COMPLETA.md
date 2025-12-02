@@ -20,6 +20,7 @@ A **Semana 5** foi concluída com sucesso! Implementamos o sistema completo de o
 ### 1. API Routes
 
 **Arquivo: `/api/orcamentos/route.ts`**
+
 - **POST** - Criar novo orçamento
   - Geração automática de número (YYYY-NNNN)
   - Validação de dados com Zod
@@ -34,6 +35,7 @@ A **Semana 5** foi concluída com sucesso! Implementamos o sistema completo de o
   - Ordenação por data de criação
 
 **Arquivo: `/api/orcamentos/[id]/route.ts`**
+
 - **GET** - Buscar orçamento por ID
   - Inclui todos os itens
   - Inclui dados do produto de cada item
@@ -57,7 +59,7 @@ async function gerarNumeroOrcamento() {
   const ano = new Date().getFullYear();
   const ultimoOrcamento = await prisma.orcamento.findFirst({
     where: { numero: { startsWith: `${ano}-` } },
-    orderBy: { numero: "desc" }
+    orderBy: { numero: "desc" },
   });
 
   let proximoNumero = 1;
@@ -80,6 +82,7 @@ async function gerarNumeroOrcamento() {
 **Arquivo: `/app/(dashboard)/orcamentos/page.tsx`**
 
 **Recursos:**
+
 - 📊 **Estatísticas:**
   - Total de orçamentos
   - Rascunhos
@@ -120,15 +123,18 @@ async function gerarNumeroOrcamento() {
 **Estrutura em 3 Seções:**
 
 #### Seção 1: Dados do Cliente
-- Nome do cliente * (obrigatório)
+
+- Nome do cliente \* (obrigatório)
 - Email
 - Telefone
 - CNPJ/CPF
-- Validade * (padrão: +30 dias)
+- Validade \* (padrão: +30 dias)
 - Observações
 
 #### Seção 2: Itens do Orçamento
+
 **Modal de Seleção de Produtos:**
+
 - Busca em tempo real
 - Filtro por nome, tipo ou código
 - Tabela com:
@@ -139,6 +145,7 @@ async function gerarNumeroOrcamento() {
   - Botão "Adicionar"
 
 **Tabela de Itens:**
+
 - Descrição do produto
 - Quantidade (editável)
 - Preço unitário (editável)
@@ -147,15 +154,18 @@ async function gerarNumeroOrcamento() {
 - Botão de remover
 
 **Validações:**
+
 - Não permite adicionar produto duplicado
 - Mínimo de 1 item obrigatório
 
 #### Seção 3: Totais
+
 - **Subtotal:** Soma de todos os itens
 - **Desconto:** Input + tipo (% ou R$)
 - **Total:** Cálculo automático final
 
 **Cálculos em Tempo Real:**
+
 ```typescript
 // Subtotal
 const calcularSubtotal = () => {
@@ -184,6 +194,7 @@ const calcularTotal = () => {
 **Arquivo: `/app/(dashboard)/orcamentos/[id]/page.tsx`**
 
 **Header:**
+
 - Número do orçamento (formato: #2025-0001)
 - Badges de status
 - Badge de "Expirado" se aplicável
@@ -194,6 +205,7 @@ const calcularTotal = () => {
   - Enviar (apenas rascunhos)
 
 **Informações do Cliente:**
+
 - Nome
 - Email
 - Telefone
@@ -202,6 +214,7 @@ const calcularTotal = () => {
 - Observações
 
 **Itens do Orçamento:**
+
 - Tabela completa com todos os itens
 - Descrição detalhada
 - Informações do produto (tipo, variação, código)
@@ -211,6 +224,7 @@ const calcularTotal = () => {
 - Total
 
 **Totais:**
+
 - Subtotal
 - Desconto (com tipo)
 - **Total** (destaque visual)
@@ -220,10 +234,12 @@ const calcularTotal = () => {
 ## 🎨 Melhorias de UX
 
 ### 1. Validação de Datas
+
 - Indica visualmente orçamentos expirados
 - Badge vermelho "Expirado" na listagem e detalhes
 
 ### 2. Status Visual
+
 ```typescript
 const statusConfig = {
   rascunho: { label: "Rascunho", variant: "default" },
@@ -235,12 +251,14 @@ const statusConfig = {
 ```
 
 ### 3. Formatação
+
 - Datas: `dd/MM/yyyy` (locale pt-BR)
 - Data e hora: `dd/MM/yyyy 'às' HH:mm`
 - Valores monetários: `formatCurrency()`
 - Números de orçamento: fonte monospace
 
 ### 4. Estados de Loading
+
 - Spinners durante carregamento
 - Botões desabilitados durante submissão
 - Mensagens de feedback
@@ -282,18 +300,21 @@ const statusConfig = {
 ## 🔒 Regras de Negócio
 
 ### Edição
+
 - ✅ Rascunhos: Edição completa
 - ⚠️ Enviados: Apenas mudança de status
 - ❌ Aprovados: Bloqueado totalmente
 - ❌ Rejeitados: Sem edição
 
 ### Exclusão
+
 - ✅ Rascunhos: Pode excluir
 - ❌ Enviados: Não pode excluir
 - ❌ Aprovados: Não pode excluir
 - ✅ Rejeitados: Pode excluir
 
 ### Status
+
 - **Criação:** Sempre inicia como "rascunho"
 - **Transições permitidas:**
   - rascunho → enviado
@@ -351,6 +372,7 @@ src/app/
 ## 🚀 Próximos Passos (Semana 6)
 
 ### Parte 2 - Orçamentos Avançado:
+
 1. **Geração de PDF**
    - Template profissional
    - Logo da empresa
@@ -396,6 +418,7 @@ src/app/
 **Sistema de Orçamentos COMPLETO e FUNCIONAL!**
 
 O sistema agora permite:
+
 - 📝 Criar orçamentos profissionais
 - 🔍 Buscar e filtrar rapidamente
 - 📊 Visualizar estatísticas em tempo real

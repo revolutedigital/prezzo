@@ -5,6 +5,7 @@
 ### 📦 API Routes Completas
 
 **Tipos de Produto:**
+
 - ✅ GET /api/tipos-produto - Listar com filtros
 - ✅ POST /api/tipos-produto - Criar novo
 - ✅ GET /api/tipos-produto/[id] - Buscar por ID
@@ -12,6 +13,7 @@
 - ✅ DELETE /api/tipos-produto/[id] - Deletar (com validação)
 
 **Variações de Produto:**
+
 - ✅ GET /api/variacoes-produto - Listar (com filtro por tipo)
 - ✅ POST /api/variacoes-produto - Criar com composição
 - ✅ GET /api/variacoes-produto/[id] - Buscar por ID
@@ -19,6 +21,7 @@
 - ✅ DELETE /api/variacoes-produto/[id] - Deletar (com validação)
 
 **Recursos das APIs:**
+
 - Validação completa com Zod
 - Cálculo automático de custo
 - Cálculo de preço sugerido com margem
@@ -31,6 +34,7 @@
 ### 🎨 Páginas Implementadas
 
 **1. Listagem de Produtos** (`/produtos`)
+
 - Grid de cards responsivo
 - Busca em tempo real
 - Badge de status (Ativo/Inativo)
@@ -38,12 +42,14 @@
 - Link direto para detalhes
 
 **2. Novo Tipo de Produto** (`/produtos/novo`)
+
 - Formulário completo
 - Validações
 - Info card com próximos passos
 - Redirecionamento automático após criação
 
 **3. Detalhes do Produto** (`/produtos/[id]`)
+
 - Header com informações do tipo
 - Cards de resumo (Categoria, Variações, Descrição)
 - Tabela de variações completa
@@ -55,6 +61,7 @@
 ### 🛠️ Formulário de Variação com Composição
 
 **Informações Básicas:**
+
 - Nome da variação
 - Código
 - SKU
@@ -62,6 +69,7 @@
 - Status (Ativo/Inativo)
 
 **Interface de Composição:**
+
 - ✅ Adicionar matérias-primas
 - ✅ Selecionar da lista (com preço no select)
 - ✅ Definir quantidade
@@ -72,6 +80,7 @@
 - ✅ Validação (não permite salvar sem composição)
 
 **Cálculo Automático em Tempo Real:**
+
 - ✅ Custo Total = Σ (quantidade × custo unitário)
 - ✅ Preço Sugerido = Custo × (1 + margem %)
 - ✅ Preview visual com destaque
@@ -119,21 +128,23 @@
 
 **Variação 1: Grade de Ferro**
 Composição:
+
 - Filtro de alumínio: 2 metros × R$ 45,00 = R$ 90,00
 - Grade de ferro: 1,5 metros × R$ 30,00 = R$ 45,00
 - Parafusos: 8 unidades × R$ 0,50 = R$ 4,00
-**Custo Total:** R$ 139,00
-**Margem:** 40%
-**Preço Sugerido:** R$ 194,60
+  **Custo Total:** R$ 139,00
+  **Margem:** 40%
+  **Preço Sugerido:** R$ 194,60
 
 **Variação 2: Grade de Cobre**
 Composição:
+
 - Filtro de alumínio: 2 metros × R$ 45,00 = R$ 90,00
 - Grade de cobre: 1,5 metros × R$ 50,00 = R$ 75,00
 - Parafusos: 8 unidades × R$ 0,50 = R$ 4,00
-**Custo Total:** R$ 169,00
-**Margem:** 40%
-**Preço Sugerido:** R$ 236,60
+  **Custo Total:** R$ 169,00
+  **Margem:** 40%
+  **Preço Sugerido:** R$ 236,60
 
 ---
 
@@ -165,11 +176,13 @@ src/app/
 ## 🧪 Como Testar
 
 ### 1. Acessar Produtos
+
 ```
 http://localhost:8001/produtos
 ```
 
 ### 2. Criar Tipo de Produto
+
 - Click em "Novo Tipo de Produto"
 - Preencher:
   - Nome: "Filtro de Alumínio"
@@ -178,6 +191,7 @@ http://localhost:8001/produtos
 - Salvar
 
 ### 3. Adicionar Variação
+
 - Na página de detalhes, click "Nova Variação"
 - Preencher:
   - Nome: "Grade de Ferro"
@@ -190,12 +204,14 @@ http://localhost:8001/produtos
 - Salvar
 
 ### 4. Testar Edição
+
 - Click no ícone de editar
 - Alterar margem para 50%
 - Ver recálculo de preço
 - Atualizar
 
 ### 5. Testar Exclusão
+
 - Click no ícone de lixeira
 - Confirmar
 - Verificar que foi removida
@@ -205,6 +221,7 @@ http://localhost:8001/produtos
 ## ✨ Destaques da Implementação
 
 ### 🎯 Cálculo Inteligente
+
 - Atualização em tempo real conforme adiciona/remove itens
 - Mostra subtotal por item
 - Calcula custo total automaticamente
@@ -212,6 +229,7 @@ http://localhost:8001/produtos
 - Preview visual destacado
 
 ### 🔄 Interface de Composição
+
 - Adicionar matérias-primas com select rico
 - Mostrar preço no select para facilitar escolha
 - Quantidade com decimais
@@ -220,6 +238,7 @@ http://localhost:8001/produtos
 - Remover itens facilmente
 
 ### 💾 Validações
+
 - Não permite salvar variação sem composição
 - Valida código único
 - Verifica uso antes de deletar
@@ -227,6 +246,7 @@ http://localhost:8001/produtos
 - Quantidade maior que zero
 
 ### 🎨 UX/UI
+
 - Feedback visual em todas as ações
 - Loading states
 - Error handling
@@ -239,11 +259,13 @@ http://localhost:8001/produtos
 ## 📊 Estatísticas da Semana 4
 
 ### Código:
+
 - API Routes: ~600 linhas
 - Páginas: ~500 linhas
 - **Total: ~1.100 linhas**
 
 ### Funcionalidades:
+
 - 10 endpoints de API
 - 4 páginas
 - 1 formulário complexo
@@ -252,6 +274,7 @@ http://localhost:8001/produtos
 - Interface de composição
 
 ### Validações:
+
 - 5 schemas Zod
 - Validação de uso
 - Código único
@@ -263,6 +286,7 @@ http://localhost:8001/produtos
 ## 🎯 Progresso Geral do MVP
 
 ### Fase 1 - MVP (6 semanas):
+
 - ✅ Semanas 1-2: Foundation (100%)
 - ✅ Semana 3: Matérias-Primas (100%)
 - ✅ Semana 4: Produtos e Variações (100%) ← **COMPLETO!**
@@ -276,6 +300,7 @@ http://localhost:8001/produtos
 ## 🚀 Próximos Passos - Semana 5
 
 ### Sistema de Orçamentos (Parte 1):
+
 - [ ] CRUD de orçamentos
 - [ ] Busca e seleção de produtos
 - [ ] Adicionar itens ao orçamento
@@ -294,6 +319,7 @@ http://localhost:8001/produtos
 **Status:** ✅ SEMANA 4 COMPLETA
 
 **Módulo de Produtos 100% Funcional:**
+
 - Criar tipos de produto
 - Adicionar variações
 - Definir composição com interface visual
@@ -302,6 +328,7 @@ http://localhost:8001/produtos
 - Editar e excluir com validação
 
 **Pronto para:**
+
 - Criar orçamentos usando os produtos
 - Selecionar variações específicas
 - Calcular preços automaticamente
@@ -321,6 +348,7 @@ http://localhost:8001/produtos
 ## 🧪 Checklist de Testes
 
 ### Tipos de Produto:
+
 - [x] Criar novo tipo
 - [x] Listar tipos
 - [x] Buscar por nome
@@ -329,6 +357,7 @@ http://localhost:8001/produtos
 - [x] Excluir tipo vazio
 
 ### Variações:
+
 - [x] Criar variação
 - [x] Adicionar composição
 - [x] Ver cálculo automático
@@ -340,6 +369,7 @@ http://localhost:8001/produtos
 - [x] Validação de uso
 
 ### Cálculos:
+
 - [x] Custo total correto
 - [x] Margem aplicada
 - [x] Preço sugerido correto

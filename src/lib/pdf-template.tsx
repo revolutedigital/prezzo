@@ -1,34 +1,34 @@
-import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import React from "react";
+import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 // Estilos do PDF
 const styles = StyleSheet.create({
   page: {
     padding: 40,
     fontSize: 10,
-    fontFamily: 'Helvetica',
+    fontFamily: "Helvetica",
   },
   header: {
     marginBottom: 30,
-    borderBottom: '2 solid #2563eb',
+    borderBottom: "2 solid #2563eb",
     paddingBottom: 20,
   },
   logo: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2563eb',
+    fontWeight: "bold",
+    color: "#2563eb",
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 10,
-    color: '#64748b',
+    color: "#64748b",
   },
   orcamentoNumero: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0f172a',
+    fontWeight: "bold",
+    color: "#0f172a",
     marginTop: 10,
   },
   section: {
@@ -36,125 +36,125 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#0f172a',
+    fontWeight: "bold",
+    color: "#0f172a",
     marginBottom: 10,
-    borderBottom: '1 solid #e2e8f0',
+    borderBottom: "1 solid #e2e8f0",
     paddingBottom: 5,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 5,
   },
   label: {
     fontSize: 9,
-    color: '#64748b',
-    width: '30%',
+    color: "#64748b",
+    width: "30%",
   },
   value: {
     fontSize: 10,
-    color: '#0f172a',
-    width: '70%',
+    color: "#0f172a",
+    width: "70%",
   },
   table: {
     marginTop: 10,
   },
   tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#f1f5f9',
+    flexDirection: "row",
+    backgroundColor: "#f1f5f9",
     padding: 8,
     fontSize: 9,
-    fontWeight: 'bold',
-    color: '#475569',
+    fontWeight: "bold",
+    color: "#475569",
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 8,
-    borderBottom: '1 solid #e2e8f0',
+    borderBottom: "1 solid #e2e8f0",
     fontSize: 9,
   },
   tableRowLast: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 8,
     fontSize: 9,
   },
-  col1: { width: '50%' },
-  col2: { width: '12%', textAlign: 'right' },
-  col3: { width: '19%', textAlign: 'right' },
-  col4: { width: '19%', textAlign: 'right' },
+  col1: { width: "50%" },
+  col2: { width: "12%", textAlign: "right" },
+  col3: { width: "19%", textAlign: "right" },
+  col4: { width: "19%", textAlign: "right" },
   totaisBox: {
-    backgroundColor: '#eff6ff',
+    backgroundColor: "#eff6ff",
     padding: 15,
     marginTop: 20,
     borderRadius: 5,
-    border: '1 solid #bfdbfe',
+    border: "1 solid #bfdbfe",
   },
   totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
   totalLabel: {
     fontSize: 10,
-    color: '#1e40af',
+    color: "#1e40af",
   },
   totalValue: {
     fontSize: 10,
-    color: '#1e40af',
-    fontWeight: 'bold',
+    color: "#1e40af",
+    fontWeight: "bold",
   },
   totalFinalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
     paddingTop: 10,
-    borderTop: '2 solid #3b82f6',
+    borderTop: "2 solid #3b82f6",
   },
   totalFinalLabel: {
     fontSize: 14,
-    color: '#1e40af',
-    fontWeight: 'bold',
+    color: "#1e40af",
+    fontWeight: "bold",
   },
   totalFinalValue: {
     fontSize: 16,
-    color: '#16a34a',
-    fontWeight: 'bold',
+    color: "#16a34a",
+    fontWeight: "bold",
   },
   footer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 30,
     left: 40,
     right: 40,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 8,
-    color: '#94a3b8',
-    borderTop: '1 solid #e2e8f0',
+    color: "#94a3b8",
+    borderTop: "1 solid #e2e8f0",
     paddingTop: 10,
   },
   observacoes: {
-    backgroundColor: '#fef3c7',
+    backgroundColor: "#fef3c7",
     padding: 10,
     marginTop: 10,
-    border: '1 solid #fbbf24',
+    border: "1 solid #fbbf24",
     fontSize: 9,
   },
   statusBadge: {
-    backgroundColor: '#dbeafe',
-    color: '#1e40af',
-    padding: '4 8',
+    backgroundColor: "#dbeafe",
+    color: "#1e40af",
+    padding: "4 8",
     borderRadius: 3,
     fontSize: 8,
-    fontWeight: 'bold',
-    alignSelf: 'flex-start',
+    fontWeight: "bold",
+    alignSelf: "flex-start",
     marginTop: 5,
   },
   infoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 10,
   },
   infoItem: {
-    width: '48%',
+    width: "48%",
     marginBottom: 8,
   },
 });
@@ -189,9 +189,9 @@ interface OrcamentoPDFProps {
 }
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   }).format(value);
 };
 
@@ -200,17 +200,18 @@ const formatDate = (dateString: string) => {
 };
 
 const statusMap: Record<string, string> = {
-  rascunho: 'Rascunho',
-  enviado: 'Enviado',
-  aprovado: 'Aprovado',
-  rejeitado: 'Rejeitado',
-  expirado: 'Expirado',
+  rascunho: "Rascunho",
+  enviado: "Enviado",
+  aprovado: "Aprovado",
+  rejeitado: "Rejeitado",
+  expirado: "Expirado",
 };
 
 export const OrcamentoPDF: React.FC<OrcamentoPDFProps> = ({ orcamento }) => {
-  const descontoValor = orcamento.descontoTipo === 'percentual'
-    ? (Number(orcamento.subtotal) * Number(orcamento.desconto)) / 100
-    : Number(orcamento.desconto);
+  const descontoValor =
+    orcamento.descontoTipo === "percentual"
+      ? (Number(orcamento.subtotal) * Number(orcamento.desconto)) / 100
+      : Number(orcamento.desconto);
 
   return (
     <Document>
@@ -324,7 +325,8 @@ export const OrcamentoPDF: React.FC<OrcamentoPDFProps> = ({ orcamento }) => {
           {Number(orcamento.desconto) > 0 && (
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>
-                Desconto ({orcamento.descontoTipo === 'percentual' ? `${orcamento.desconto}%` : 'R$'}):
+                Desconto (
+                {orcamento.descontoTipo === "percentual" ? `${orcamento.desconto}%` : "R$"}):
               </Text>
               <Text style={styles.totalValue}>- {formatCurrency(descontoValor)}</Text>
             </View>

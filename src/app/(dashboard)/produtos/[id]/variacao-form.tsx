@@ -30,12 +30,7 @@ interface ComposicaoItem {
   };
 }
 
-export function VariacaoForm({
-  tipoProdutoId,
-  variacao,
-  onSuccess,
-  onCancel,
-}: VariacaoFormProps) {
+export function VariacaoForm({ tipoProdutoId, variacao, onSuccess, onCancel }: VariacaoFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [materiasPrimas, setMateriasPrimas] = useState<any[]>([]);
@@ -170,9 +165,7 @@ export function VariacaoForm({
     setError("");
 
     try {
-      const url = variacao
-        ? `/api/variacoes-produto/${variacao.id}`
-        : "/api/variacoes-produto";
+      const url = variacao ? `/api/variacoes-produto/${variacao.id}` : "/api/variacoes-produto";
 
       const method = variacao ? "PUT" : "POST";
 
@@ -282,9 +275,7 @@ export function VariacaoForm({
             <NativeSelect
               id="ativo"
               value={formData.ativo ? "true" : "false"}
-              onChange={(e) =>
-                setFormData({ ...formData, ativo: e.target.value === "true" })
-              }
+              onChange={(e) => setFormData({ ...formData, ativo: e.target.value === "true" })}
               disabled={loading}
             >
               <option value="true">Ativo</option>
@@ -358,11 +349,7 @@ export function VariacaoForm({
 
                 <div className="w-32">
                   <Label>Unidade</Label>
-                  <Input
-                    value={item.unidade}
-                    disabled
-                    className="bg-muted"
-                  />
+                  <Input value={item.unidade} disabled className="bg-muted" />
                 </div>
 
                 <div className="w-32">
@@ -449,8 +436,10 @@ export function VariacaoForm({
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Salvando...
             </>
+          ) : variacao ? (
+            "Atualizar"
           ) : (
-            variacao ? "Atualizar" : "Criar Variação"
+            "Criar Variação"
           )}
         </Button>
       </div>

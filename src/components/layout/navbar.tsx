@@ -4,6 +4,7 @@ import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
+import { TourButton } from "@/components/onboarding/tour-button";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -11,25 +12,26 @@ export function Navbar() {
 
   useEffect(() => {
     // Check initial theme
-    const isDarkMode = document.documentElement.classList.contains('dark');
+    const isDarkMode = document.documentElement.classList.contains("dark");
     setIsDark(isDarkMode);
   }, []);
 
   const toggleTheme = () => {
-    document.documentElement.classList.toggle('dark');
+    document.documentElement.classList.toggle("dark");
     setIsDark(!isDark);
-    localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+    localStorage.setItem("theme", !isDark ? "dark" : "light");
   };
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-card px-6">
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold">
-          Bem-vindo, {session?.user?.name || "Usuário"}
-        </h1>
+        <h1 className="text-lg font-semibold">Bem-vindo, {session?.user?.name || "Usuário"}</h1>
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Tour Guide Button */}
+        <TourButton />
+
         {/* Theme Toggle */}
         <Button
           variant="ghost"
@@ -52,11 +54,7 @@ export function Navbar() {
         </div>
 
         {/* Logout */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => signOut({ callbackUrl: "/login" })}
-        >
+        <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: "/login" })}>
           <LogOut className="mr-2 h-4 w-4" />
           Sair
         </Button>

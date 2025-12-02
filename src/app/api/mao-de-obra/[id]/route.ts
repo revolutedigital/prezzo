@@ -16,10 +16,7 @@ const maoDeObraUpdateSchema = z.object({
 });
 
 // GET - Buscar tipo de mão de obra por ID
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -47,15 +44,11 @@ export async function GET(
     });
 
     if (!tipoMaoDeObra) {
-      return NextResponse.json(
-        { error: "Tipo de mão de obra não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tipo de mão de obra não encontrado" }, { status: 404 });
     }
 
     const custoTotalHora = tipoMaoDeObra.incluiMaquina
-      ? Number(tipoMaoDeObra.custoHora) +
-        Number(tipoMaoDeObra.custoMaquinaHora || 0)
+      ? Number(tipoMaoDeObra.custoHora) + Number(tipoMaoDeObra.custoMaquinaHora || 0)
       : Number(tipoMaoDeObra.custoHora);
 
     return NextResponse.json({
@@ -64,18 +57,12 @@ export async function GET(
     });
   } catch (error) {
     console.error("Erro ao buscar tipo de mão de obra:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar tipo de mão de obra" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar tipo de mão de obra" }, { status: 500 });
   }
 }
 
 // PATCH - Atualizar tipo de mão de obra
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -92,19 +79,14 @@ export async function PATCH(
     });
 
     if (!tipoAtual) {
-      return NextResponse.json(
-        { error: "Tipo de mão de obra não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tipo de mão de obra não encontrado" }, { status: 404 });
     }
 
     // Validação: se incluiMaquina é true, custoMaquinaHora deve ser fornecido
     const incluiMaquina = data.incluiMaquina ?? tipoAtual.incluiMaquina;
     if (incluiMaquina) {
       const custoMaquina =
-        data.custoMaquinaHora !== undefined
-          ? data.custoMaquinaHora
-          : tipoAtual.custoMaquinaHora;
+        data.custoMaquinaHora !== undefined ? data.custoMaquinaHora : tipoAtual.custoMaquinaHora;
       if (!custoMaquina) {
         return NextResponse.json(
           { error: "Custo de máquina é obrigatório quando inclui máquina" },
@@ -120,10 +102,7 @@ export async function PATCH(
       });
 
       if (existente) {
-        return NextResponse.json(
-          { error: "Código já está em uso" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Código já está em uso" }, { status: 400 });
       }
     }
 
@@ -176,18 +155,12 @@ export async function PATCH(
     }
 
     console.error("Erro ao atualizar tipo de mão de obra:", error);
-    return NextResponse.json(
-      { error: "Erro ao atualizar tipo de mão de obra" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao atualizar tipo de mão de obra" }, { status: 500 });
   }
 }
 
 // DELETE - Excluir tipo de mão de obra
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -208,10 +181,7 @@ export async function DELETE(
     });
 
     if (!tipoMaoDeObra) {
-      return NextResponse.json(
-        { error: "Tipo de mão de obra não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tipo de mão de obra não encontrado" }, { status: 404 });
     }
 
     // Verificar se está em uso
@@ -231,9 +201,6 @@ export async function DELETE(
     return NextResponse.json({ message: "Tipo de mão de obra excluído com sucesso" });
   } catch (error) {
     console.error("Erro ao excluir tipo de mão de obra:", error);
-    return NextResponse.json(
-      { error: "Erro ao excluir tipo de mão de obra" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao excluir tipo de mão de obra" }, { status: 500 });
   }
 }

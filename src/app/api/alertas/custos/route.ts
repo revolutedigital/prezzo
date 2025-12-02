@@ -48,8 +48,7 @@ export async function GET(request: NextRequest) {
     ).length;
     const medioImpacto = atualizacoesNaoConfirmadas.filter(
       (a) =>
-        Math.abs(Number(a.percentualMudanca)) >= 10 &&
-        Math.abs(Number(a.percentualMudanca)) <= 20
+        Math.abs(Number(a.percentualMudanca)) >= 10 && Math.abs(Number(a.percentualMudanca)) <= 20
     ).length;
     const baixoImpacto = atualizacoesNaoConfirmadas.filter(
       (a) => Math.abs(Number(a.percentualMudanca)) < 10
@@ -96,9 +95,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Erro ao buscar alertas de custo:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar alertas" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar alertas" }, { status: 500 });
   }
 }

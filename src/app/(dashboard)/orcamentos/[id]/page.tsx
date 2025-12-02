@@ -117,7 +117,7 @@ export default function OrcamentoDetalhesPage() {
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `orcamento-${orcamento?.numero}.pdf`;
         document.body.appendChild(a);
@@ -125,11 +125,11 @@ export default function OrcamentoDetalhesPage() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } else {
-        showError('Erro ao gerar PDF');
+        showError("Erro ao gerar PDF");
       }
     } catch (error) {
-      console.error('Erro ao baixar PDF:', error);
-      showError('Erro ao gerar PDF');
+      console.error("Erro ao baixar PDF:", error);
+      showError("Erro ao gerar PDF");
     } finally {
       setDownloadingPDF(false);
     }
@@ -270,9 +270,7 @@ export default function OrcamentoDetalhesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Itens do Orçamento</CardTitle>
-          <CardDescription>
-            {orcamento.itens.length} item(ns) no orçamento
-          </CardDescription>
+          <CardDescription>{orcamento.itens.length} item(ns) no orçamento</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -337,9 +335,7 @@ export default function OrcamentoDetalhesPage() {
               <div className="flex justify-between items-center text-muted-foreground">
                 <span>
                   Desconto (
-                  {orcamento.descontoTipo === "percentual"
-                    ? `${orcamento.desconto}%`
-                    : "R$"}
+                  {orcamento.descontoTipo === "percentual" ? `${orcamento.desconto}%` : "R$"}
                   ):
                 </span>
                 <span className="font-mono">- {formatCurrency(descontoValor)}</span>

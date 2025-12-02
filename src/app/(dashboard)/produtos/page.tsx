@@ -158,17 +158,17 @@ export default function ProdutosPage() {
     } else {
       if (currentPage <= 4) {
         for (let i = 1; i <= 5; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 3) {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
       } else {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       }
     }
@@ -219,7 +219,7 @@ export default function ProdutosPage() {
 
   // Categorias únicas
   const categorias = useMemo(
-    () => Array.from(new Set(tiposProduto.map(t => t.categoria).filter(Boolean))),
+    () => Array.from(new Set(tiposProduto.map((t) => t.categoria).filter(Boolean))),
     [tiposProduto]
   );
 
@@ -228,11 +228,11 @@ export default function ProdutosPage() {
     let filtered = tiposProduto;
 
     if (ativo) {
-      filtered = filtered.filter(t => t.ativo === (ativo === "true"));
+      filtered = filtered.filter((t) => t.ativo === (ativo === "true"));
     }
 
     if (categoria) {
-      filtered = filtered.filter(t => t.categoria === categoria);
+      filtered = filtered.filter((t) => t.categoria === categoria);
     }
 
     return filtered;
@@ -241,17 +241,17 @@ export default function ProdutosPage() {
   // Stats calculadas
   const stats = useMemo(() => {
     const filteredByStatus = ativo
-      ? tiposProduto.filter(t => t.ativo === (ativo === "true"))
+      ? tiposProduto.filter((t) => t.ativo === (ativo === "true"))
       : tiposProduto;
 
     const filteredByCategory = categoria
-      ? filteredByStatus.filter(t => t.categoria === categoria)
+      ? filteredByStatus.filter((t) => t.categoria === categoria)
       : filteredByStatus;
 
     const totalVariacoes = tiposProduto.reduce((acc, t) => acc + t._count.variacoes, 0);
-    const ativos = tiposProduto.filter(t => t.ativo);
-    const inativos = tiposProduto.filter(t => t.ativo === false);
-    const comVariacoes = tiposProduto.filter(t => t._count.variacoes > 0);
+    const ativos = tiposProduto.filter((t) => t.ativo);
+    const inativos = tiposProduto.filter((t) => t.ativo === false);
+    const comVariacoes = tiposProduto.filter((t) => t._count.variacoes > 0);
 
     return {
       total: totalItems,
@@ -259,9 +259,8 @@ export default function ProdutosPage() {
       ativos: ativos.length,
       inativos: inativos.length,
       totalVariacoes,
-      mediaVariacoes: produtosExibidos.length > 0
-        ? (totalVariacoes / produtosExibidos.length).toFixed(1)
-        : "0",
+      mediaVariacoes:
+        produtosExibidos.length > 0 ? (totalVariacoes / produtosExibidos.length).toFixed(1) : "0",
       comVariacoes: comVariacoes.length,
     };
   }, [tiposProduto, ativo, categoria, totalItems, produtosExibidos.length]);
@@ -369,7 +368,9 @@ export default function ProdutosPage() {
             <Layers className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-purple-600">{stats.totalVariacoes}</div>
+            <div className="text-xl sm:text-2xl font-bold text-purple-600">
+              {stats.totalVariacoes}
+            </div>
             <p className="text-[10px] sm:text-xs text-muted-foreground">
               Média de {stats.mediaVariacoes} por produto
             </p>
@@ -429,14 +430,22 @@ export default function ProdutosPage() {
               </option>
             ))}
           </NativeSelect>
-          <NativeSelect value={ativo} onChange={(e) => setAtivo(e.target.value)} className="w-full sm:w-32">
+          <NativeSelect
+            value={ativo}
+            onChange={(e) => setAtivo(e.target.value)}
+            className="w-full sm:w-32"
+          >
             <option value="">Todos</option>
             <option value="true">Ativos</option>
             <option value="false">Inativos</option>
           </NativeSelect>
         </div>
         <div className="flex gap-2">
-          <NativeSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="flex-1 sm:w-40">
+          <NativeSelect
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="flex-1 sm:w-40"
+          >
             <option value="nome">Nome</option>
             <option value="codigo">Código</option>
             <option value="categoria">Categoria</option>
@@ -465,7 +474,7 @@ export default function ProdutosPage() {
           }
           action={{
             label: "Criar Primeiro Produto",
-            onClick: () => window.location.href = "/produtos/novo",
+            onClick: () => (window.location.href = "/produtos/novo"),
             icon: Plus,
           }}
         />
@@ -488,9 +497,7 @@ export default function ProdutosPage() {
                         {tipo.nome}
                       </CardTitle>
                       {tipo.codigo && (
-                        <p className="text-xs text-muted-foreground font-mono">
-                          {tipo.codigo}
-                        </p>
+                        <p className="text-xs text-muted-foreground font-mono">{tipo.codigo}</p>
                       )}
                     </div>
                     <Badge variant={tipo.ativo ? "default" : "secondary"} className="shrink-0">
@@ -566,14 +573,16 @@ export default function ProdutosPage() {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    className={
+                      currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
+                    }
                   />
                 </PaginationItem>
 
                 {generatePageNumbers().map((page, idx) => (
                   <PaginationItem key={idx}>
-                    {page === 'ellipsis' ? (
+                    {page === "ellipsis" ? (
                       <PaginationEllipsis />
                     ) : (
                       <PaginationLink
@@ -589,8 +598,12 @@ export default function ProdutosPage() {
 
                 <PaginationItem>
                   <PaginationNext
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
                   />
                 </PaginationItem>
               </PaginationContent>
@@ -600,7 +613,9 @@ export default function ProdutosPage() {
           {/* Footer Info */}
           <div className="flex justify-between items-center text-sm text-muted-foreground">
             <span>
-              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s) de produto
+              Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}-
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s) de
+              produto
               {(debouncedSearch || categoria || ativo) && " (com filtros)"}
             </span>
             <div className="flex gap-2">

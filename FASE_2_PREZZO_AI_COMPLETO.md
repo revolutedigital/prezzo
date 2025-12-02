@@ -24,6 +24,7 @@ A **Fase 2 - PREZZO AI** foi implementada com sucesso, adicionando capacidades d
 ### Modelos Adicionados
 
 #### 1. NotaFiscal
+
 ```prisma
 model NotaFiscal {
   id                String   @id @default(cuid())
@@ -47,6 +48,7 @@ model NotaFiscal {
 ```
 
 #### 2. AtualizacaoCusto
+
 ```prisma
 model AtualizacaoCusto {
   id                String   @id @default(cuid())
@@ -66,6 +68,7 @@ model AtualizacaoCusto {
 ```
 
 ### Migration
+
 - **Arquivo**: `prisma/migrations/20251127030928_add_prezzo_ai_models/migration.sql`
 - **Status**: ✅ Aplicada com sucesso
 
@@ -74,6 +77,7 @@ model AtualizacaoCusto {
 ## 🧠 Processamento com IA
 
 ### Biblioteca Claude AI
+
 - **Package**: `@anthropic-ai/sdk`
 - **Modelo**: Claude 3.5 Sonnet (`claude-3-5-sonnet-20241022`)
 - **Arquivo**: `src/lib/claude-nf-processor.ts`
@@ -81,6 +85,7 @@ model AtualizacaoCusto {
 ### Capacidades de Extração
 
 A IA extrai automaticamente:
+
 - ✅ Nome do Fornecedor
 - ✅ Número da Nota Fiscal
 - ✅ Data de Emissão (formato YYYY-MM-DD)
@@ -122,12 +127,14 @@ O sistema normaliza automaticamente diferentes formatos de unidades:
 O sistema tenta encontrar matérias-primas em 3 níveis:
 
 #### 1. Match Exato
+
 ```typescript
 // Busca por nome exato (case-insensitive)
 nome: { equals: descricao, mode: "insensitive" }
 ```
 
 #### 2. Match Parcial
+
 ```typescript
 // Busca por nome que contenha a descrição + mesma unidade
 nome: { contains: descricao, mode: "insensitive" }
@@ -135,6 +142,7 @@ unidadeMedida: unidade
 ```
 
 #### 3. Match por Palavras-Chave
+
 ```typescript
 // Extrai palavras com mais de 3 caracteres
 // Busca cada palavra individualmente
@@ -151,20 +159,25 @@ palavrasChave.forEach(palavra => {
 ### 1. Backend - APIs
 
 #### `src/lib/claude-nf-processor.ts`
+
 Processador principal que integra com Claude AI para extrair dados de PDFs.
 
 **Principais funções:**
+
 - `processarNotaFiscal(pdfText: string): Promise<NFDadosExtraidos>`
 - `normalizarUnidade(unidade: string): string`
 
 #### `src/app/api/notas-fiscais/route.ts`
+
 API principal para upload e listagem de notas fiscais.
 
 **Endpoints:**
+
 - `POST /api/notas-fiscais` - Upload de PDF
 - `GET /api/notas-fiscais` - Lista todas as NFs do usuário
 
 **Fluxo de processamento:**
+
 1. Recebe arquivo PDF via FormData
 2. Cria registro inicial no banco (status: "processando")
 3. Extrai texto do PDF usando `pdf-parse`
@@ -174,19 +187,24 @@ API principal para upload e listagem de notas fiscais.
 7. Atualiza status para "processado" ou "erro"
 
 #### `src/app/api/notas-fiscais/[id]/route.ts`
+
 Operações individuais de notas fiscais.
 
 **Endpoints:**
+
 - `GET /api/notas-fiscais/[id]` - Detalhes de uma NF
 - `DELETE /api/notas-fiscais/[id]` - Deletar NF
 
 #### `src/app/api/notas-fiscais/[id]/confirmar/route.ts`
+
 Confirmação de atualizações de custo.
 
 **Endpoint:**
+
 - `POST /api/notas-fiscais/[id]/confirmar`
 
 **Body:**
+
 ```json
 {
   "atualizacaoIds": ["id1", "id2", "id3"]
@@ -194,23 +212,28 @@ Confirmação de atualizações de custo.
 ```
 
 **Ações realizadas ao confirmar:**
+
 1. Atualiza `custoUnitario` da matéria-prima
 2. Cria registro em `HistoricoCusto`
 3. Marca atualização como confirmada
 4. Recalcula automaticamente preços de produtos afetados
 
 **Recálculo de Produtos:**
+
 - Identifica todas as variações que usam as matérias-primas atualizadas
 - Recalcula custo total da composição
 - Atualiza `custoCalculado` e `precoVenda` de cada item produto
 
 #### `src/app/api/alertas/custos/route.ts`
+
 API de alertas para dashboard.
 
 **Endpoint:**
+
 - `GET /api/alertas/custos`
 
 **Retorno:**
+
 ```json
 {
   "resumo": {
@@ -228,9 +251,11 @@ API de alertas para dashboard.
 ### 2. Frontend - Páginas
 
 #### `src/app/(dashboard)/prezzo-ai/page.tsx`
+
 Página principal do Prezzo AI.
 
 **Componentes:**
+
 - Upload de arquivos PDF
 - 5 Cards de estatísticas:
   - Total de NFs processadas
@@ -242,6 +267,7 @@ Página principal do Prezzo AI.
 - Botão "Revisar" para NFs com atualizações pendentes
 
 **Recursos:**
+
 - Upload drag-and-drop (input file)
 - Validação de tipo de arquivo (apenas PDF)
 - Atualização automática da lista após upload
@@ -249,6 +275,7 @@ Página principal do Prezzo AI.
 - Link direto para página de revisão
 
 #### `src/app/(dashboard)/prezzo-ai/[id]/page.tsx`
+
 Página de revisão de atualizações.
 
 **Seções:**
@@ -275,6 +302,7 @@ Página de revisão de atualizações.
    - Apenas visualização
 
 **Recursos:**
+
 - Seleção múltipla com checkboxes
 - Confirmação em lote
 - Indicadores visuais de impacto
@@ -283,14 +311,17 @@ Página de revisão de atualizações.
 ### 3. Frontend - Componentes
 
 #### `src/components/ui/checkbox.tsx`
+
 Componente de checkbox usando Radix UI.
 
 **Package**: `@radix-ui/react-checkbox`
 
 #### `src/components/dashboard/alertas-custos-widget.tsx`
+
 Widget de alertas para dashboard.
 
 **Visualização:**
+
 - Card com borda laranja quando há alertas
 - 3 mini-cards com contadores por nível de impacto:
   - Alto (>20%) - vermelho
@@ -338,16 +369,19 @@ Widget de alertas para dashboard.
 ### Indicadores Visuais
 
 #### Status de NF
+
 - 🔵 **Processando** - Azul, ícone Clock
 - 🟢 **Processado** - Verde, ícone CheckCircle2
 - 🔴 **Erro** - Vermelho, ícone XCircle
 
 #### Nível de Impacto
+
 - 🔴 **Alto** - Badge vermelho, >20%
 - 🟠 **Médio** - Badge laranja, 10-20%
 - 🔵 **Baixo** - Badge azul, <10%
 
 #### Variação de Preço
+
 - ↑ **Aumento** - Vermelho, TrendingUp
 - ↓ **Redução** - Verde, TrendingDown
 
@@ -389,6 +423,7 @@ Quando custos são confirmados, o sistema:
    - Recalcula `precoVenda` aplicando a margem de lucro
 
 **Fórmula:**
+
 ```typescript
 custoTotal = Σ (quantidade × custoUnitarioMateria)
 precoVenda = custoTotal × (1 + margemLucro / 100)

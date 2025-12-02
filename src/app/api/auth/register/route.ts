@@ -20,14 +20,11 @@ export async function POST(request: NextRequest) {
 
     // Verificar se usuário já existe
     const existingUser = await prisma.user.findUnique({
-      where: { email: validatedData.email }
+      where: { email: validatedData.email },
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Email já cadastrado" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email já cadastrado" }, { status: 400 });
     }
 
     // Hash da senha
@@ -51,29 +48,22 @@ export async function POST(request: NextRequest) {
         empresa: true,
         telefone: true,
         createdAt: true,
-      }
+      },
     });
 
     return NextResponse.json(
       {
         message: "Usuário criado com sucesso",
-        user
+        user,
       },
       { status: 201 }
     );
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao criar usuário:", error);
-    return NextResponse.json(
-      { error: "Erro ao criar usuário" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao criar usuário" }, { status: 500 });
   }
 }

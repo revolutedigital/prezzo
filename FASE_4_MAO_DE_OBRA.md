@@ -21,12 +21,14 @@ Nova funcionalidade para incluir **custos de mão de obra** no cálculo de preci
 ## 🎯 Requisitos (baseado na conversa)
 
 ### Contexto da Conversa:
+
 - "tem uma componente de mão de obra"
 - "que podemos mudar numa interface"
 - "pode ser diferentes horas"
 - "em alguns casos tem maquinas e outros não"
 
 ### Interpretação:
+
 1. Sistema deve ter cadastro de tipos de mão de obra
 2. Interface configurável para ajustar custos
 3. Suporte para diferentes tipos com custos/hora variados
@@ -39,6 +41,7 @@ Nova funcionalidade para incluir **custos de mão de obra** no cálculo de preci
 ### Novos Modelos
 
 #### 1. TipoMaoDeObra
+
 ```prisma
 model TipoMaoDeObra {
   id                String   @id @default(cuid())
@@ -58,6 +61,7 @@ model TipoMaoDeObra {
 ```
 
 **Campos:**
+
 - `nome`: Nome do tipo (ex: "Soldador", "Montador")
 - `codigo`: Código único opcional
 - `custoHora`: Custo por hora de trabalho humano
@@ -66,6 +70,7 @@ model TipoMaoDeObra {
 - `descricao`: Detalhes sobre o tipo de trabalho
 
 **Cálculo do custo total/hora:**
+
 ```
 Se incluiMaquina = true:
   custoTotalHora = custoHora + custoMaquinaHora
@@ -74,6 +79,7 @@ Senão:
 ```
 
 #### 2. ComposicaoMaoDeObra
+
 ```prisma
 model ComposicaoMaoDeObra {
   id                  String   @id @default(cuid())
@@ -90,11 +96,13 @@ model ComposicaoMaoDeObra {
 ```
 
 **Campos:**
+
 - `horasNecessarias`: Quantidade de horas necessárias desse tipo de mão de obra
 - `descricao`: Descrição específica do trabalho (ex: "Soldagem da base")
 - `ordem`: Ordem de execução
 
 #### 3. HistoricoMaoDeObra
+
 ```prisma
 model HistoricoMaoDeObra {
   id                String   @id @default(cuid())
@@ -112,6 +120,7 @@ model HistoricoMaoDeObra {
 ### Modificações em Modelos Existentes
 
 #### VariacaoProduto
+
 ```prisma
 model VariacaoProduto {
   // ... campos existentes ...
@@ -130,12 +139,14 @@ model VariacaoProduto {
 #### 1. `/api/mao-de-obra` (CRUD de Tipos de Mão de Obra)
 
 **GET** - Listar todos os tipos
+
 ```typescript
 GET /api/mao-de-obra
 Response: TipoMaoDeObra[]
 ```
 
 **POST** - Criar novo tipo
+
 ```typescript
 POST /api/mao-de-obra
 Body: {
@@ -149,12 +160,14 @@ Body: {
 ```
 
 **PATCH** - Atualizar tipo
+
 ```typescript
 PATCH /api/mao-de-obra/:id
 Body: Partial<TipoMaoDeObra>
 ```
 
 **DELETE** - Excluir tipo
+
 ```typescript
 DELETE /api/mao-de-obra/:id
 ```
@@ -162,12 +175,14 @@ DELETE /api/mao-de-obra/:id
 #### 2. `/api/produtos/[id]/mao-de-obra` (Composição de Mão de Obra)
 
 **GET** - Listar mão de obra de um produto
+
 ```typescript
 GET /api/produtos/:id/mao-de-obra
 Response: ComposicaoMaoDeObra[]
 ```
 
 **POST** - Adicionar mão de obra ao produto
+
 ```typescript
 POST /api/produtos/:id/mao-de-obra
 Body: {
@@ -178,6 +193,7 @@ Body: {
 ```
 
 **DELETE** - Remover mão de obra do produto
+
 ```typescript
 DELETE /api/produtos/:id/mao-de-obra/:composicaoId
 ```
@@ -185,40 +201,41 @@ DELETE /api/produtos/:id/mao-de-obra/:composicaoId
 ### Lógica de Cálculo
 
 #### Cálculo do Custo Total do Produto
+
 ```typescript
 function calcularCustoProduto(variacaoId: string) {
   // 1. Buscar composição de matérias-primas
   const materias = await prisma.composicaoProduto.findMany({
     where: { variacaoProdutoId: variacaoId },
-    include: { materiaPrima: true }
-  })
+    include: { materiaPrima: true },
+  });
 
   const custoMateriais = materias.reduce((total, item) => {
-    return total + (item.quantidade * item.materiaPrima.custoUnitario)
-  }, 0)
+    return total + item.quantidade * item.materiaPrima.custoUnitario;
+  }, 0);
 
   // 2. Buscar composição de mão de obra
   const maoDeObra = await prisma.composicaoMaoDeObra.findMany({
     where: { variacaoProdutoId: variacaoId },
-    include: { tipoMaoDeObra: true }
-  })
+    include: { tipoMaoDeObra: true },
+  });
 
   const custoMaoDeObra = maoDeObra.reduce((total, item) => {
-    const custoHora = item.tipoMaoDeObra.custoHora
+    const custoHora = item.tipoMaoDeObra.custoHora;
     const custoMaquina = item.tipoMaoDeObra.incluiMaquina
-      ? (item.tipoMaoDeObra.custoMaquinaHora || 0)
-      : 0
-    const custoTotalHora = custoHora + custoMaquina
+      ? item.tipoMaoDeObra.custoMaquinaHora || 0
+      : 0;
+    const custoTotalHora = custoHora + custoMaquina;
 
-    return total + (item.horasNecessarias * custoTotalHora)
-  }, 0)
+    return total + item.horasNecessarias * custoTotalHora;
+  }, 0);
 
   // 3. Custo total
   return {
     custoMateriais,
     custoMaoDeObra,
-    custoTotal: custoMateriais + custoMaoDeObra
-  }
+    custoTotal: custoMateriais + custoMaoDeObra,
+  };
 }
 ```
 
@@ -229,6 +246,7 @@ function calcularCustoProduto(variacaoId: string) {
 ### Páginas
 
 #### 1. `/mao-de-obra` (Lista de Tipos de Mão de Obra)
+
 ```
 ┌─────────────────────────────────────────────────┐
 │ Mão de Obra                [+ Novo Tipo]        │
@@ -246,6 +264,7 @@ function calcularCustoProduto(variacaoId: string) {
 **Componente:** `src/app/(dashboard)/mao-de-obra/page.tsx`
 
 **Funcionalidades:**
+
 - Listar todos os tipos de mão de obra
 - Filtrar por nome/código
 - Adicionar novo tipo
@@ -254,6 +273,7 @@ function calcularCustoProduto(variacaoId: string) {
 - Mostrar custo total/hora calculado
 
 #### 2. Modal de Cadastro/Edição de Tipo
+
 ```
 ┌─────────────────────────────────────────┐
 │ Novo Tipo de Mão de Obra               │
@@ -278,6 +298,7 @@ function calcularCustoProduto(variacaoId: string) {
 ```
 
 **Validações:**
+
 - Nome obrigatório
 - Custo/hora > 0
 - Se `incluiMaquina` = true, `custoMaquinaHora` obrigatório
@@ -317,6 +338,7 @@ Adicionar aba "Mão de Obra" na página de edição de variação de produto:
 **Alterações em:** `src/app/(dashboard)/produtos/[id]/page.tsx`
 
 **Componentes novos:**
+
 - `<MaoDeObraComposicao />` - Aba de mão de obra
 - `<MaoDeObraSelector />` - Seletor de tipo + horas
 - `<MaoDeObraItem />` - Item da lista de mão de obra
@@ -326,6 +348,7 @@ Adicionar aba "Mão de Obra" na página de edição de variação de produto:
 ## 🔄 Fluxo de Uso
 
 ### 1. Configurar Tipos de Mão de Obra
+
 ```
 Admin → Menu "Mão de Obra" → Cadastrar tipos
 Exemplo:
@@ -334,6 +357,7 @@ Exemplo:
 ```
 
 ### 2. Adicionar Mão de Obra ao Produto
+
 ```
 Produtos → Editar Variação → Aba "Mão de Obra"
   → Adicionar "Soldador" → 2 horas
@@ -342,6 +366,7 @@ Produtos → Editar Variação → Aba "Mão de Obra"
 ```
 
 ### 3. Visualizar Custo Total
+
 ```
 Custo Materiais:  R$ 139,00
 Custo Mão Obra:   R$ 175,00
@@ -352,6 +377,7 @@ Preço Venda:      R$ 439,60
 ```
 
 ### 4. Orçamento
+
 ```
 Cliente solicita orçamento
   → Vendedor seleciona produto
@@ -364,6 +390,7 @@ Cliente solicita orçamento
 ## 📅 Cronograma de Implementação
 
 ### Semana 13: Backend (5-7 dias)
+
 - [ ] Atualizar schema Prisma com novos modelos
 - [ ] Criar migration
 - [ ] API Routes para mão de obra (CRUD)
@@ -372,6 +399,7 @@ Cliente solicita orçamento
 - [ ] Testes unitários
 
 ### Semana 14: Frontend (5-7 dias)
+
 - [ ] Página de listagem de mão de obra
 - [ ] Modal de cadastro/edição
 - [ ] Integrar aba "Mão de Obra" na edição de produto
@@ -380,6 +408,7 @@ Cliente solicita orçamento
 - [ ] Validações no frontend
 
 ### Semana 15: Integração e Testes (3-5 dias)
+
 - [ ] Testes end-to-end
 - [ ] Ajustes de UX/UI
 - [ ] Atualizar dashboard com novos custos
@@ -392,12 +421,14 @@ Cliente solicita orçamento
 ## ✅ Checklist de Implementação
 
 ### Schema e Migrations
+
 - [ ] Criar models TipoMaoDeObra, ComposicaoMaoDeObra, HistoricoMaoDeObra
 - [ ] Atualizar VariacaoProduto com nova relação
 - [ ] Executar migration
 - [ ] Testar relações no Prisma Studio
 
 ### Backend
+
 - [ ] POST /api/mao-de-obra (criar tipo)
 - [ ] GET /api/mao-de-obra (listar tipos)
 - [ ] PATCH /api/mao-de-obra/:id (atualizar tipo)
@@ -409,6 +440,7 @@ Cliente solicita orçamento
 - [ ] Atualizar recálculo automático de produtos
 
 ### Frontend
+
 - [ ] Página /mao-de-obra
 - [ ] Componente MaoDeObraTable
 - [ ] Modal MaoDeObraForm
@@ -419,12 +451,14 @@ Cliente solicita orçamento
 - [ ] Adicionar ao menu lateral
 
 ### Relatórios e Dashboard
+
 - [ ] Incluir mão de obra no dashboard
 - [ ] Atualizar relatório de margens
 - [ ] Atualizar relatório de evolução de custos
 - [ ] Histórico de reajustes de mão de obra
 
 ### Testes
+
 - [ ] Testar criação de tipo de mão de obra
 - [ ] Testar edição e exclusão
 - [ ] Testar adição de mão de obra a produto

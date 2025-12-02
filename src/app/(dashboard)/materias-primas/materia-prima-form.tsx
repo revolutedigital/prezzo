@@ -16,11 +16,7 @@ interface MateriaPrimaFormProps {
   onCancel: () => void;
 }
 
-export function MateriaPrimaForm({
-  materiaPrima,
-  onSuccess,
-  onCancel,
-}: MateriaPrimaFormProps) {
+export function MateriaPrimaForm({ materiaPrima, onSuccess, onCancel }: MateriaPrimaFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -62,9 +58,7 @@ export function MateriaPrimaForm({
     setError("");
 
     try {
-      const url = materiaPrima
-        ? `/api/materias-primas/${materiaPrima.id}`
-        : "/api/materias-primas";
+      const url = materiaPrima ? `/api/materias-primas/${materiaPrima.id}` : "/api/materias-primas";
 
       const method = materiaPrima ? "PUT" : "POST";
 
@@ -111,31 +105,18 @@ export function MateriaPrimaForm({
             placeholder="Ex: Filtro de Alumínio"
             disabled={loading}
           />
-          {errors.nome && (
-            <p className="text-sm text-red-500 mt-1">{errors.nome.message}</p>
-          )}
+          {errors.nome && <p className="text-sm text-red-500 mt-1">{errors.nome.message}</p>}
         </div>
 
         <div>
           <Label htmlFor="codigo">Código</Label>
-          <Input
-            id="codigo"
-            {...register("codigo")}
-            placeholder="Ex: FLT-001"
-            disabled={loading}
-          />
-          {errors.codigo && (
-            <p className="text-sm text-red-500 mt-1">{errors.codigo.message}</p>
-          )}
+          <Input id="codigo" {...register("codigo")} placeholder="Ex: FLT-001" disabled={loading} />
+          {errors.codigo && <p className="text-sm text-red-500 mt-1">{errors.codigo.message}</p>}
         </div>
 
         <div>
           <Label htmlFor="unidadeMedida">Unidade de Medida *</Label>
-          <NativeSelect
-            id="unidadeMedida"
-            {...register("unidadeMedida")}
-            disabled={loading}
-          >
+          <NativeSelect id="unidadeMedida" {...register("unidadeMedida")} disabled={loading}>
             <option value="unidade">Unidade</option>
             <option value="metro">Metro (m)</option>
             <option value="kg">Quilograma (kg)</option>
@@ -204,19 +185,12 @@ export function MateriaPrimaForm({
             <option value="true">Ativo</option>
             <option value="false">Inativo</option>
           </NativeSelect>
-          {errors.ativo && (
-            <p className="text-sm text-red-500 mt-1">{errors.ativo.message}</p>
-          )}
+          {errors.ativo && <p className="text-sm text-red-500 mt-1">{errors.ativo.message}</p>}
         </div>
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={loading}
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
           Cancelar
         </Button>
         <Button type="submit" disabled={loading}>
@@ -225,8 +199,10 @@ export function MateriaPrimaForm({
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Salvando...
             </>
+          ) : materiaPrima ? (
+            "Atualizar"
           ) : (
-            materiaPrima ? "Atualizar" : "Cadastrar"
+            "Cadastrar"
           )}
         </Button>
       </div>

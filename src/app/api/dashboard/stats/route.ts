@@ -42,8 +42,7 @@ export async function GET(request: NextRequest) {
     );
 
     // Valor médio por orçamento
-    const valorMedio =
-      orcamentosAprovados > 0 ? valorTotalAprovado / orcamentosAprovados : 0;
+    const valorMedio = orcamentosAprovados > 0 ? valorTotalAprovado / orcamentosAprovados : 0;
 
     // Taxa de conversão
     const orcamentosEnviadosOuAprovados = orcamentosEnviados + orcamentosAprovados;
@@ -57,7 +56,7 @@ export async function GET(request: NextRequest) {
     seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6);
 
     const orcamentosPorMes = await prisma.orcamento.groupBy({
-      by: ['createdAt'],
+      by: ["createdAt"],
       where: {
         createdAt: {
           gte: seisMesesAtras,
@@ -94,10 +93,10 @@ export async function GET(request: NextRequest) {
 
     // Top 5 produtos mais vendidos (por quantidade em orçamentos aprovados)
     const topProdutos = await prisma.itemOrcamento.groupBy({
-      by: ['itemProdutoId'],
+      by: ["itemProdutoId"],
       where: {
         orcamento: {
-          status: 'aprovado',
+          status: "aprovado",
         },
       },
       _sum: {
@@ -106,7 +105,7 @@ export async function GET(request: NextRequest) {
       },
       orderBy: {
         _sum: {
-          quantidade: 'desc',
+          quantidade: "desc",
         },
       },
       take: 5,
@@ -130,7 +129,7 @@ export async function GET(request: NextRequest) {
           id: item.itemProdutoId,
           nome: produto
             ? `${produto.variacaoProduto.tipoProduto.nome} - ${produto.variacaoProduto.nome}`
-            : 'Produto removido',
+            : "Produto removido",
           quantidade: Number(item._sum.quantidade || 0),
           valor: Number(item._sum.total || 0),
         };
@@ -141,7 +140,7 @@ export async function GET(request: NextRequest) {
     const orcamentosRecentes = await prisma.orcamento.findMany({
       take: 5,
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       select: {
         id: true,
@@ -172,9 +171,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Erro ao buscar estatísticas:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar estatísticas" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar estatísticas" }, { status: 500 });
   }
 }

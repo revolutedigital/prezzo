@@ -31,9 +31,17 @@ export async function GET(request: Request) {
     const skip = (page - 1) * limit;
 
     // Validar campos de ordenação permitidos
-    const allowedSortFields = ['nome', 'codigo', 'custoHora', 'incluiMaquina', 'custoMaquinaHora', 'ativo', 'createdAt'];
-    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'nome';
-    const validOrder = (order === 'asc' || order === 'desc') ? order : 'asc';
+    const allowedSortFields = [
+      "nome",
+      "codigo",
+      "custoHora",
+      "incluiMaquina",
+      "custoMaquinaHora",
+      "ativo",
+      "createdAt",
+    ];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : "nome";
+    const validOrder = order === "asc" || order === "desc" ? order : "asc";
 
     const [tiposMaoDeObra, total] = await Promise.all([
       prisma.tipoMaoDeObra.findMany({
@@ -48,7 +56,7 @@ export async function GET(request: Request) {
           },
         },
       }),
-      prisma.tipoMaoDeObra.count()
+      prisma.tipoMaoDeObra.count(),
     ]);
 
     // Calcular custo total por hora
@@ -66,15 +74,12 @@ export async function GET(request: Request) {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     console.error("Erro ao buscar tipos de mão de obra:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar tipos de mão de obra" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar tipos de mão de obra" }, { status: 500 });
   }
 }
 
@@ -104,10 +109,7 @@ export async function POST(request: Request) {
       });
 
       if (existente) {
-        return NextResponse.json(
-          { error: "Código já está em uso" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Código já está em uso" }, { status: 400 });
       }
     }
 
@@ -133,9 +135,6 @@ export async function POST(request: Request) {
     }
 
     console.error("Erro ao criar tipo de mão de obra:", error);
-    return NextResponse.json(
-      { error: "Erro ao criar tipo de mão de obra" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao criar tipo de mão de obra" }, { status: 500 });
   }
 }

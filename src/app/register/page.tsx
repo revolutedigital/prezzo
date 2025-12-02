@@ -7,7 +7,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -71,9 +78,7 @@ export default function RegisterPage() {
             <div className="text-4xl font-heading font-bold text-primary">Prezzo</div>
           </div>
           <CardTitle className="text-2xl">Criar conta</CardTitle>
-          <CardDescription>
-            Preencha os dados abaixo para começar
-          </CardDescription>
+          <CardDescription>Preencha os dados abaixo para começar</CardDescription>
         </CardHeader>
         <form onSubmit={onSubmit}>
           <CardContent className="space-y-4">
@@ -139,11 +144,7 @@ export default function RegisterPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Criando conta..." : "Criar conta"}
             </Button>
             <div className="text-sm text-center text-muted-foreground">

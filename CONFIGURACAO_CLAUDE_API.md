@@ -33,17 +33,21 @@ npm run dev
 O Prezzo AI usa o modelo **Claude 3.5 Sonnet** (`claude-3-5-sonnet-20241022`).
 
 ### Preços (valores de referência, conferir site oficial)
+
 - **Input**: ~$3.00 / 1M tokens
 - **Output**: ~$15.00 / 1M tokens
 
 ### Estimativa por Nota Fiscal
+
 Uma NF típica de 2-3 páginas consome aproximadamente:
+
 - Input: ~3.000 tokens (texto do PDF + prompt)
 - Output: ~500 tokens (JSON estruturado)
 
 **Custo por NF:** ~$0.02 USD (2 centavos de dólar)
 
 ### Exemplo Mensal
+
 - 100 NFs/mês = ~$2.00 USD
 - 500 NFs/mês = ~$10.00 USD
 - 1000 NFs/mês = ~$20.00 USD
@@ -65,6 +69,7 @@ Uma NF típica de 2-3 páginas consome aproximadamente:
 Se o processamento falhar:
 
 1. **Verifique a chave no .env**
+
    ```bash
    cat .env | grep CLAUDE_API_KEY
    ```
@@ -74,6 +79,7 @@ Se o processamento falhar:
    - Mensagem comum: "Invalid API Key"
 
 3. **Teste a chave diretamente**
+
    ```bash
    # Criar arquivo teste.js
    node teste.js
@@ -92,9 +98,7 @@ Se o processamento falhar:
        const message = await client.messages.create({
          model: "claude-3-5-sonnet-20241022",
          max_tokens: 1024,
-         messages: [
-           { role: "user", content: "Hello, Claude!" }
-         ],
+         messages: [{ role: "user", content: "Hello, Claude!" }],
        });
        console.log("✅ API funcionando!");
        console.log(message.content[0].text);
@@ -147,6 +151,7 @@ Se você acidentalmente expôs a chave:
 ### Via Logs do Prezzo
 
 Os logs do servidor mostram cada chamada:
+
 ```
 POST /api/notas-fiscais
 Processando NF: exemplo.pdf
@@ -160,16 +165,19 @@ NF processada com sucesso
 ### Problemas Comuns
 
 #### 1. "Invalid API Key"
+
 - Verifique se a chave está correta no `.env`
 - Certifique-se de que não há espaços extras
 - Verifique se a chave não foi revogada
 
 #### 2. "Rate Limit Exceeded"
+
 - Você excedeu o limite de requisições/minuto
 - Aguarde alguns minutos
 - Considere upgrade do plano
 
 #### 3. "Insufficient Credits"
+
 - Saldo da conta esgotado
 - Adicione créditos no console da Anthropic
 - Configure billing automático

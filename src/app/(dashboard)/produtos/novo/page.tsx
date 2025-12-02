@@ -65,9 +65,7 @@ export default function NovoProdutoPage() {
           </Button>
         </Link>
         <div>
-          <h2 className="text-3xl font-heading font-bold tracking-tight">
-            Novo Tipo de Produto
-          </h2>
+          <h2 className="text-3xl font-heading font-bold tracking-tight">Novo Tipo de Produto</h2>
           <p className="text-muted-foreground">
             Crie um novo tipo de produto e depois adicione suas variações
           </p>
@@ -78,9 +76,7 @@ export default function NovoProdutoPage() {
       <Card>
         <CardHeader>
           <CardTitle>Informações Básicas</CardTitle>
-          <CardDescription>
-            Preencha os dados do tipo de produto
-          </CardDescription>
+          <CardDescription>Preencha os dados do tipo de produto</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -141,9 +137,7 @@ export default function NovoProdutoPage() {
                 <NativeSelect
                   id="ativo"
                   value={formData.ativo ? "true" : "false"}
-                  onChange={(e) =>
-                    setFormData({ ...formData, ativo: e.target.value === "true" })
-                  }
+                  onChange={(e) => setFormData({ ...formData, ativo: e.target.value === "true" })}
                   disabled={loading}
                 >
                   <option value="true">Ativo</option>
@@ -170,8 +164,9 @@ export default function NovoProdutoPage() {
       <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
         <CardContent className="pt-6">
           <p className="text-sm text-blue-900 dark:text-blue-100">
-            <strong>Próximo passo:</strong> Após criar o tipo de produto, você poderá adicionar variações
-            (como diferentes grades, tamanhos, cores) e definir a composição de matérias-primas para cada variação.
+            <strong>Próximo passo:</strong> Após criar o tipo de produto, você poderá adicionar
+            variações (como diferentes grades, tamanhos, cores) e definir a composição de
+            matérias-primas para cada variação.
           </p>
         </CardContent>
       </Card>

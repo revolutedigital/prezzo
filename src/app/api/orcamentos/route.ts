@@ -13,13 +13,17 @@ const orcamentoSchema = z.object({
   observacoes: z.string().optional(),
   desconto: z.number().min(0).default(0),
   descontoTipo: z.enum(["percentual", "valor"]).default("percentual"),
-  itens: z.array(z.object({
-    itemProdutoId: z.string(),
-    descricao: z.string(),
-    quantidade: z.number().positive(),
-    precoUnitario: z.number().positive(),
-    desconto: z.number().min(0).default(0),
-  })).min(1, "Adicione pelo menos um item"),
+  itens: z
+    .array(
+      z.object({
+        itemProdutoId: z.string(),
+        descricao: z.string(),
+        quantidade: z.number().positive(),
+        precoUnitario: z.number().positive(),
+        desconto: z.number().min(0).default(0),
+      })
+    )
+    .min(1, "Adicione pelo menos um item"),
 });
 
 // Gerar número do orçamento
@@ -28,12 +32,12 @@ async function gerarNumeroOrcamento() {
   const ultimoOrcamento = await prisma.orcamento.findFirst({
     where: {
       numero: {
-        startsWith: `${ano}-`
-      }
+        startsWith: `${ano}-`,
+      },
     },
     orderBy: {
-      numero: "desc"
-    }
+      numero: "desc",
+    },
   });
 
   let proximoNumero = 1;
@@ -80,9 +84,16 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Validar campos de ordenação permitidos
-    const allowedSortFields = ['numero', 'clienteNome', 'status', 'valorTotal', 'validade', 'createdAt'];
-    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
-    const validOrder = (order === 'asc' || order === 'desc') ? order : 'desc';
+    const allowedSortFields = [
+      "numero",
+      "clienteNome",
+      "status",
+      "valorTotal",
+      "validade",
+      "createdAt",
+    ];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : "createdAt";
+    const validOrder = order === "asc" || order === "desc" ? order : "desc";
 
     const [orcamentos, total] = await Promise.all([
       prisma.orcamento.findMany({
@@ -96,22 +107,22 @@ export async function GET(request: NextRequest) {
                 include: {
                   variacaoProduto: {
                     include: {
-                      tipoProduto: true
-                    }
-                  }
-                }
-              }
-            }
+                      tipoProduto: true,
+                    },
+                  },
+                },
+              },
+            },
           },
           _count: {
-            select: { itens: true }
-          }
+            select: { itens: true },
+          },
         },
         orderBy: {
-          [validSortBy]: validOrder
-        }
+          [validSortBy]: validOrder,
+        },
       }),
-      prisma.orcamento.count({ where })
+      prisma.orcamento.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -120,15 +131,12 @@ export async function GET(request: NextRequest) {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     console.error("Erro ao buscar orçamentos:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar orçamentos" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar orçamentos" }, { status: 500 });
   }
 }
 
@@ -185,8 +193,8 @@ export async function POST(request: NextRequest) {
         status: "rascunho",
         userId: session.user.id,
         itens: {
-          create: itensComTotal
-        }
+          create: itensComTotal,
+        },
       },
       include: {
         itens: {
@@ -195,30 +203,23 @@ export async function POST(request: NextRequest) {
               include: {
                 variacaoProduto: {
                   include: {
-                    tipoProduto: true
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    tipoProduto: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json(orcamento, { status: 201 });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao criar orçamento:", error);
-    return NextResponse.json(
-      { error: "Erro ao criar orçamento" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao criar orçamento" }, { status: 500 });
   }
 }

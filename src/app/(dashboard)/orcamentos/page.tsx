@@ -21,7 +21,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Plus, Eye, Edit, Trash2, FileText, Home, ArrowUp, ArrowDown, FileDown } from "lucide-react";
+import {
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  FileText,
+  Home,
+  ArrowUp,
+  ArrowDown,
+  FileDown,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -77,6 +87,7 @@ export default function OrcamentosPage() {
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
@@ -87,6 +98,15 @@ export default function OrcamentosPage() {
   const [totalItems, setTotalItems] = useState(0);
   const [exportando, setExportando] = useState(false);
   const ITEMS_PER_PAGE = 20;
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const handleExportExcel = async () => {
     try {
@@ -124,17 +144,17 @@ export default function OrcamentosPage() {
     } else {
       if (currentPage <= 4) {
         for (let i = 1; i <= 5; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 3) {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
       } else {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       }
     }
@@ -145,13 +165,13 @@ export default function OrcamentosPage() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, sortBy, order]);
+  }, [debouncedSearchTerm, statusFilter, sortBy, order]);
 
   const loadOrcamentos = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (searchTerm) params.append("search", searchTerm);
+      if (debouncedSearchTerm) params.append("search", debouncedSearchTerm);
       if (statusFilter) params.append("status", statusFilter);
       params.append("page", currentPage.toString());
       params.append("limit", ITEMS_PER_PAGE.toString());
@@ -170,7 +190,7 @@ export default function OrcamentosPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, statusFilter, currentPage, sortBy, order]);
+  }, [debouncedSearchTerm, statusFilter, currentPage, sortBy, order]);
 
   useEffect(() => {
     loadOrcamentos();
@@ -296,7 +316,7 @@ export default function OrcamentosPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xl sm:text-2xl font-bold">
-              {orcamentos.filter(o => o.status === "rascunho").length}
+              {orcamentos.filter((o) => o.status === "rascunho").length}
             </p>
           </CardContent>
         </Card>
@@ -306,7 +326,7 @@ export default function OrcamentosPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xl sm:text-2xl font-bold">
-              {orcamentos.filter(o => o.status === "enviado").length}
+              {orcamentos.filter((o) => o.status === "enviado").length}
             </p>
           </CardContent>
         </Card>
@@ -316,7 +336,7 @@ export default function OrcamentosPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xl sm:text-2xl font-bold text-success">
-              {orcamentos.filter(o => o.status === "aprovado").length}
+              {orcamentos.filter((o) => o.status === "aprovado").length}
             </p>
           </CardContent>
         </Card>
@@ -328,7 +348,7 @@ export default function OrcamentosPage() {
             <p className="text-lg sm:text-2xl font-bold font-mono">
               {formatCurrency(
                 orcamentos
-                  .filter(o => o.status === "aprovado")
+                  .filter((o) => o.status === "aprovado")
                   .reduce((acc, o) => acc + Number(o.total), 0)
               )}
             </p>
@@ -344,7 +364,9 @@ export default function OrcamentosPage() {
         <CardContent>
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex-1">
-              <Label htmlFor="search" className="text-xs sm:text-sm">Buscar</Label>
+              <Label htmlFor="search" className="text-xs sm:text-sm">
+                Buscar
+              </Label>
               <div className="mt-1.5">
                 <SearchInput
                   id="search"
@@ -358,7 +380,9 @@ export default function OrcamentosPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               <div>
-                <Label htmlFor="status" className="text-xs sm:text-sm">Status</Label>
+                <Label htmlFor="status" className="text-xs sm:text-sm">
+                  Status
+                </Label>
                 <NativeSelect
                   id="status"
                   value={statusFilter}
@@ -374,7 +398,9 @@ export default function OrcamentosPage() {
                 </NativeSelect>
               </div>
               <div>
-                <Label htmlFor="sortBy" className="text-xs sm:text-sm">Ordernar por</Label>
+                <Label htmlFor="sortBy" className="text-xs sm:text-sm">
+                  Ordernar por
+                </Label>
                 <NativeSelect
                   id="sortBy"
                   value={sortBy}
@@ -390,7 +416,9 @@ export default function OrcamentosPage() {
                 </NativeSelect>
               </div>
               <div className="flex flex-col col-span-2 sm:col-span-1">
-                <Label htmlFor="order" className="text-xs sm:text-sm">Ordem</Label>
+                <Label htmlFor="order" className="text-xs sm:text-sm">
+                  Ordem
+                </Label>
                 <Button
                   id="order"
                   variant="outline"
@@ -428,117 +456,115 @@ export default function OrcamentosPage() {
               icon={FileText}
               title="Nenhum orçamento encontrado"
               description={
-                searchTerm || statusFilter
+                debouncedSearchTerm || statusFilter
                   ? "Tente ajustar os filtros para encontrar o que procura"
                   : "Comece criando seu primeiro orçamento"
               }
               action={{
                 label: "Criar Primeiro Orçamento",
-                onClick: () => window.location.href = "/orcamentos/novo",
+                onClick: () => (window.location.href = "/orcamentos/novo"),
                 icon: Plus,
               }}
             />
           ) : (
             <div className="overflow-x-auto -mx-6 sm:mx-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Número</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Contato</TableHead>
-                  <TableHead>Itens</TableHead>
-                  <TableHead>Validade</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orcamentos.map((orcamento) => (
-                  <TableRow key={orcamento.id}>
-                    <TableCell className="font-mono font-medium">
-                      {orcamento.numero}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{orcamento.clienteNome}</p>
-                        {orcamento.clienteCNPJ && (
-                          <p className="text-xs text-muted-foreground font-mono">
-                            {orcamento.clienteCNPJ}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {orcamento.clienteEmail && (
-                          <p className="text-muted-foreground">{orcamento.clienteEmail}</p>
-                        )}
-                        {orcamento.clienteTelefone && (
-                          <p className="text-muted-foreground">{orcamento.clienteTelefone}</p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{orcamento._count.itens} item(ns)</TableCell>
-                    <TableCell>
-                      <div>
-                        <p>{formatDate(orcamento.validade)}</p>
-                        {isExpired(orcamento.validade) && (
-                          <Badge variant="destructive" className="text-xs mt-1">
-                            Expirado
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono font-semibold">
-                      {formatCurrency(Number(orcamento.total))}
-                    </TableCell>
-                    <TableCell>
-                      <NativeSelect
-                        value={orcamento.status}
-                        onChange={(e) => handleStatusChange(orcamento.id, e.target.value)}
-                        className="w-32"
-                        disabled={orcamento.status === "aprovado"}
-                      >
-                        <option value="rascunho">Rascunho</option>
-                        <option value="enviado">Enviado</option>
-                        <option value="aprovado">Aprovado</option>
-                        <option value="rejeitado">Rejeitado</option>
-                      </NativeSelect>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex gap-2 justify-end">
-                        <Link href={`/orcamentos/${orcamento.id}`}>
-                          <Button variant="ghost" size="icon" title="Visualizar">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        {orcamento.status === "rascunho" && (
-                          <Link href={`/orcamentos/${orcamento.id}/editar`}>
-                            <Button variant="ghost" size="icon" title="Editar">
-                              <Edit className="h-4 w-4" />
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Número</TableHead>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Contato</TableHead>
+                    <TableHead>Itens</TableHead>
+                    <TableHead>Validade</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orcamentos.map((orcamento) => (
+                    <TableRow key={orcamento.id}>
+                      <TableCell className="font-mono font-medium">{orcamento.numero}</TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{orcamento.clienteNome}</p>
+                          {orcamento.clienteCNPJ && (
+                            <p className="text-xs text-muted-foreground font-mono">
+                              {orcamento.clienteCNPJ}
+                            </p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {orcamento.clienteEmail && (
+                            <p className="text-muted-foreground">{orcamento.clienteEmail}</p>
+                          )}
+                          {orcamento.clienteTelefone && (
+                            <p className="text-muted-foreground">{orcamento.clienteTelefone}</p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>{orcamento._count.itens} item(ns)</TableCell>
+                      <TableCell>
+                        <div>
+                          <p>{formatDate(orcamento.validade)}</p>
+                          {isExpired(orcamento.validade) && (
+                            <Badge variant="destructive" className="text-xs mt-1">
+                              Expirado
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono font-semibold">
+                        {formatCurrency(Number(orcamento.total))}
+                      </TableCell>
+                      <TableCell>
+                        <NativeSelect
+                          value={orcamento.status}
+                          onChange={(e) => handleStatusChange(orcamento.id, e.target.value)}
+                          className="w-32"
+                          disabled={orcamento.status === "aprovado"}
+                        >
+                          <option value="rascunho">Rascunho</option>
+                          <option value="enviado">Enviado</option>
+                          <option value="aprovado">Aprovado</option>
+                          <option value="rejeitado">Rejeitado</option>
+                        </NativeSelect>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Link href={`/orcamentos/${orcamento.id}`}>
+                            <Button variant="ghost" size="icon" title="Visualizar">
+                              <Eye className="h-4 w-4" />
                             </Button>
                           </Link>
-                        )}
-                        {["rascunho", "rejeitado"].includes(orcamento.status) && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              setSelectedOrcamento(orcamento);
-                              setIsDeleteOpen(true);
-                            }}
-                            title="Excluir"
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          {orcamento.status === "rascunho" && (
+                            <Link href={`/orcamentos/${orcamento.id}/editar`}>
+                              <Button variant="ghost" size="icon" title="Editar">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                          )}
+                          {["rascunho", "rejeitado"].includes(orcamento.status) && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                setSelectedOrcamento(orcamento);
+                                setIsDeleteOpen(true);
+                              }}
+                              title="Excluir"
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           )}
 
@@ -551,9 +577,7 @@ export default function OrcamentosPage() {
                     <PaginationPrevious
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       className={
-                        currentPage === 1
-                          ? "pointer-events-none opacity-50"
-                          : "cursor-pointer"
+                        currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
                       }
                     />
                   </PaginationItem>
@@ -592,7 +616,8 @@ export default function OrcamentosPage() {
           {/* Rodapé com informações */}
           {!loading && orcamentos.length > 0 && (
             <div className="mt-4 text-sm text-muted-foreground text-center">
-              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} orçamento(s)
+              Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}-
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} orçamento(s)
             </div>
           )}
         </CardContent>

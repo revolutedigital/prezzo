@@ -142,21 +142,22 @@ export default function ProdutoDetalhesPage() {
           </Link>
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-3xl font-heading font-bold tracking-tight">
-                {tipoProduto.nome}
-              </h2>
+              <h2 className="text-3xl font-heading font-bold tracking-tight">{tipoProduto.nome}</h2>
               <Badge variant={tipoProduto.ativo ? "success" : "destructive"}>
                 {tipoProduto.ativo ? "Ativo" : "Inativo"}
               </Badge>
             </div>
             {tipoProduto.codigo && (
-              <p className="text-sm text-muted-foreground font-mono mt-1">
-                {tipoProduto.codigo}
-              </p>
+              <p className="text-sm text-muted-foreground font-mono mt-1">{tipoProduto.codigo}</p>
             )}
           </div>
         </div>
-        <Button onClick={() => { setSelectedVariacao(null); setIsVariacaoFormOpen(true); }}>
+        <Button
+          onClick={() => {
+            setSelectedVariacao(null);
+            setIsVariacaoFormOpen(true);
+          }}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Nova Variação
         </Button>
@@ -169,9 +170,7 @@ export default function ProdutoDetalhesPage() {
             <CardTitle className="text-sm font-medium">Categoria</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">
-              {tipoProduto.categoria || "-"}
-            </p>
+            <p className="text-2xl font-bold">{tipoProduto.categoria || "-"}</p>
           </CardContent>
         </Card>
 
@@ -212,7 +211,12 @@ export default function ProdutoDetalhesPage() {
               <p className="text-muted-foreground mb-4">
                 Comece criando a primeira variação deste produto
               </p>
-              <Button onClick={() => { setSelectedVariacao(null); setIsVariacaoFormOpen(true); }}>
+              <Button
+                onClick={() => {
+                  setSelectedVariacao(null);
+                  setIsVariacaoFormOpen(true);
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Nova Variação
               </Button>
@@ -251,13 +255,9 @@ export default function ProdutoDetalhesPage() {
                     </TableCell>
                     <TableCell>
                       {variacao.composicao.length > 0 ? (
-                        <span className="text-sm">
-                          {variacao.composicao.length} item(ns)
-                        </span>
+                        <span className="text-sm">{variacao.composicao.length} item(ns)</span>
                       ) : (
-                        <span className="text-sm text-muted-foreground">
-                          Sem composição
-                        </span>
+                        <span className="text-sm text-muted-foreground">Sem composição</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -299,11 +299,12 @@ export default function ProdutoDetalhesPage() {
 
       {/* Modal de Formulário */}
       <Dialog open={isVariacaoFormOpen} onOpenChange={setIsVariacaoFormOpen}>
-        <DialogContent onClose={() => setIsVariacaoFormOpen(false)} className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent
+          onClose={() => setIsVariacaoFormOpen(false)}
+          className="max-w-4xl max-h-[90vh] overflow-y-auto"
+        >
           <DialogHeader>
-            <DialogTitle>
-              {selectedVariacao ? "Editar Variação" : "Nova Variação"}
-            </DialogTitle>
+            <DialogTitle>{selectedVariacao ? "Editar Variação" : "Nova Variação"}</DialogTitle>
             <DialogDescription>
               {selectedVariacao
                 ? "Atualize as informações da variação"

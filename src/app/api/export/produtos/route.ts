@@ -18,23 +18,16 @@ export async function GET() {
         variacaoProduto: {
           include: {
             tipoProduto: true,
-          },
-        },
-        composicoesMateriasPrimas: {
-          include: {
-            materiaPrima: true,
-          },
-        },
-        composicoesMaoDeObra: {
-          include: {
-            tipoMaoDeObra: true,
-          },
-        },
-      },
-      orderBy: {
-        variacaoProduto: {
-          tipoProduto: {
-            nome: "asc",
+            composicao: {
+              include: {
+                materiaPrima: true,
+              },
+            },
+            composicaoMaoDeObra: {
+              include: {
+                tipoMaoDeObra: true,
+              },
+            },
           },
         },
       },
@@ -43,18 +36,18 @@ export async function GET() {
     // Preparar dados para exportação
     const dadosExportacao = produtos.map((produto) => {
       // Calcular custo de matérias-primas
-      const custoMateriasPrimas = produto.composicoesMateriasPrimas.reduce(
-        (acc, comp) => acc + Number(comp.quantidade) * Number(comp.materiaPrima.precoUnitario),
+      const custoMateriasPrimas = produto.variacaoProduto.composicao.reduce(
+        (acc, comp) => acc + Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario),
         0
       );
 
       // Calcular custo de mão de obra
-      const custoMaoDeObra = produto.composicoesMaoDeObra.reduce((acc, comp) => {
+      const custoMaoDeObra = produto.variacaoProduto.composicaoMaoDeObra.reduce((acc, comp) => {
         const custoBase = Number(comp.tipoMaoDeObra.custoHora);
         const custoMaquina = comp.tipoMaoDeObra.incluiMaquina
           ? Number(comp.tipoMaoDeObra.custoMaquinaHora || 0)
           : 0;
-        const custoTotal = (custoBase + custoMaquina) * Number(comp.tempoHoras);
+        const custoTotal = (custoBase + custoMaquina) * Number(comp.horasNecessarias);
         return acc + custoTotal;
       }, 0);
 
@@ -68,8 +61,6 @@ export async function GET() {
       return {
         "Tipo de Produto": produto.variacaoProduto.tipoProduto.nome,
         Variação: produto.variacaoProduto.nome,
-        Largura: Number(produto.largura),
-        Altura: Number(produto.altura),
         "Custo Matérias-Primas": custoMateriasPrimas.toFixed(2),
         "Custo Mão de Obra": custoMaoDeObra.toFixed(2),
         "Custo Total": custoTotal.toFixed(2),
@@ -87,8 +78,6 @@ export async function GET() {
     const columnWidths = [
       { wch: 25 }, // Tipo de Produto
       { wch: 25 }, // Variação
-      { wch: 10 }, // Largura
-      { wch: 10 }, // Altura
       { wch: 20 }, // Custo Matérias-Primas
       { wch: 20 }, // Custo Mão de Obra
       { wch: 15 }, // Custo Total

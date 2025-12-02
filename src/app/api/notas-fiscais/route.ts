@@ -17,18 +17,12 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File;
 
     if (!file) {
-      return NextResponse.json(
-        { error: "Nenhum arquivo enviado" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
     }
 
     // Validar tipo de arquivo
     if (file.type !== "application/pdf") {
-      return NextResponse.json(
-        { error: "Apenas arquivos PDF são suportados" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Apenas arquivos PDF são suportados" }, { status: 400 });
     }
 
     // Converter arquivo para buffer
@@ -55,10 +49,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Erro ao fazer upload da NF:", error);
-    return NextResponse.json(
-      { error: "Erro ao processar arquivo" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao processar arquivo" }, { status: 500 });
   }
 }
 
@@ -95,19 +86,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(notasFiscais);
   } catch (error) {
     console.error("Erro ao buscar notas fiscais:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar notas fiscais" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar notas fiscais" }, { status: 500 });
   }
 }
 
 // Função para processar em background (idealmente seria uma queue como Bull/BullMQ)
-async function processarNotaFiscalBackground(
-  notaFiscalId: string,
-  buffer: Buffer,
-  userId: string
-) {
+async function processarNotaFiscalBackground(notaFiscalId: string, buffer: Buffer, userId: string) {
   try {
     // Extrair texto do PDF
     const pdfData = await (pdfParse as any).default(buffer);
@@ -122,9 +106,7 @@ async function processarNotaFiscalBackground(
       data: {
         fornecedor: dadosExtraidos.fornecedor,
         numeroNF: dadosExtraidos.numeroNF,
-        dataEmissao: dadosExtraidos.dataEmissao
-          ? new Date(dadosExtraidos.dataEmissao)
-          : null,
+        dataEmissao: dadosExtraidos.dataEmissao ? new Date(dadosExtraidos.dataEmissao) : null,
         valorTotal: dadosExtraidos.valorTotal,
         dadosExtraidos: dadosExtraidos as any,
         itensProcessados: dadosExtraidos.itens.length,
@@ -142,19 +124,14 @@ async function processarNotaFiscalBackground(
       where: { id: notaFiscalId },
       data: {
         status: "erro",
-        erroMensagem:
-          error instanceof Error ? error.message : "Erro desconhecido",
+        erroMensagem: error instanceof Error ? error.message : "Erro desconhecido",
       },
     });
   }
 }
 
 // Função de matching e atualização de custos
-async function matchEAtualizarCustos(
-  notaFiscalId: string,
-  dadosExtraidos: any,
-  userId: string
-) {
+async function matchEAtualizarCustos(notaFiscalId: string, dadosExtraidos: any, userId: string) {
   const itens = dadosExtraidos.itens || [];
   let itensAtualizados = 0;
 
@@ -168,8 +145,7 @@ async function matchEAtualizarCustos(
 
       // Só criar atualização se houver diferença
       if (custoNovo !== custoAnterior) {
-        const percentualMudanca =
-          ((custoNovo - custoAnterior) / custoAnterior) * 100;
+        const percentualMudanca = ((custoNovo - custoAnterior) / custoAnterior) * 100;
 
         // Criar registro de atualização (não confirmado)
         await prisma.atualizacaoCusto.create({

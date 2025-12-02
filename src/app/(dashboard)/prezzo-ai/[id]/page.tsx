@@ -113,9 +113,7 @@ export default function PrezzoAIDetalhesPage() {
   const toggleAll = () => {
     if (!notaFiscal) return;
 
-    const naoConfirmadas = notaFiscal.atualizacoes
-      .filter((a) => !a.confirmado)
-      .map((a) => a.id);
+    const naoConfirmadas = notaFiscal.atualizacoes.filter((a) => !a.confirmado).map((a) => a.id);
 
     if (selectedIds.size === naoConfirmadas.length) {
       setSelectedIds(new Set());
@@ -198,23 +196,16 @@ export default function PrezzoAIDetalhesPage() {
             </Button>
           </Link>
           <div>
-            <h2 className="text-3xl font-heading font-bold tracking-tight">
-              Revisar Atualizações
-            </h2>
+            <h2 className="text-3xl font-heading font-bold tracking-tight">Revisar Atualizações</h2>
             <p className="text-sm text-muted-foreground mt-1">
               {notaFiscal.nomeArquivo} • Processado em {formatDateTime(notaFiscal.createdAt)}
             </p>
           </div>
         </div>
         {atualizacoesNaoConfirmadas.length > 0 && (
-          <Button
-            onClick={handleConfirmar}
-            disabled={selectedIds.size === 0 || confirming}
-          >
+          <Button onClick={handleConfirmar} disabled={selectedIds.size === 0 || confirming}>
             <CheckCircle2 className="mr-2 h-4 w-4" />
-            {confirming
-              ? "Confirmando..."
-              : `Confirmar ${selectedIds.size} Selecionada(s)`}
+            {confirming ? "Confirmando..." : `Confirmar ${selectedIds.size} Selecionada(s)`}
           </Button>
         )}
       </div>
@@ -408,9 +399,7 @@ export default function PrezzoAIDetalhesPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <span
-                          className={`font-mono ${
-                            isPositive ? "text-red-600" : "text-green-600"
-                          }`}
+                          className={`font-mono ${isPositive ? "text-red-600" : "text-green-600"}`}
                         >
                           {isPositive ? "+" : ""}
                           {Number(atualizacao.percentualMudanca).toFixed(2)}%

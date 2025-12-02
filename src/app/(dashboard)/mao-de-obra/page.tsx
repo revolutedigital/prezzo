@@ -112,17 +112,17 @@ export default function MaoDeObraPage() {
     } else {
       if (currentPage <= 4) {
         for (let i = 1; i <= 5; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 3) {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
       } else {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       }
     }
@@ -523,9 +523,7 @@ export default function MaoDeObraPage() {
                     <PaginationPrevious
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       className={
-                        currentPage === 1
-                          ? "pointer-events-none opacity-50"
-                          : "cursor-pointer"
+                        currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
                       }
                     />
                   </PaginationItem>
@@ -564,7 +562,8 @@ export default function MaoDeObraPage() {
           {/* Footer Info */}
           <div className="flex justify-between items-center text-sm text-muted-foreground">
             <span>
-              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s)
+              Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}-
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s)
             </span>
             <Button variant="outline" size="sm" onClick={handleNovo}>
               <Plus className="mr-2 h-4 w-4" />
@@ -578,9 +577,7 @@ export default function MaoDeObraPage() {
           <Card>
             <CardHeader>
               <CardTitle>Tipos de Mão de Obra</CardTitle>
-              <CardDescription>
-                Lista de todos os tipos de mão de obra cadastrados
-              </CardDescription>
+              <CardDescription>Lista de todos os tipos de mão de obra cadastrados</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -600,10 +597,7 @@ export default function MaoDeObraPage() {
                   </TableHeader>
                   <TableBody>
                     {tipos.map((tipo) => (
-                      <TableRow
-                        key={tipo.id}
-                        className="hover:bg-muted/50 transition-colors"
-                      >
+                      <TableRow key={tipo.id} className="hover:bg-muted/50 transition-colors">
                         <TableCell className="font-medium">{tipo.nome}</TableCell>
                         <TableCell>
                           {tipo.codigo || <span className="text-muted-foreground">-</span>}
@@ -619,9 +613,11 @@ export default function MaoDeObraPage() {
                           )}
                         </TableCell>
                         <TableCell className="text-right font-mono text-blue-600">
-                          {tipo.incluiMaquina && tipo.custoMaquinaHora
-                            ? formatCurrency(tipo.custoMaquinaHora)
-                            : <span className="text-muted-foreground">-</span>}
+                          {tipo.incluiMaquina && tipo.custoMaquinaHora ? (
+                            formatCurrency(tipo.custoMaquinaHora)
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-right font-semibold font-mono text-primary">
                           {formatCurrency(tipo.custoTotalHora)}
@@ -638,11 +634,7 @@ export default function MaoDeObraPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleEditar(tipo)}
-                            >
+                            <Button variant="ghost" size="icon" onClick={() => handleEditar(tipo)}>
                               <Pencil className="h-4 w-4" />
                             </Button>
                             <Button
@@ -672,9 +664,7 @@ export default function MaoDeObraPage() {
                     <PaginationPrevious
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       className={
-                        currentPage === 1
-                          ? "pointer-events-none opacity-50"
-                          : "cursor-pointer"
+                        currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
                       }
                     />
                   </PaginationItem>
@@ -713,7 +703,8 @@ export default function MaoDeObraPage() {
           {/* Footer Info */}
           <div className="flex justify-between items-center text-sm text-muted-foreground">
             <span>
-              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s)
+              Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}-
+              {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} tipo(s)
             </span>
           </div>
         </>

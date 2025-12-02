@@ -3,6 +3,7 @@
 ## 🎯 O que foi desenvolvido hoje:
 
 ### ✅ SEMANAS 1-2: Foundation (COMPLETO)
+
 - Next.js 15 + TypeScript
 - Tailwind CSS + shadcn/ui
 - PostgreSQL + Prisma
@@ -12,19 +13,23 @@
 - Dashboard inicial
 
 ### ✅ SEMANA 3: Matérias-Primas (COMPLETO)
+
 **Docker Setup:**
+
 - PostgreSQL porta 8000
 - Next.js porta 8001
 - docker-compose.yml
 - Migrations executadas
 
 **API Routes:**
+
 - GET, POST, PUT, DELETE /api/materias-primas
 - Validação com Zod
 - Filtros (busca, categoria, status)
 - Histórico de custos automático
 
 **Frontend:**
+
 - Página de listagem completa
 - Formulário de cadastro/edição
 - Modals (Dialog)
@@ -32,16 +37,20 @@
 - Badges de status
 
 **Componentes UI Novos:**
+
 - Table, Dialog, Select, Badge
 
 ### ✅ SEMANA 4: Produtos (COMPLETO - 100%)
+
 **API Routes Completas:**
+
 - GET, POST, PUT, DELETE /api/tipos-produto
 - GET, POST, PUT, DELETE /api/variacoes-produto
 - Cálculo automático de custo
 - Suporte a composições
 
 **Frontend:**
+
 - Página de listagem de produtos (cards)
 - Busca em tempo real
 - Formulário de criação/edição de produto
@@ -50,7 +59,9 @@
 - Preview de preço em tempo real
 
 ### ✅ SEMANA 5: Orçamentos Parte 1 (COMPLETO - 100%)
+
 **API Routes:**
+
 - GET, POST /api/orcamentos
 - GET, PUT, DELETE /api/orcamentos/[id]
 - Geração automática de número (YYYY-NNNN)
@@ -58,6 +69,7 @@
 - Cálculo automático de totais
 
 **Frontend:**
+
 - Página de listagem com estatísticas
 - Filtros (busca e status)
 - Formulário de criação completo
@@ -70,13 +82,16 @@
 - Validação de permissões por status
 
 ### ✅ SEMANA 6: PDF + Dashboard (COMPLETO - 100% - MVP FINALIZADO!)
+
 **Sistema de PDF:**
+
 - Template profissional com @react-pdf/renderer
 - API de geração de PDF
 - Download automático
 - Formatação brasileira (R$, datas)
 
 **Dashboard Completo:**
+
 - API de estatísticas (GET /api/dashboard/stats)
 - 6 Cards de KPIs (matérias-primas, produtos, orçamentos, conversão, valor total, ticket médio)
 - Gráfico de linha (orçamentos por mês)
@@ -181,6 +196,7 @@ prezzo/
 ## 🎨 Componentes UI Implementados
 
 ### Básicos:
+
 - [x] Button (variants: default, destructive, outline, ghost)
 - [x] Input
 - [x] Label
@@ -188,6 +204,7 @@ prezzo/
 - [x] Card (Header, Title, Description, Content, Footer)
 
 ### Avançados:
+
 - [x] Table (Header, Body, Row, Cell)
 - [x] Dialog (Modal customizado)
 - [x] Badge (variants: default, success, destructive, warning)
@@ -197,10 +214,12 @@ prezzo/
 ## 🔌 API Routes Implementadas
 
 ### Autenticação:
+
 - [x] POST /api/auth/register
 - [x] POST /api/auth/[nextauth]
 
 ### Matérias-Primas:
+
 - [x] GET /api/materias-primas (com filtros)
 - [x] POST /api/materias-primas
 - [x] GET /api/materias-primas/[id]
@@ -208,6 +227,7 @@ prezzo/
 - [x] DELETE /api/materias-primas/[id]
 
 ### Tipos de Produto:
+
 - [x] GET /api/tipos-produto
 - [x] POST /api/tipos-produto
 - [x] GET /api/tipos-produto/[id]
@@ -215,6 +235,7 @@ prezzo/
 - [x] DELETE /api/tipos-produto/[id]
 
 ### Variações de Produto:
+
 - [x] GET /api/variacoes-produto
 - [x] POST /api/variacoes-produto (com composição)
 - [x] GET /api/variacoes-produto/[id]
@@ -222,6 +243,7 @@ prezzo/
 - [x] DELETE /api/variacoes-produto/[id]
 
 ### Orçamentos:
+
 - [x] GET /api/orcamentos
 - [x] POST /api/orcamentos
 - [x] GET /api/orcamentos/[id]
@@ -235,6 +257,7 @@ prezzo/
 ## 📊 Estatísticas do Projeto
 
 ### Linhas de Código:
+
 - API Routes: ~2.000 linhas
 - Componentes UI: ~900 linhas
 - Páginas: ~2.200 linhas
@@ -242,12 +265,14 @@ prezzo/
 - **Total: ~5.500 linhas de código**
 
 ### Arquivos Criados:
+
 - TypeScript/React: 43 arquivos
 - Configuração: 8 arquivos
 - Documentação: 7 arquivos
 - **Total: 58 arquivos**
 
 ### Funcionalidades:
+
 - 20 endpoints de API
 - 9 componentes UI
 - 12 páginas completas
@@ -266,6 +291,7 @@ prezzo/
 ## 🚀 Como Rodar o Projeto
 
 ### Opção 1: Docker (Recomendado)
+
 ```bash
 # 1. Iniciar PostgreSQL
 docker-compose up -d postgres
@@ -277,6 +303,7 @@ npm run dev
 ```
 
 ### Opção 2: Tudo Local
+
 ```bash
 # 1. Instalar dependências
 npm install
@@ -297,6 +324,7 @@ npm run dev
 ## 🎯 Progresso Geral do MVP
 
 ### Fase 1 - MVP (6 semanas):
+
 - ✅ Semanas 1-2: Foundation (100%)
 - ✅ Semana 3: Matérias-Primas (100%)
 - ✅ Semana 4: Produtos e Variações (100%)
@@ -319,6 +347,7 @@ npm run dev
 ## 📋 Próximos Passos
 
 ### Semana 6 (Orçamentos - Parte 2 + Dashboard):
+
 1. **Geração de PDF:**
    - Template profissional
    - Logo e personalização
@@ -346,6 +375,7 @@ npm run dev
 ## 💡 Funcionalidades Implementadas
 
 ### Autenticação:
+
 - [x] Registro de usuários
 - [x] Login/Logout
 - [x] Proteção de rotas
@@ -354,6 +384,7 @@ npm run dev
 - [x] Tipos TypeScript
 
 ### Matérias-Primas:
+
 - [x] Listar (com filtros)
 - [x] Criar
 - [x] Editar
@@ -363,6 +394,7 @@ npm run dev
 - [x] Indicador de uso em produtos
 
 ### Produtos:
+
 - [x] Listar tipos de produto
 - [x] API completa (tipos e variações)
 - [x] Cálculo automático de custo
@@ -373,6 +405,7 @@ npm run dev
 - [x] Preview de preços em tempo real
 
 ### Orçamentos:
+
 - [x] CRUD completo
 - [x] Listagem com estatísticas
 - [x] Filtros e busca
@@ -389,6 +422,7 @@ npm run dev
 - [ ] Envio por email/WhatsApp
 
 ### Interface:
+
 - [x] Dark mode funcional
 - [x] Layout responsivo
 - [x] Sidebar com navegação
@@ -414,6 +448,7 @@ npm run dev
 ## 📦 Tecnologias Utilizadas
 
 ### Frontend:
+
 - Next.js 15 (App Router)
 - React 19
 - TypeScript
@@ -421,6 +456,7 @@ npm run dev
 - shadcn/ui
 
 ### Backend:
+
 - Next.js API Routes
 - Prisma ORM
 - PostgreSQL
@@ -428,10 +464,12 @@ npm run dev
 - Zod (validação)
 
 ### DevOps:
+
 - Docker
 - docker-compose
 
 ### Libs Auxiliares:
+
 - bcryptjs
 - date-fns
 - lucide-react
@@ -453,6 +491,7 @@ npm run dev
 ## ✅ Testes Realizados
 
 ### Funcionalidades Testadas:
+
 - [x] Login/Registro
 - [x] Dark mode
 - [x] Navegação entre páginas
@@ -464,6 +503,7 @@ npm run dev
 - [x] PostgreSQL via Docker
 
 ### Servidor:
+
 - [x] Next.js rodando em 8001
 - [x] PostgreSQL rodando em 8000
 - [x] Sem erros de compilação
@@ -476,6 +516,7 @@ npm run dev
 **Status Atual:** Sistema funcional com 83.3% do MVP completo
 
 **Pronto para uso:**
+
 - ✅ Autenticação (100%)
 - ✅ Matérias-Primas (100%)
 - ✅ Produtos e Variações (100%)
@@ -484,6 +525,7 @@ npm run dev
 - ⏳ Dashboard Avançado (0%)
 
 **Sistema completamente funcional para:**
+
 - 📦 Gerenciar matérias-primas
 - 🏭 Criar produtos com composições
 - 💰 Calcular custos e preços automaticamente
@@ -492,6 +534,7 @@ npm run dev
 - 🔍 Buscar e filtrar dados
 
 **Próxima sessão:**
+
 - Semana 6: PDF, Templates, Envios e Dashboard
 
 ---

@@ -27,11 +27,13 @@ docker-compose up -d
 ```
 
 Pronto! O sistema já está rodando com:
+
 - PostgreSQL na porta **8000**
 - Next.js na porta **8001**
 - Migrations executadas automaticamente
 
 **Comandos úteis:**
+
 ```bash
 # Ver logs
 docker-compose logs -f
@@ -52,11 +54,13 @@ docker-compose exec app npx prisma studio
 
 1. Clone o repositório
 2. Instale as dependências:
+
 ```bash
 npm install
 ```
 
 3. Configure as variáveis de ambiente:
+
 ```bash
 cp .env.example .env
 ```
@@ -64,11 +68,13 @@ cp .env.example .env
 Edite o arquivo `.env` com suas credenciais do PostgreSQL.
 
 4. Execute as migrations do Prisma:
+
 ```bash
 npx prisma migrate dev --name init
 ```
 
 5. Inicie o servidor de desenvolvimento:
+
 ```bash
 npm run dev
 ```
@@ -80,6 +86,7 @@ Acesse [http://localhost:3000](http://localhost:3000)
 ### Setup do PostgreSQL
 
 **Opção 1: PostgreSQL Local**
+
 ```bash
 # macOS (Homebrew)
 brew install postgresql@15
@@ -90,12 +97,14 @@ createdb prezzo
 ```
 
 **Opção 2: Docker**
+
 ```bash
 docker run --name prezzo-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:15
 docker exec -it prezzo-postgres createdb -U postgres prezzo
 ```
 
 **Opção 3: Serviços na Nuvem**
+
 - [Neon](https://neon.tech) (recomendado - free tier generoso)
 - [Supabase](https://supabase.com)
 - [Railway](https://railway.app)
@@ -143,6 +152,7 @@ prezzo/
 ## 🎯 Status do Projeto
 
 ### ✅ Fase 1: MVP - Core do Sistema (COMPLETA)
+
 - [x] Setup inicial do projeto
 - [x] Configuração do banco de dados
 - [x] Gestão de Matérias-Primas (CRUD completo)
@@ -152,6 +162,7 @@ prezzo/
 - [x] Dashboard com KPIs e gráficos
 
 ### ✅ Fase 2: Prezzo AI (COMPLETA)
+
 - [x] Integração com Claude 3.5 Sonnet
 - [x] Upload e parsing de Notas Fiscais (PDF)
 - [x] Extração automática de dados com IA
@@ -161,6 +172,7 @@ prezzo/
 - [x] Recálculo automático de preços
 
 ### ✅ Fase 3: Analytics e Relatórios (COMPLETA)
+
 - [x] Widget de alertas no dashboard
 - [x] Relatório de margens por produto
 - [x] Relatório de evolução de custos

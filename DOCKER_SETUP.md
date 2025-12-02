@@ -44,18 +44,23 @@ docker-compose down -v
 ## 📂 Arquivos Docker
 
 ### docker-compose.yml
+
 Define 3 serviços:
+
 1. **postgres** - PostgreSQL 15 na porta 8000
 2. **app** - Next.js em modo produção (porta 8001)
 3. **dev** - Next.js em modo desenvolvimento com hot reload
 
 ### Dockerfile
+
 Build multi-stage para produção:
+
 - Stage 1: Instala dependências
 - Stage 2: Build da aplicação
 - Stage 3: Imagem final otimizada
 
 ### Dockerfile.dev
+
 Build simples para desenvolvimento com hot reload.
 
 ---
@@ -112,12 +117,14 @@ docker-compose up -d --build app
 ## 🔐 Credenciais Padrão
 
 **PostgreSQL:**
+
 - Host: `localhost:8000`
 - Usuário: `prezzo`
 - Senha: `prezzo123`
 - Database: `prezzo`
 
 **Connection String:**
+
 ```
 postgresql://prezzo:prezzo123@localhost:8000/prezzo?schema=public
 ```
@@ -129,6 +136,7 @@ postgresql://prezzo:prezzo123@localhost:8000/prezzo?schema=public
 ## 🎛️ Variáveis de Ambiente
 
 ### .env (Desenvolvimento Local)
+
 ```env
 DATABASE_URL="postgresql://prezzo:prezzo123@localhost:8000/prezzo?schema=public"
 NEXTAUTH_URL="http://localhost:8001"
@@ -136,6 +144,7 @@ NEXTAUTH_SECRET="seu-secret-aqui"
 ```
 
 ### docker-compose.yml (Containers)
+
 As variáveis são definidas diretamente no `docker-compose.yml`.
 
 ---
@@ -151,6 +160,7 @@ docker stats prezzo-postgres prezzo-app
 ```
 
 **Saída esperada:**
+
 ```
 NAME              STATUS                    PORTS
 prezzo-postgres   Up (healthy)             0.0.0.0:8000->5432/tcp
@@ -162,6 +172,7 @@ prezzo-app        Up                       0.0.0.0:8001->3000/tcp
 ## 🐛 Troubleshooting
 
 ### Porta já em uso
+
 ```bash
 # Verificar o que está usando a porta
 lsof -i :8000
@@ -172,6 +183,7 @@ kill -9 <PID>
 ```
 
 ### Container não inicia
+
 ```bash
 # Ver logs de erro
 docker-compose logs
@@ -183,6 +195,7 @@ docker-compose up -d
 ```
 
 ### Banco não conecta
+
 ```bash
 # Verificar se PostgreSQL está healthy
 docker-compose ps
@@ -195,6 +208,7 @@ docker exec -it prezzo-postgres pg_isready -U prezzo
 ```
 
 ### Migrations falharam
+
 ```bash
 # Entrar no container
 docker exec -it prezzo-app sh
@@ -211,6 +225,7 @@ npx prisma migrate status
 ## 🔄 Workflow de Desenvolvimento
 
 ### Opção 1: Híbrido (Recomendado)
+
 - PostgreSQL no Docker
 - Next.js rodando localmente
 
@@ -223,11 +238,13 @@ npm run dev
 ```
 
 **Vantagens:**
+
 - Hot reload rápido
 - Fácil debugging
 - Menor uso de recursos
 
 ### Opção 2: Tudo no Docker
+
 - Tudo em containers
 
 ```bash
@@ -235,6 +252,7 @@ docker-compose --profile dev up -d
 ```
 
 **Vantagens:**
+
 - Ambiente isolado
 - Fácil compartilhar
 - Evita "funciona na minha máquina"

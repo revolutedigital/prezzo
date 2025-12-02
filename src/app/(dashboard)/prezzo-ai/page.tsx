@@ -125,9 +125,7 @@ export default function PrezzoAIPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-heading font-bold tracking-tight">
-            Prezzo AI
-          </h2>
+          <h2 className="text-3xl font-heading font-bold tracking-tight">Prezzo AI</h2>
           <p className="text-muted-foreground">
             Atualize custos automaticamente com inteligência artificial
           </p>
@@ -209,9 +207,7 @@ export default function PrezzoAIPage() {
       <Card>
         <CardHeader>
           <CardTitle>Notas Fiscais Processadas</CardTitle>
-          <CardDescription>
-            Histórico de processamento de notas fiscais
-          </CardDescription>
+          <CardDescription>Histórico de processamento de notas fiscais</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (

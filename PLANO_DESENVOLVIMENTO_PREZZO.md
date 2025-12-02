@@ -1,4 +1,5 @@
 # 🎯 Plano de Desenvolvimento - PREZZO
+
 ## Sistema Inteligente de Precificação
 
 ---
@@ -10,6 +11,7 @@
 **Posicionamento:** Software de precificação para indústrias e empresas que trabalham com produtos compostos e múltiplas variações
 
 ### Conceito Visual:
+
 - **Cores:** Azul profissional + Verde (crescimento/lucro) + Branco
 - **Estilo:** Moderno, clean, profissional
 - **Tipografia:** Sans-serif moderna (Inter ou Manrope)
@@ -20,6 +22,7 @@
 ## 📋 Visão Geral do Prezzo
 
 ### Problema que resolve:
+
 Empresas que fabricam produtos com múltiplas variações (como filtros de alumínio com diferentes tipos de grade) enfrentam dificuldade para:
 
 - Calcular custos precisos considerando todas as matérias-primas
@@ -28,6 +31,7 @@ Empresas que fabricam produtos com múltiplas variações (como filtros de alum�
 - Rastrear mudanças de custos ao longo do tempo
 
 ### Solução - Prezzo:
+
 Sistema que automatiza o cálculo de custos baseado na composição de produtos, atualiza preços via IA através de notas fiscais e gera orçamentos profissionais em segundos.
 
 ---
@@ -37,6 +41,7 @@ Sistema que automatiza o cálculo de custos baseado na composição de produtos,
 ### 1. Gestão de Matérias-Primas
 
 **O que faz:**
+
 - Cadastro completo de todos os materiais/insumos
 - Definição de custo unitário e unidade de medida
 - Histórico de preços com gráfico de evolução
@@ -44,6 +49,7 @@ Sistema que automatiza o cálculo de custos baseado na composição de produtos,
 - Alertas de variação de preço
 
 **Telas:**
+
 - Lista de matérias-primas (tabela com filtros)
 - Cadastro/edição de material
 - Detalhes do material (com histórico)
@@ -53,6 +59,7 @@ Sistema que automatiza o cálculo de custos baseado na composição de produtos,
 ### 1.5. Gestão de Mão de Obra (NOVA FUNCIONALIDADE)
 
 **O que faz:**
+
 - Cadastro de tipos de mão de obra (Soldador, Montador, Pintor, etc.)
 - Definição de custo por hora de trabalho
 - Opção de incluir custo de máquina/equipamento
@@ -61,6 +68,7 @@ Sistema que automatiza o cálculo de custos baseado na composição de produtos,
 - Interface configurável para ajustar valores
 
 **Exemplo prático:**
+
 ```
 Tipo: Soldador
 Custo/hora: R$ 45,00
@@ -75,6 +83,7 @@ Custo total/hora: R$ 35,00
 ```
 
 **Telas:**
+
 - Lista de tipos de mão de obra (tabela com filtros)
 - Cadastro/edição de tipo de mão de obra
 - Configuração de custos (com/sem máquina)
@@ -85,6 +94,7 @@ Custo total/hora: R$ 35,00
 ### 2. Cadastro de Produtos e Variações
 
 **O que faz:**
+
 - Criação de tipos de produto (ex: Filtro de Alumínio)
 - Definição de variações (ex: com grade de ferro, cobre, inox)
 - Composição: lista de matérias-primas + quantidades
@@ -94,6 +104,7 @@ Custo total/hora: R$ 35,00
 - Preço de venda sugerido
 
 **Exemplo prático:**
+
 ```
 Produto: Filtro de Alumínio - Grade de Ferro
 
@@ -113,6 +124,7 @@ Subtotal Mão de Obra: R$ 175
 ```
 
 **Telas:**
+
 - Lista de tipos de produto
 - Cadastro de tipo de produto
 - Gestão de variações
@@ -125,6 +137,7 @@ Subtotal Mão de Obra: R$ 175
 ### 3. Sistema de Orçamentos
 
 **O que faz:**
+
 - Criação rápida de orçamentos
 - Busca inteligente de produtos
 - Seleção de variações específicas
@@ -136,6 +149,7 @@ Subtotal Mão de Obra: R$ 175
 - Envio por email/WhatsApp
 
 **Telas:**
+
 - Lista de orçamentos (com status)
 - Criar novo orçamento
 - Editor de orçamento (adicionar produtos)
@@ -147,6 +161,7 @@ Subtotal Mão de Obra: R$ 175
 ### 4. Prezzo AI - Atualização Automática de Custos
 
 **O diferencial do sistema:**
+
 - Upload de notas fiscais (PDF ou XML)
 - IA extrai automaticamente: fornecedor, produtos, valores, quantidades
 - Sistema faz matching com matérias-primas cadastradas
@@ -155,6 +170,7 @@ Subtotal Mão de Obra: R$ 175
 - Histórico completo de atualizações
 
 **Fluxo:**
+
 1. Você recebe NF do fornecedor
 2. Upload no Prezzo
 3. IA processa e extrai dados
@@ -164,6 +180,7 @@ Subtotal Mão de Obra: R$ 175
 7. Alerta se margem ficou abaixo do esperado
 
 **Telas:**
+
 - Upload de NF (drag & drop)
 - Preview da extração da IA
 - Confirmação de atualizações
@@ -174,6 +191,7 @@ Subtotal Mão de Obra: R$ 175
 ### 5. Dashboards e Relatórios
 
 **O que mostra:**
+
 - Evolução de custos (gráficos)
 - Margem média por produto
 - Produtos mais vendidos
@@ -182,6 +200,7 @@ Subtotal Mão de Obra: R$ 175
 - Resumo de orçamentos (aprovados, pendentes, perdidos)
 
 **Telas:**
+
 - Dashboard principal (KPIs)
 - Relatório de margens
 - Relatório de evolução de custos
@@ -194,6 +213,7 @@ Subtotal Mão de Obra: R$ 175
 ### Stack Tecnológico
 
 **Frontend:**
+
 - Next.js 14 (App Router)
 - TypeScript
 - Tailwind CSS
@@ -203,22 +223,26 @@ Subtotal Mão de Obra: R$ 175
 - TanStack Table (tabelas)
 
 **Backend:**
+
 - Next.js API Routes
 - Prisma ORM
 - PostgreSQL (Supabase)
 - NextAuth (autenticação)
 
 **IA/Automação:**
+
 - Anthropic Claude API (extração de NF)
 - Vercel AI SDK
 - PDF.js (parsing de PDF)
 
 **Infraestrutura:**
+
 - Vercel (deploy e hosting)
 - Supabase (PostgreSQL + Storage)
 - Cloudflare R2 ou S3 (armazenamento de NFs)
 
 **Features Extras:**
+
 - PWA (funciona offline)
 - Dark mode
 - Multi-idioma (PT/EN/ES)
@@ -443,7 +467,9 @@ model User {
 ### 🚀 FASE 1: MVP - Core do Sistema (6 semanas)
 
 #### Semana 1-2: Foundation
+
 **Setup e Infraestrutura**
+
 - [ ] Criar projeto Next.js + TypeScript
 - [ ] Configurar Tailwind + shadcn/ui
 - [ ] Setup PostgreSQL (Supabase)
@@ -456,6 +482,7 @@ model User {
 **Deliverable:** Aplicação rodando com login funcional
 
 #### Semana 3: Gestão de Matérias-Primas
+
 - [ ] CRUD completo de matérias-primas
 - [ ] Tabela com filtros e busca
 - [ ] Formulário de cadastro/edição
@@ -466,6 +493,7 @@ model User {
 **Deliverable:** Módulo de matérias-primas 100% funcional
 
 #### Semana 4: Sistema de Produtos e Variações
+
 - [ ] CRUD de tipos de produto
 - [ ] CRUD de variações
 - [ ] Interface de composição (arrastar matérias-primas)
@@ -477,6 +505,7 @@ model User {
 **Deliverable:** Sistema de produtos compostos funcionando
 
 #### Semana 5: Sistema de Orçamentos (Parte 1)
+
 - [ ] CRUD de orçamentos
 - [ ] Busca e seleção de produtos
 - [ ] Adicionar itens ao orçamento
@@ -488,6 +517,7 @@ model User {
 **Deliverable:** Criação e edição de orçamentos funcionando
 
 #### Semana 6: Orçamentos (Parte 2) + Polimento
+
 - [ ] Geração de PDF profissional
 - [ ] Templates customizáveis
 - [ ] Preview do orçamento
@@ -503,6 +533,7 @@ model User {
 ### 🤖 FASE 2: Prezzo AI - Automação (3 semanas)
 
 #### Semana 7-8: Integração com IA
+
 - [ ] Setup Claude API
 - [ ] Upload de arquivos (PDF/XML)
 - [ ] Parser de PDF (extração de texto)
@@ -512,8 +543,9 @@ model User {
 - [ ] Testes com NFs reais
 
 **Deliverable:** Upload e extração de NF funcionando
-          
+
 #### Semana 9: Automação de Custos
+
 - [ ] Atualização automática de custos
 - [ ] Cálculo de impacto nos produtos
 - [ ] Sistema de alertas
@@ -529,6 +561,7 @@ model User {
 ### 📊 FASE 3: Analytics e Melhorias (3 semanas)
 
 #### Semana 10-11: Dashboards e Relatórios
+
 - [ ] Dashboard principal com métricas
 - [ ] Gráficos de evolução de custos
 - [ ] Relatório de margens por produto
@@ -540,6 +573,7 @@ model User {
 **Deliverable:** Sistema completo de analytics
 
 #### Semana 12: Polimento e Lançamento
+
 - [ ] Testes finais end-to-end
 - [ ] Ajustes de UX/UI
 - [ ] Otimização de performance
@@ -557,14 +591,17 @@ model User {
 ### Desenvolvimento
 
 **Fase 1 - MVP (6 semanas):**
+
 - Horas estimadas: 80-100h
 - Valor: R$ 22.000 - R$ 30.000
 
 **Fase 2 - IA (3 semanas):**
+
 - Horas estimadas: 40-50h
 - Valor: R$ 11.000 - R$ 15.000
 
 **Fase 3 - Analytics (3 semanas):**
+
 - Horas estimadas: 40-50h
 - Valor: R$ 11.000 - R$ 15.000
 
@@ -573,11 +610,13 @@ model User {
 ### Custos Mensais de Operação
 
 **Infraestrutura:**
+
 - Vercel Pro: R$ 100/mês
 - Supabase: R$ 0 (free tier) ou R$ 150 (pro)
 - Domínio prezzo.app/.com.br: R$ 50/ano
 
 **IA:**
+
 - Claude API: ~R$ 100-300/mês (depende do volume)
   - Estimativa: 100 NFs/mês = ~R$ 150
 
@@ -586,17 +625,20 @@ model User {
 ### ROI Estimado
 
 **Modelo de Negócio Sugerido:**
+
 - Plano Starter: R$ 197/mês (1 usuário, 50 orçamentos/mês)
 - Plano Professional: R$ 397/mês (3 usuários, orçamentos ilimitados)
 - Plano Enterprise: R$ 797/mês (usuários ilimitados, white label)
 
 **Break-even:**
+
 - Com 10 clientes no plano Starter: R$ 1.970/mês
 - Custos: R$ 550/mês
 - Lucro líquido: R$ 1.420/mês
 - ROI em: 31-42 meses
 
 **Com 50 clientes (mix):**
+
 - Receita: ~R$ 15.000/mês
 - Custos: ~R$ 1.000/mês (escala)
 - Lucro: ~R$ 14.000/mês
@@ -609,10 +651,12 @@ model User {
 ### Identidade Visual
 
 **Logo:**
+
 - Símbolo: P estilizado com símbolo de cifrão integrado
 - Versões: completa, símbolo, monocromática
 
 **Paleta de Cores:**
+
 ```
 Primária:
 - Azul Principal: #2563EB (confiança, tecnologia)
@@ -631,6 +675,7 @@ Neutras:
 ```
 
 **Tipografia:**
+
 - Headings: Manrope Bold
 - Body: Inter Regular/Medium
 - Números: JetBrains Mono (dados, valores)
@@ -638,22 +683,26 @@ Neutras:
 ### UI Components
 
 **Botões:**
+
 - Primário: Azul sólido
 - Secundário: Azul outline
 - Destrutivo: Vermelho
 - Tamanhos: sm, md, lg
 
 **Cards:**
+
 - Border radius: 12px
 - Shadow: sutil
 - Hover: elevação suave
 
 **Inputs:**
+
 - Border: cinza claro
 - Focus: azul principal
 - Erro: vermelho
 
 **Tabelas:**
+
 - Header: fundo cinza claro
 - Hover rows: destaque suave
 - Zebra striping: opcional
@@ -663,6 +712,7 @@ Neutras:
 ## 📱 Wireframes Principais - Prezzo
 
 ### 1. Dashboard
+
 ```
 ┌─────────────────────────────────────────┐
 │ [Logo Prezzo]     [Busca]    [👤 User] │
@@ -684,6 +734,7 @@ Neutras:
 ```
 
 ### 2. Matérias-Primas
+
 ```
 ┌─────────────────────────────────────────┐
 │ Matérias-Primas                         │
@@ -701,6 +752,7 @@ Neutras:
 ```
 
 ### 3. Criar Produto
+
 ```
 ┌─────────────────────────────────────────┐
 │ Novo Produto                            │
@@ -726,6 +778,7 @@ Neutras:
 ```
 
 ### 4. Novo Orçamento
+
 ```
 ┌─────────────────────────────────────────┐
 │ Novo Orçamento #2024-127                │
@@ -750,6 +803,7 @@ Neutras:
 ```
 
 ### 5. Prezzo AI - Upload NF
+
 ```
 ┌─────────────────────────────────────────┐
 │ Prezzo AI - Atualizar Custos            │
@@ -779,12 +833,14 @@ Neutras:
 ### Pré-Lançamento (2 semanas antes)
 
 **Marketing:**
+
 - Landing page com early access
 - Vídeo demo do produto
 - Posts no LinkedIn sobre o problema
 - Email marketing para base atual
 
 **Early Access:**
+
 - 10-20 beta testers
 - Feedback intensivo
 - Ajustes finais
@@ -792,17 +848,20 @@ Neutras:
 ### Lançamento
 
 **Dia 1:**
+
 - Post anúncio no LinkedIn
 - Email para toda base
 - Stories no Instagram
 - Vídeo no YouTube
 
 **Primeira Semana:**
+
 - Webinar demonstrativo
 - Lives tirando dúvidas
 - Oferta de lançamento: 50% off primeiro mês
 
 **Primeiro Mês:**
+
 - Conteúdo educativo semanal
 - Cases de sucesso
 - Depoimentos de clientes
@@ -813,6 +872,7 @@ Neutras:
 ## 📋 Checklist de Lançamento
 
 ### Técnico
+
 - [ ] Todos os módulos testados
 - [ ] Performance otimizada
 - [ ] Responsivo mobile
@@ -823,6 +883,7 @@ Neutras:
 - [ ] DNS apontando corretamente
 
 ### Produto
+
 - [ ] Documentação completa
 - [ ] Vídeos tutoriais
 - [ ] FAQ criado
@@ -831,6 +892,7 @@ Neutras:
 - [ ] Templates de orçamento prontos
 
 ### Marketing
+
 - [ ] Landing page no ar
 - [ ] Página de preços
 - [ ] Blog com 3 posts
@@ -839,6 +901,7 @@ Neutras:
 - [ ] Materiais gráficos prontos
 
 ### Legal
+
 - [ ] Termos de uso
 - [ ] Política de privacidade
 - [ ] LGPD compliance
@@ -878,6 +941,7 @@ Neutras:
 ## 💡 Funcionalidades Futuras (Pós-MVP)
 
 ### Versão 1.5 (PRÓXIMA FASE - GESTÃO DE MÃO DE OBRA):
+
 - ✅ **ADICIONADO:** Cadastro de tipos de mão de obra
 - ✅ **ADICIONADO:** Configuração de custos por hora
 - ✅ **ADICIONADO:** Opção de incluir custo de máquina/equipamento
@@ -887,11 +951,13 @@ Neutras:
 - ✅ **ADICIONADO:** Histórico de reajustes de mão de obra
 
 **Cronograma Estimado:**
+
 - Semana 13: Schema e backend (modelos, API routes)
 - Semana 14: Frontend (CRUD de mão de obra, interface de composição)
 - Semana 15: Integração e testes (recálculo de produtos, relatórios)
 
 ### Versão 2.0:
+
 - App mobile (React Native)
 - Integração com ERPs
 - API para terceiros
@@ -902,6 +968,7 @@ Neutras:
 - White label para revendedores
 
 ### Versão 3.0:
+
 - Marketplace de templates
 - Previsão de custos com IA
 - Análise de concorrência

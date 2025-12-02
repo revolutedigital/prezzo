@@ -8,10 +8,7 @@ export async function GET() {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Não autorizado" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const itensProduto = await prisma.itemProduto.findMany({
@@ -42,25 +39,19 @@ export async function GET() {
       const variacaoProduto = item.variacaoProduto;
 
       // Calcular custo de matérias-primas
-      const custoMateriasPrimas = variacaoProduto.composicao.reduce(
-        (total, comp) => {
-          const custo = comp.materiaPrima.custoUnitario.toNumber();
-          const quantidade = comp.quantidade.toNumber();
-          return total + custo * quantidade;
-        },
-        0
-      );
+      const custoMateriasPrimas = variacaoProduto.composicao.reduce((total, comp) => {
+        const custo = comp.materiaPrima.custoUnitario.toNumber();
+        const quantidade = comp.quantidade.toNumber();
+        return total + custo * quantidade;
+      }, 0);
 
       // Calcular custo de mão de obra
-      const custoMaoDeObra = variacaoProduto.composicaoMaoDeObra.reduce(
-        (total, comp) => {
-          const custoHora = comp.tipoMaoDeObra.custoHora.toNumber();
-          const custoMaquina = comp.tipoMaoDeObra.custoMaquinaHora?.toNumber() || 0;
-          const horas = comp.horasNecessarias.toNumber();
-          return total + (custoHora + custoMaquina) * horas;
-        },
-        0
-      );
+      const custoMaoDeObra = variacaoProduto.composicaoMaoDeObra.reduce((total, comp) => {
+        const custoHora = comp.tipoMaoDeObra.custoHora.toNumber();
+        const custoMaquina = comp.tipoMaoDeObra.custoMaquinaHora?.toNumber() || 0;
+        const horas = comp.horasNecessarias.toNumber();
+        return total + (custoHora + custoMaquina) * horas;
+      }, 0);
 
       const custoTotal = custoMateriasPrimas + custoMaoDeObra;
       const margemPadrao = variacaoProduto.margemPadrao.toNumber();
@@ -87,9 +78,6 @@ export async function GET() {
     return NextResponse.json(itensComDetalhes);
   } catch (error) {
     console.error("Erro ao buscar itens de produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar itens de produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar itens de produto" }, { status: 500 });
   }
 }

@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, Printer, Loader2 } from "lucide-react";
 
@@ -58,21 +53,11 @@ export function PDFPreviewDialog({
           <div className="flex items-center justify-between">
             <DialogTitle>{title}</DialogTitle>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handlePrint}
-                className="gap-2"
-              >
+              <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
                 <Printer className="h-4 w-4" />
                 <span className="hidden sm:inline">Imprimir</span>
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownload}
-                className="gap-2"
-              >
+              <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2">
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline">Baixar</span>
               </Button>

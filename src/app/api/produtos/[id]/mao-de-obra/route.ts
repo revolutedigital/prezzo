@@ -12,10 +12,7 @@ const composicaoMaoDeObraSchema = z.object({
 });
 
 // GET - Listar composição de mão de obra de um produto
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -29,10 +26,7 @@ export async function GET(
     });
 
     if (!produto) {
-      return NextResponse.json(
-        { error: "Produto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
     const composicao = await prisma.composicaoMaoDeObra.findMany({
@@ -79,10 +73,7 @@ export async function GET(
 }
 
 // POST - Adicionar mão de obra à composição do produto
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -99,10 +90,7 @@ export async function POST(
     });
 
     if (!produto) {
-      return NextResponse.json(
-        { error: "Produto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
     // Verificar se tipo de mão de obra existe
@@ -111,10 +99,7 @@ export async function POST(
     });
 
     if (!tipoMaoDeObra) {
-      return NextResponse.json(
-        { error: "Tipo de mão de obra não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Tipo de mão de obra não encontrado" }, { status: 404 });
     }
 
     // Verificar se já existe na composição
@@ -165,9 +150,6 @@ export async function POST(
     }
 
     console.error("Erro ao adicionar mão de obra:", error);
-    return NextResponse.json(
-      { error: "Erro ao adicionar mão de obra" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao adicionar mão de obra" }, { status: 500 });
   }
 }

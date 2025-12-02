@@ -69,19 +69,22 @@ export function RelatorioRentabilidade() {
   const totalVendas = orcamentos.reduce((acc, orc) => acc + Number(orc.total), 0);
   const totalCustos = orcamentos.reduce((acc, orc) => acc + Number(orc.custoTotal), 0);
   const totalLucro = orcamentos.reduce((acc, orc) => acc + Number(orc.lucroTotal), 0);
-  const margemGlobal = totalVendas > 0 ? ((totalLucro / totalCustos) * 100) : 0;
+  const margemGlobal = totalVendas > 0 ? (totalLucro / totalCustos) * 100 : 0;
 
   // Dados para gráfico de pizza (top 5 clientes)
-  const clientesAgrupados = orcamentos.reduce((acc, orc) => {
-    if (!acc[orc.clienteNome]) {
-      acc[orc.clienteNome] = {
-        nome: orc.clienteNome,
-        total: 0,
-      };
-    }
-    acc[orc.clienteNome].total += Number(orc.total);
-    return acc;
-  }, {} as Record<string, { nome: string; total: number }>);
+  const clientesAgrupados = orcamentos.reduce(
+    (acc, orc) => {
+      if (!acc[orc.clienteNome]) {
+        acc[orc.clienteNome] = {
+          nome: orc.clienteNome,
+          total: 0,
+        };
+      }
+      acc[orc.clienteNome].total += Number(orc.total);
+      return acc;
+    },
+    {} as Record<string, { nome: string; total: number }>
+  );
 
   const topClientes = Object.values(clientesAgrupados)
     .sort((a, b) => b.total - a.total)
@@ -123,9 +126,7 @@ export function RelatorioRentabilidade() {
             <div className="text-2xl font-bold font-mono text-primary">
               {formatCurrency(totalVendas)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {orcamentos.length} orçamento(s)
-            </p>
+            <p className="text-xs text-muted-foreground">{orcamentos.length} orçamento(s)</p>
           </CardContent>
         </Card>
 
@@ -134,9 +135,7 @@ export function RelatorioRentabilidade() {
             <CardTitle className="text-sm font-medium">Custo Total</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-mono">
-              {formatCurrency(totalCustos)}
-            </div>
+            <div className="text-2xl font-bold font-mono">{formatCurrency(totalCustos)}</div>
             <p className="text-xs text-muted-foreground">Soma dos custos</p>
           </CardContent>
         </Card>
@@ -205,9 +204,7 @@ export function RelatorioRentabilidade() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={(entry) =>
-                      `${entry.name}: ${formatCurrency(entry.value)}`
-                    }
+                    label={(entry) => `${entry.name}: ${formatCurrency(entry.value)}`}
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"

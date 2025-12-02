@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +71,7 @@ interface DashboardStats {
   }>;
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 const statusConfig: Record<string, { label: string; variant: any }> = {
   rascunho: { label: "Rascunho", variant: "default" },
@@ -115,30 +115,40 @@ export default function DashboardPage() {
           <p className="text-lg font-medium">Erro ao carregar dados</p>
           <p className="text-sm">Tente recarregar a página</p>
         </div>
-        <Button onClick={() => window.location.reload()}>
-          Recarregar
-        </Button>
+        <Button onClick={() => window.location.reload()}>Recarregar</Button>
       </div>
     );
   }
 
-  // Dados para gráfico de pizza
-  const pieData = [
-    { name: "Rascunho", value: stats.resumo.orcamentosRascunho, color: COLORS[0] },
-    { name: "Enviado", value: stats.resumo.orcamentosEnviados, color: COLORS[2] },
-    { name: "Aprovado", value: stats.resumo.orcamentosAprovados, color: COLORS[1] },
-  ].filter((item) => item.value > 0);
+  // Dados para gráfico de pizza (memoizado)
+  const pieData = useMemo(
+    () =>
+      [
+        { name: "Rascunho", value: stats.resumo.orcamentosRascunho, color: COLORS[0] },
+        { name: "Enviado", value: stats.resumo.orcamentosEnviados, color: COLORS[2] },
+        { name: "Aprovado", value: stats.resumo.orcamentosAprovados, color: COLORS[1] },
+      ].filter((item) => item.value > 0),
+    [
+      stats.resumo.orcamentosRascunho,
+      stats.resumo.orcamentosEnviados,
+      stats.resumo.orcamentosAprovados,
+    ]
+  );
 
-  // Formatar dados de orçamentos por mês
-  const chartData = stats.orcamentosPorMes.map((item) => {
-    const [ano, mes] = item.mes.split("-");
-    const data = new Date(parseInt(ano), parseInt(mes) - 1);
-    return {
-      mes: format(data, "MMM/yy", { locale: ptBR }),
-      quantidade: item.count,
-      valor: item.value,
-    };
-  });
+  // Formatar dados de orçamentos por mês (memoizado)
+  const chartData = useMemo(
+    () =>
+      stats.orcamentosPorMes.map((item) => {
+        const [ano, mes] = item.mes.split("-");
+        const data = new Date(parseInt(ano), parseInt(mes) - 1);
+        return {
+          mes: format(data, "MMM/yy", { locale: ptBR }),
+          quantidade: item.count,
+          valor: item.value,
+        };
+      }),
+    [stats.orcamentosPorMes]
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -203,9 +213,7 @@ export default function DashboardPage() {
               <ShoppingCart className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {stats.resumo.totalTiposProduto}
-              </div>
+              <div className="text-2xl font-bold">{stats.resumo.totalTiposProduto}</div>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 {stats.resumo.totalVariacoes} variações
                 <ArrowUpRight className="h-3 w-3" />
@@ -293,9 +301,9 @@ export default function DashboardPage() {
                   <YAxis yAxisId="right" orientation="right" className="text-xs" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
                     }}
                     formatter={(value: any, name: string) => {
                       if (name === "valor") {
@@ -312,7 +320,7 @@ export default function DashboardPage() {
                     stroke="#3b82f6"
                     strokeWidth={3}
                     name="Quantidade"
-                    dot={{ fill: '#3b82f6', r: 4 }}
+                    dot={{ fill: "#3b82f6", r: 4 }}
                     activeDot={{ r: 6 }}
                   />
                   <Line
@@ -322,7 +330,7 @@ export default function DashboardPage() {
                     stroke="#10b981"
                     strokeWidth={3}
                     name="Valor (R$)"
-                    dot={{ fill: '#10b981', r: 4 }}
+                    dot={{ fill: "#10b981", r: 4 }}
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>
@@ -372,9 +380,9 @@ export default function DashboardPage() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
                     }}
                   />
                 </PieChart>
@@ -383,7 +391,9 @@ export default function DashboardPage() {
               <div className="flex flex-col items-center justify-center h-[300px] space-y-3">
                 <FileText className="h-16 w-16 text-muted-foreground/50" />
                 <div className="text-center">
-                  <p className="text-muted-foreground text-sm font-medium">Nenhum orçamento criado</p>
+                  <p className="text-muted-foreground text-sm font-medium">
+                    Nenhum orçamento criado
+                  </p>
                   <Link href="/orcamentos/novo">
                     <Button variant="outline" size="sm" className="mt-3">
                       <Plus className="mr-2 h-4 w-4" />
@@ -417,12 +427,17 @@ export default function DashboardPage() {
                     className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-sm ${
-                        index === 0 ? 'bg-amber-500 text-white' :
-                        index === 1 ? 'bg-slate-400 text-white' :
-                        index === 2 ? 'bg-amber-700 text-white' :
-                        'bg-primary/10 text-primary'
-                      }`}>
+                      <div
+                        className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-sm ${
+                          index === 0
+                            ? "bg-amber-500 text-white"
+                            : index === 1
+                              ? "bg-slate-400 text-white"
+                              : index === 2
+                                ? "bg-amber-700 text-white"
+                                : "bg-primary/10 text-primary"
+                        }`}
+                      >
                         {index + 1}
                       </div>
                       <div>
@@ -444,9 +459,7 @@ export default function DashboardPage() {
               <div className="flex flex-col items-center justify-center h-32 space-y-3">
                 <Package className="h-12 w-12 text-muted-foreground/50" />
                 <div className="text-center">
-                  <p className="text-muted-foreground text-sm">
-                    Nenhum produto vendido ainda
-                  </p>
+                  <p className="text-muted-foreground text-sm">Nenhum produto vendido ainda</p>
                   <Link href="/produtos/novo">
                     <Button variant="outline" size="sm" className="mt-2">
                       <Plus className="mr-2 h-4 w-4" />
@@ -476,9 +489,7 @@ export default function DashboardPage() {
                   >
                     <div>
                       <p className="font-medium font-mono text-sm">#{orcamento.numero}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {orcamento.clienteNome}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{orcamento.clienteNome}</p>
                     </div>
                     <div className="text-right flex items-center gap-3">
                       <div>

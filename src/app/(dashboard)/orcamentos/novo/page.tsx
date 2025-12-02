@@ -102,14 +102,14 @@ export default function NovoOrcamentoPage() {
     // Definir validade padrão (30 dias)
     const hoje = new Date();
     const validade = new Date(hoje.setDate(hoje.getDate() + 30));
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      validade: validade.toISOString().split('T')[0]
+      validade: validade.toISOString().split("T")[0],
     }));
   }, []);
 
   // Filtrar produtos
-  const produtosFiltrados = produtos.filter(p => {
+  const produtosFiltrados = produtos.filter((p) => {
     const searchLower = produtosSearch.toLowerCase();
     return (
       p.nome.toLowerCase().includes(searchLower) ||
@@ -122,7 +122,7 @@ export default function NovoOrcamentoPage() {
   // Adicionar produto ao orçamento
   const adicionarProduto = (produto: ItemProduto) => {
     // Verificar se já existe
-    const jaExiste = itens.find(item => item.itemProdutoId === produto.id);
+    const jaExiste = itens.find((item) => item.itemProdutoId === produto.id);
     if (jaExiste) {
       showWarning("Este produto já foi adicionado ao orçamento");
       return;
@@ -204,7 +204,7 @@ export default function NovoOrcamentoPage() {
           clienteTelefone: formData.clienteTelefone || undefined,
           clienteCNPJ: formData.clienteCNPJ || undefined,
           observacoes: formData.observacoes || undefined,
-          itens: itens.map(item => ({
+          itens: itens.map((item) => ({
             itemProdutoId: item.itemProdutoId,
             descricao: item.descricao,
             quantidade: item.quantidade,
@@ -243,12 +243,8 @@ export default function NovoOrcamentoPage() {
           </Button>
         </Link>
         <div>
-          <h2 className="text-3xl font-heading font-bold tracking-tight">
-            Novo Orçamento
-          </h2>
-          <p className="text-muted-foreground">
-            Crie um novo orçamento para seu cliente
-          </p>
+          <h2 className="text-3xl font-heading font-bold tracking-tight">Novo Orçamento</h2>
+          <p className="text-muted-foreground">Crie um novo orçamento para seu cliente</p>
         </div>
       </div>
 
@@ -345,9 +341,7 @@ export default function NovoOrcamentoPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Itens do Orçamento</CardTitle>
-                <CardDescription>
-                  Adicione os produtos que farão parte do orçamento
-                </CardDescription>
+                <CardDescription>Adicione os produtos que farão parte do orçamento</CardDescription>
               </div>
               <Button
                 type="button"
@@ -463,9 +457,7 @@ export default function NovoOrcamentoPage() {
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="font-medium">Subtotal:</span>
-              <span className="text-xl font-mono font-bold">
-                {formatCurrency(subtotal)}
-              </span>
+              <span className="text-xl font-mono font-bold">{formatCurrency(subtotal)}</span>
             </div>
 
             <div className="grid grid-cols-3 gap-4 items-end">
@@ -535,12 +527,13 @@ export default function NovoOrcamentoPage() {
 
       {/* Modal de Seleção de Produtos */}
       <Dialog open={isProductModalOpen} onOpenChange={setIsProductModalOpen}>
-        <DialogContent onClose={() => setIsProductModalOpen(false)} className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+        <DialogContent
+          onClose={() => setIsProductModalOpen(false)}
+          className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col"
+        >
           <DialogHeader>
             <DialogTitle>Selecionar Produto</DialogTitle>
-            <DialogDescription>
-              Escolha um produto para adicionar ao orçamento
-            </DialogDescription>
+            <DialogDescription>Escolha um produto para adicionar ao orçamento</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
@@ -596,11 +589,7 @@ export default function NovoOrcamentoPage() {
                             : "-"}
                         </TableCell>
                         <TableCell>
-                          <Button
-                            type="button"
-                            size="sm"
-                            onClick={() => adicionarProduto(produto)}
-                          >
+                          <Button type="button" size="sm" onClick={() => adicionarProduto(produto)}>
                             <Plus className="h-4 w-4 mr-1" />
                             Adicionar
                           </Button>

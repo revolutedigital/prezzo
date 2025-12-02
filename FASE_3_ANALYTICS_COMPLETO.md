@@ -23,6 +23,7 @@ A **Fase 3 - Analytics e Relatórios** foi implementada com sucesso, adicionando
 ### 1. Componentes UI
 
 #### `src/components/ui/tabs.tsx`
+
 Componente de abas usando Radix UI para navegação entre relatórios.
 
 **Package instalado**: `@radix-ui/react-tabs`
@@ -30,22 +31,27 @@ Componente de abas usando Radix UI para navegação entre relatórios.
 ### 2. Widget de Alertas
 
 #### `src/components/dashboard/alertas-custos-widget.tsx` (já existia)
+
 Widget integrado ao dashboard principal mostrando:
+
 - Resumo de atualizações por nível de impacto (Alto/Médio/Baixo)
 - Top 5 atualizações pendentes
 - Alertas de notas fiscais aguardando revisão
 - Link direto para Prezzo AI
 
 **Integração no Dashboard**:
-- Adicionado em [src/app/(dashboard)/dashboard/page.tsx](src/app/(dashboard)/dashboard/page.tsx:345)
+
+- Adicionado em [src/app/(dashboard)/dashboard/page.tsx](<src/app/(dashboard)/dashboard/page.tsx:345>)
 - Aparece entre os gráficos e a seção de top produtos
 
 ### 3. Página de Relatórios
 
 #### `src/app/(dashboard)/relatorios/page.tsx`
+
 Página principal de relatórios com sistema de abas.
 
 **Estrutura**:
+
 ```tsx
 - Header com botão "Exportar Dados"
 - Tabs horizontais:
@@ -55,6 +61,7 @@ Página principal de relatórios com sistema de abas.
 ```
 
 **Recursos**:
+
 - Navegação por tabs
 - Botão de exportação (preparado para futuras implementações)
 - Layout responsivo
@@ -62,9 +69,11 @@ Página principal de relatórios com sistema de abas.
 ### 4. Componentes de Relatórios
 
 #### `src/components/relatorios/relatorio-margens.tsx`
+
 Relatório detalhado de margens de lucro por produto.
 
 **Visualizações**:
+
 1. **3 Cards de Resumo**:
    - Margem média geral
    - Quantidade de produtos com margem baixa (<20%)
@@ -84,14 +93,17 @@ Relatório detalhado de margens de lucro por produto.
    - Badge de status (Baixa/Média/Alta)
 
 **Classificação de Margens**:
+
 - 🔴 **Baixa**: < 20% (Badge vermelho)
 - 🟠 **Média**: 20-35% (Badge laranja)
 - 🟢 **Alta**: > 35% (Badge verde)
 
 #### `src/components/relatorios/relatorio-evolucao-custos.tsx`
+
 Relatório de histórico e evolução de custos de matérias-primas.
 
 **Visualizações**:
+
 1. **3 Cards de Resumo**:
    - Total de atualizações registradas
    - Aumentos vs. Reduções (com contadores separados)
@@ -112,13 +124,16 @@ Relatório de histórico e evolução de custos de matérias-primas.
    - Motivo (NF, Manual, Reajuste)
 
 **Indicadores Visuais**:
+
 - ↑ Vermelho: Aumento de custo
 - ↓ Verde: Redução de custo
 
 #### `src/components/relatorios/relatorio-rentabilidade.tsx`
+
 Análise de rentabilidade de orçamentos aprovados.
 
 **Visualizações**:
+
 1. **4 Cards de Resumo**:
    - Total em vendas (soma de todos os orçamentos)
    - Custo total
@@ -145,38 +160,43 @@ Análise de rentabilidade de orçamentos aprovados.
 ### 5. APIs de Relatórios
 
 #### `src/app/api/relatorios/margens/route.ts`
+
 API para relatório de margens.
 
 **Endpoint**: `GET /api/relatorios/margens`
 
 **Retorno**:
+
 ```json
 [
   {
     "id": "...",
     "nome": "Filtro Alumínio - Grade Ferro",
     "tipoProduto": "Filtro Alumínio",
-    "custoCalculado": 139.00,
-    "margemLucro": 40.00,
-    "precoVenda": 194.60,
-    "lucroUnitario": 55.60,
+    "custoCalculado": 139.0,
+    "margemLucro": 40.0,
+    "precoVenda": 194.6,
+    "lucroUnitario": 55.6,
     "tabelaPreco": "padrao"
   }
 ]
 ```
 
 **Lógica**:
+
 - Busca todos os `ItemProduto` ativos
 - Calcula lucro unitário (preço - custo)
 - Ordena por margem (menor para maior)
 - Retorna lista completa para análise
 
 #### `src/app/api/relatorios/evolucao-custos/route.ts`
+
 API para evolução de custos.
 
 **Endpoint**: `GET /api/relatorios/evolucao-custos`
 
 **Retorno**:
+
 ```json
 {
   "historico": [
@@ -187,8 +207,8 @@ API para evolução de custos.
         "nome": "Grade de Ferro",
         "unidadeMedida": "metro"
       },
-      "custoAnterior": 30.00,
-      "custoNovo": 32.00,
+      "custoAnterior": 30.0,
+      "custoNovo": 32.0,
       "percentualMudanca": 6.67,
       "motivo": "NF",
       "createdAt": "2025-11-27T..."
@@ -201,11 +221,11 @@ API para evolução de custos.
       "historico": [
         {
           "data": "2025-11-01T...",
-          "custo": 30.00
+          "custo": 30.0
         },
         {
           "data": "2025-11-27T...",
-          "custo": 32.00
+          "custo": 32.0
         }
       ]
     }
@@ -214,35 +234,39 @@ API para evolução de custos.
 ```
 
 **Lógica**:
+
 - Busca últimas 20 mudanças no `HistoricoCusto`
 - Busca top 5 matérias-primas com mais mudanças
 - Agrupa histórico por matéria-prima para gráficos
 - Ordena cronologicamente
 
 #### `src/app/api/relatorios/rentabilidade/route.ts`
+
 API para análise de rentabilidade.
 
 **Endpoint**: `GET /api/relatorios/rentabilidade`
 
 **Retorno**:
+
 ```json
 [
   {
     "id": "...",
     "numero": "2025-0001",
     "clienteNome": "Cliente ABC",
-    "subtotal": 500.00,
-    "desconto": 50.00,
-    "total": 450.00,
+    "subtotal": 500.0,
+    "desconto": 50.0,
+    "total": 450.0,
     "createdAt": "2025-11-27T...",
-    "custoTotal": 300.00,
-    "lucroTotal": 150.00,
-    "margemMedia": 50.00
+    "custoTotal": 300.0,
+    "lucroTotal": 150.0,
+    "margemMedia": 50.0
   }
 ]
 ```
 
 **Lógica**:
+
 - Busca orçamentos com `status: "aprovado"`
 - Inclui todos os itens com seus custos
 - Calcula para cada orçamento:
@@ -260,12 +284,14 @@ API para análise de rentabilidade.
 **Objetivo**: Identificar produtos com margens de lucro problemáticas.
 
 **Casos de Uso**:
+
 - Encontrar produtos com margem muito baixa (< 20%)
 - Avaliar quais produtos são mais lucrativos
 - Reajustar preços baseado em margens
 - Comparar margens entre tipos de produto
 
 **Métricas**:
+
 - Margem média geral
 - Distribuição de produtos por faixa de margem
 - Lucro unitário por produto
@@ -276,12 +302,14 @@ API para análise de rentabilidade.
 **Objetivo**: Rastrear mudanças nos custos de matérias-primas ao longo do tempo.
 
 **Casos de Uso**:
+
 - Identificar tendências de aumento/redução
 - Prever necessidade de reajuste de preços
 - Analisar impacto de fornecedores
 - Histórico completo de mudanças
 
 **Métricas**:
+
 - Quantidade total de atualizações
 - Proporção aumentos vs. reduções
 - Variação média percentual
@@ -292,12 +320,14 @@ API para análise de rentabilidade.
 **Objetivo**: Avaliar a lucratividade real do negócio.
 
 **Casos de Uso**:
+
 - Calcular lucro real obtido
 - Identificar clientes mais valiosos
 - Analisar efetividade de descontos
 - Projetar faturamento
 
 **Métricas**:
+
 - Total em vendas (orçamentos aprovados)
 - Custo total (soma dos custos dos produtos)
 - Lucro total (vendas - custos)
@@ -325,15 +355,18 @@ API para análise de rentabilidade.
 ### Cores e Indicadores
 
 **Margens**:
+
 - 🔴 Vermelho: Margem baixa (< 20%)
 - 🟠 Laranja: Margem média (20-35%)
 - 🟢 Verde: Margem alta (> 35%)
 
 **Variações de Custo**:
+
 - 🔴 Vermelho + ↑: Aumento
 - 🟢 Verde + ↓: Redução
 
 **Rentabilidade**:
+
 - 🔵 Azul: Receita/Vendas
 - 🔴 Vermelho: Custos
 - 🟢 Verde: Lucros
@@ -343,11 +376,13 @@ API para análise de rentabilidade.
 ## 📈 Bibliotecas Utilizadas
 
 ### Recharts
+
 ```json
 "recharts": "^2.x"
 ```
 
 **Componentes usados**:
+
 - `LineChart` - Evolução de custos
 - `BarChart` - Margens e rentabilidade
 - `PieChart` - Top clientes
@@ -357,11 +392,13 @@ API para análise de rentabilidade.
 - `CartesianGrid` - Grade de fundo
 
 ### Radix UI
+
 ```json
 "@radix-ui/react-tabs": "^1.x"
 ```
 
 **Componentes**:
+
 - `Tabs` - Container principal
 - `TabsList` - Lista de abas
 - `TabsTrigger` - Botão de aba
@@ -372,6 +409,7 @@ API para análise de rentabilidade.
 ## 🔄 Fluxo de Dados
 
 ### Margens
+
 ```
 ItemProduto (DB)
   └─> API /relatorios/margens
@@ -380,6 +418,7 @@ ItemProduto (DB)
 ```
 
 ### Evolução de Custos
+
 ```
 HistoricoCusto (DB)
   └─> API /relatorios/evolucao-custos
@@ -389,6 +428,7 @@ HistoricoCusto (DB)
 ```
 
 ### Rentabilidade
+
 ```
 Orcamento (status: aprovado)
   └─> Inclui ItemOrcamento
@@ -402,12 +442,14 @@ Orcamento (status: aprovado)
 ## 🎯 Próximas Melhorias Sugeridas
 
 ### Exportação de Dados
+
 - [ ] Exportar relatórios para Excel (biblioteca `xlsx`)
 - [ ] Exportar gráficos como imagem (biblioteca `html2canvas`)
 - [ ] Exportar para PDF (biblioteca `jspdf`)
 - [ ] Agendar envio automático de relatórios por email
 
 ### Filtros Avançados
+
 - [ ] Filtro por período de data
 - [ ] Filtro por categoria de produto
 - [ ] Filtro por fornecedor
@@ -415,18 +457,21 @@ Orcamento (status: aprovado)
 - [ ] Comparação entre períodos
 
 ### Dashboards Personalizados
+
 - [ ] Permitir usuário configurar quais widgets ver
 - [ ] Salvar configurações de visualização
 - [ ] Criar múltiplos dashboards customizados
 - [ ] Compartilhar dashboards entre usuários
 
 ### Alertas Inteligentes
+
 - [ ] Alerta quando margem cai abaixo de X%
 - [ ] Alerta de aumento de custo acima de Y%
 - [ ] Sugestões automáticas de reajuste de preço
 - [ ] Notificações push/email
 
 ### Análises Adicionais
+
 - [ ] Relatório de comparação de fornecedores
 - [ ] Análise de sazonalidade
 - [ ] Previsão de custos com IA
@@ -467,6 +512,7 @@ Orcamento (status: aprovado)
 **FASE 3 - ANALYTICS E RELATÓRIOS: 100% COMPLETA** ✅
 
 O sistema Prezzo agora possui um conjunto completo de ferramentas analíticas para:
+
 - Monitorar margens de lucro
 - Rastrear evolução de custos
 - Analisar rentabilidade do negócio
@@ -479,6 +525,7 @@ Todos os componentes foram implementados e testados. A aplicação está rodando
 ## 📊 Resumo Geral das 3 Fases
 
 ### FASE 1: MVP - Core do Sistema ✅
+
 - Gestão de Matérias-Primas
 - Produtos e Variações
 - Sistema de Orçamentos
@@ -486,6 +533,7 @@ Todos os componentes foram implementados e testados. A aplicação está rodando
 - Dashboard básico
 
 ### FASE 2: Prezzo AI ✅
+
 - Upload de Notas Fiscais
 - Extração com Claude AI
 - Matching automático
@@ -493,6 +541,7 @@ Todos os componentes foram implementados e testados. A aplicação está rodando
 - Sistema de alertas
 
 ### FASE 3: Analytics e Relatórios ✅
+
 - Widget de alertas no dashboard
 - Relatório de margens
 - Relatório de evolução de custos

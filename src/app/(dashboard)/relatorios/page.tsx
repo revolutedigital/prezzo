@@ -18,9 +18,7 @@ export default function RelatoriosPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-heading font-bold tracking-tight">Relatórios</h2>
-          <p className="text-muted-foreground">
-            Análises e insights sobre seu negócio
-          </p>
+          <p className="text-muted-foreground">Análises e insights sobre seu negócio</p>
         </div>
         <Button variant="outline">
           <FileDown className="mr-2 h-4 w-4" />

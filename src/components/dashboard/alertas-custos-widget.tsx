@@ -150,15 +150,14 @@ export function AlertasCustosWidget() {
                   className="flex items-center justify-between rounded-lg border p-3 hover:bg-accent/50 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">
-                      {atualizacao.materiaPrima.nome}
-                    </p>
+                    <p className="font-medium text-sm truncate">{atualizacao.materiaPrima.nome}</p>
                     <div className="flex items-center gap-2 mt-1">
                       {atualizacao.notaFiscal && (
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <FileText className="h-3 w-3" />
                           <span className="truncate max-w-[150px]">
-                            {atualizacao.notaFiscal.fornecedor || atualizacao.notaFiscal.nomeArquivo}
+                            {atualizacao.notaFiscal.fornecedor ||
+                              atualizacao.notaFiscal.nomeArquivo}
                           </span>
                         </div>
                       )}

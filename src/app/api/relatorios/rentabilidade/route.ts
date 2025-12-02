@@ -71,9 +71,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(relatorio);
   } catch (error) {
     console.error("Erro ao gerar relatório de rentabilidade:", error);
-    return NextResponse.json(
-      { error: "Erro ao gerar relatório" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao gerar relatório" }, { status: 500 });
   }
 }

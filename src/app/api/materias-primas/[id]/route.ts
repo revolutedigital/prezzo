@@ -15,10 +15,7 @@ const materiaPrimaSchema = z.object({
 });
 
 // GET - Buscar matéria-prima por ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -35,33 +32,24 @@ export async function GET(
           take: 10,
         },
         _count: {
-          select: { composicoes: true }
-        }
-      }
+          select: { composicoes: true },
+        },
+      },
     });
 
     if (!materiaPrima) {
-      return NextResponse.json(
-        { error: "Matéria-prima não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Matéria-prima não encontrada" }, { status: 404 });
     }
 
     return NextResponse.json(materiaPrima);
   } catch (error) {
     console.error("Erro ao buscar matéria-prima:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar matéria-prima" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar matéria-prima" }, { status: 500 });
   }
 }
 
 // PUT - Atualizar matéria-prima
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -75,27 +63,21 @@ export async function PUT(
 
     // Verificar se matéria-prima existe
     const existing = await prisma.materiaPrima.findUnique({
-      where: { id: id }
+      where: { id: id },
     });
 
     if (!existing) {
-      return NextResponse.json(
-        { error: "Matéria-prima não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Matéria-prima não encontrada" }, { status: 404 });
     }
 
     // Verificar se código já existe (se alterado)
     if (validatedData.codigo && validatedData.codigo !== existing.codigo) {
       const codigoExists = await prisma.materiaPrima.findUnique({
-        where: { codigo: validatedData.codigo }
+        where: { codigo: validatedData.codigo },
       });
 
       if (codigoExists) {
-        return NextResponse.json(
-          { error: "Código já cadastrado" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Código já cadastrado" }, { status: 400 });
       }
     }
 
@@ -112,13 +94,15 @@ export async function PUT(
         fornecedor: validatedData.fornecedor,
         categoria: validatedData.categoria,
         ativo: validatedData.ativo ?? existing.ativo,
-      }
+      },
     });
 
     // Criar histórico de mudança de custo
     if (custoMudou) {
       const percentualMudanca =
-        ((validatedData.custoUnitario - Number(existing.custoUnitario)) / Number(existing.custoUnitario)) * 100;
+        ((validatedData.custoUnitario - Number(existing.custoUnitario)) /
+          Number(existing.custoUnitario)) *
+        100;
 
       await prisma.historicoCusto.create({
         data: {
@@ -128,25 +112,18 @@ export async function PUT(
           percentualMudanca,
           motivo: "Manual",
           userId: session.user.id,
-        }
+        },
       });
     }
 
     return NextResponse.json(materiaPrima);
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao atualizar matéria-prima:", error);
-    return NextResponse.json(
-      { error: "Erro ao atualizar matéria-prima" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao atualizar matéria-prima" }, { status: 500 });
   }
 }
 
@@ -168,16 +145,13 @@ export async function DELETE(
       where: { id: id },
       include: {
         _count: {
-          select: { composicoes: true }
-        }
-      }
+          select: { composicoes: true },
+        },
+      },
     });
 
     if (!materiaPrima) {
-      return NextResponse.json(
-        { error: "Matéria-prima não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Matéria-prima não encontrada" }, { status: 404 });
     }
 
     // Verificar se está sendo usada em algum produto
@@ -192,16 +166,12 @@ export async function DELETE(
 
     // Deletar matéria-prima
     await prisma.materiaPrima.delete({
-      where: { id: id }
+      where: { id: id },
     });
 
     return NextResponse.json({ message: "Matéria-prima excluída com sucesso" });
-
   } catch (error) {
     console.error("Erro ao deletar matéria-prima:", error);
-    return NextResponse.json(
-      { error: "Erro ao deletar matéria-prima" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao deletar matéria-prima" }, { status: 500 });
   }
 }

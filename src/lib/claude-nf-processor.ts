@@ -20,9 +20,7 @@ export interface NFDadosExtraidos {
   itens: NFItem[];
 }
 
-export async function processarNotaFiscal(
-  pdfText: string
-): Promise<NFDadosExtraidos> {
+export async function processarNotaFiscal(pdfText: string): Promise<NFDadosExtraidos> {
   const prompt = `Você é um assistente especializado em extrair dados de Notas Fiscais brasileiras.
 
 Analise o texto da nota fiscal abaixo e extraia as seguintes informações:
@@ -77,8 +75,7 @@ ${pdfText}`;
       ],
     });
 
-    const responseText =
-      message.content[0].type === "text" ? message.content[0].text : "";
+    const responseText = message.content[0].type === "text" ? message.content[0].text : "";
 
     // Extrair JSON da resposta (pode vir com markdown)
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);

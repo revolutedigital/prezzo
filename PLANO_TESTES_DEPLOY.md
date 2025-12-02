@@ -28,6 +28,7 @@
 Este plano de testes garante que o sistema Prezzo esteja funcional, seguro e performático após deploy em ambiente de produção.
 
 ### Objetivos
+
 - ✅ Validar funcionalidades críticas do sistema
 - ✅ Garantir integridade de dados
 - ✅ Verificar performance e escalabilidade
@@ -35,6 +36,7 @@ Este plano de testes garante que o sistema Prezzo esteja funcional, seguro e per
 - ✅ Confirmar compatibilidade entre módulos
 
 ### Ambientes de Teste
+
 - **Staging**: Ambiente de pré-produção (obrigatório)
 - **Production**: Ambiente final (smoke tests apenas)
 
@@ -120,6 +122,7 @@ Password: Admin_Test_2025!
 ### ST-001: Sistema Está Acessível
 
 **Passos**:
+
 1. Acessar URL de produção
 2. Verificar que página carrega (não 500/502/503)
 3. Verificar que CSS/JS carregam corretamente
@@ -127,6 +130,7 @@ Password: Admin_Test_2025!
 **Resultado Esperado**: Página de login exibida corretamente
 
 **Script de Validação**:
+
 ```bash
 #!/bin/bash
 # smoke-test-001.sh
@@ -148,12 +152,14 @@ fi
 ### ST-002: Database Connectivity
 
 **Passos**:
+
 1. Tentar fazer login
 2. Sistema deve conseguir consultar banco de dados
 
 **Resultado Esperado**: Login funcional ou erro de credenciais (não erro de conexão)
 
 **Script de Validação**:
+
 ```bash
 #!/bin/bash
 # smoke-test-002.sh
@@ -175,6 +181,7 @@ fi
 ### ST-003: Autenticação Funciona
 
 **Passos**:
+
 1. Acessar `/auth/signin`
 2. Inserir credenciais de teste
 3. Clicar em "Entrar"
@@ -188,6 +195,7 @@ fi
 ### ST-004: Dashboard Carrega
 
 **Passos**:
+
 1. Após login, verificar dashboard
 2. Cards de estatísticas devem aparecer
 3. Nenhum erro no console
@@ -201,6 +209,7 @@ fi
 ### ST-005: API Endpoints Respondem
 
 **Passos**:
+
 1. Verificar `/api/materias-primas` (GET)
 2. Verificar `/api/tipos-produto` (GET)
 3. Verificar `/api/mao-de-obra` (GET)
@@ -208,6 +217,7 @@ fi
 **Resultado Esperado**: Status 200 ou 401 (se não autenticado)
 
 **Script de Validação**:
+
 ```bash
 #!/bin/bash
 # smoke-test-005.sh
@@ -252,6 +262,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Pré-condição**: Usuário autenticado
 
 **Passos**:
+
 1. Navegar para `/materias-primas`
 2. Clicar em "Nova Matéria-Prima"
 3. Preencher formulário:
@@ -268,12 +279,14 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 9. Verificar atualização
 
 **Resultado Esperado**:
+
 - Matéria-prima criada com sucesso
 - Mensagem de sucesso exibida (toast)
 - Item aparece na listagem com dados corretos
 - Edição persiste corretamente
 
 **Dados de Validação**:
+
 - Nome exibido: "Teste QA - Farinha de Trigo"
 - Custo exibido: "R$ 6,00"
 - Status: "Ativo"
@@ -287,11 +300,13 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Criar tipo de produto com variações
 
 **Pré-condição**:
+
 - Usuário autenticado
 - Ao menos 1 matéria-prima cadastrada
 - Ao menos 1 tipo de mão de obra cadastrado
 
 **Passos**:
+
 1. Navegar para `/produtos`
 2. Clicar em "Novo Tipo de Produto"
 3. Preencher dados do tipo:
@@ -311,13 +326,15 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 9. Visualizar custos calculados
 
 **Resultado Esperado**:
+
 - Tipo de produto criado
 - Matérias-primas vinculadas
 - Mão de obra vinculada
 - Variações criadas com custos calculados
-- Custo total = (custo MPs + custo MO) * margem
+- Custo total = (custo MPs + custo MO) \* margem
 
 **Validações**:
+
 - [ ] Tipo de produto aparece na listagem
 - [ ] Contagem de variações correta (2)
 - [ ] Custos calculados automaticamente
@@ -332,6 +349,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Criar tipo de mão de obra com e sem máquina
 
 **Passos**:
+
 1. Navegar para `/mao-de-obra`
 2. Criar tipo SEM máquina:
    - Nome: "Confeiteiro Junior"
@@ -345,6 +363,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 4. Verificar cálculo de "Total/Hora"
 
 **Resultado Esperado**:
+
 - Confeiteiro: Total = R$ 25,00/h
 - Operador: Total = R$ 45,00/h (30 + 15)
 - Cards exibem custos com cores corretas (verde/azul/primary)
@@ -358,6 +377,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Validar funcionalidade de busca e filtros
 
 **Passos (Matérias-Primas)**:
+
 1. Navegar para `/materias-primas`
 2. Digitar "Farinha" na busca
 3. Aguardar debounce (300ms)
@@ -367,6 +387,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 7. Aplicar filtro de status (Ativos/Inativos)
 
 **Resultado Esperado**:
+
 - Busca filtra corretamente
 - Debounce evita chamadas excessivas
 - Filtros combinam corretamente
@@ -381,6 +402,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Alternar entre modos de visualização
 
 **Passos**:
+
 1. Acessar página com toggle (Matérias-Primas ou Mão de Obra)
 2. Clicar em ícone de "Cards"
 3. Verificar layout em grid
@@ -388,6 +410,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 5. Verificar layout em tabela
 
 **Resultado Esperado**:
+
 - Transição suave entre layouts
 - Dados idênticos em ambas views
 - Filtros mantidos ao trocar view
@@ -402,12 +425,14 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Tentar excluir item vinculado
 
 **Passos**:
+
 1. Criar matéria-prima "MP Test Delete"
 2. Criar produto que usa essa MP
 3. Tentar excluir a MP
 4. Verificar mensagem de erro
 
 **Resultado Esperado**:
+
 - Sistema impede exclusão
 - Mensagem clara: "Não é possível excluir. Item está vinculado a X produto(s)"
 - Botão de exclusão desabilitado se houver vínculos
@@ -421,6 +446,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Tentar salvar com dados inválidos
 
 **Passos**:
+
 1. Abrir formulário de nova matéria-prima
 2. Deixar "Nome" em branco
 3. Tentar salvar
@@ -430,6 +456,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 7. Tentar salvar
 
 **Resultado Esperado**:
+
 - Mensagem de erro para campo obrigatório
 - Validação de valores negativos
 - Validação de valores zero (se aplicável)
@@ -446,6 +473,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Pré-condição**: Ao menos 3 matérias-primas cadastradas
 
 **Passos**:
+
 1. Navegar para `/materias-primas`
 2. Selecionar checkbox de 3 itens
 3. Clicar em "Desativar Selecionados"
@@ -456,6 +484,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 8. Verificar que foram reativados
 
 **Resultado Esperado**:
+
 - Seleção múltipla funciona
 - Ação em lote executa corretamente
 - Feedback visual durante processamento
@@ -480,6 +509,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Produto deve calcular custo baseado em MPs vinculadas
 
 **Passos**:
+
 1. Criar matéria-prima "Farinha" - R$ 5,00/kg
 2. Criar matéria-prima "Açúcar" - R$ 3,00/kg
 3. Criar produto "Bolo Simples"
@@ -488,6 +518,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 6. Verificar custo total de MPs
 
 **Resultado Esperado**:
+
 - Custo MPs = R$ 3,10
 - Cálculo automático correto
 - Atualização em tempo real
@@ -501,12 +532,14 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Produto deve calcular custo de mão de obra
 
 **Passos**:
+
 1. Criar tipo MO "Confeiteiro" - R$ 25,00/h
 2. Criar produto "Bolo Decorado"
 3. Adicionar 2 horas de Confeiteiro
 4. Verificar custo de MO
 
 **Resultado Esperado**:
+
 - Custo MO = R$ 50,00
 - Refletido no custo total do produto
 
@@ -519,13 +552,15 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Variação deve calcular preço com margem
 
 **Passos**:
+
 1. Criar produto com custo total de R$ 50,00
 2. Criar variação com margem de 100%
 3. Verificar preço sugerido
 
 **Resultado Esperado**:
+
 - Preço sugerido = R$ 100,00
-- Fórmula: preço = custo * (1 + margem/100)
+- Fórmula: preço = custo \* (1 + margem/100)
 
 **Status**: ✅ PASS | ❌ FAIL
 
@@ -536,6 +571,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Cenário**: Dashboard deve exibir estatísticas corretas
 
 **Passos**:
+
 1. Criar 5 matérias-primas
 2. Criar 3 produtos
 3. Criar 2 tipos de mão de obra
@@ -543,6 +579,7 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 5. Verificar cards de estatísticas
 
 **Resultado Esperado**:
+
 - Total de matérias-primas: 5
 - Total de produtos: 3
 - Total de tipos MO: 2
@@ -566,16 +603,18 @@ echo "✅ ST-005 PASSED: All API endpoints responding"
 **Métrica**: Páginas devem carregar em < 3 segundos
 
 **Páginas a Testar**:
-- [ ] Dashboard: _____ ms
-- [ ] Matérias-Primas: _____ ms
-- [ ] Produtos: _____ ms
-- [ ] Mão de Obra: _____ ms
+
+- [ ] Dashboard: **\_** ms
+- [ ] Matérias-Primas: **\_** ms
+- [ ] Produtos: **\_** ms
+- [ ] Mão de Obra: **\_** ms
 
 **Ferramenta**: Chrome DevTools (Network tab) ou Lighthouse
 
 **Critério de Aceitação**: < 3000ms (First Contentful Paint)
 
 **Script de Teste**:
+
 ```bash
 #!/bin/bash
 # performance-test-001.sh
@@ -606,10 +645,11 @@ done
 **Métrica**: APIs devem responder em < 500ms
 
 **Endpoints**:
-- [ ] GET /api/materias-primas: _____ ms
-- [ ] GET /api/tipos-produto: _____ ms
-- [ ] GET /api/mao-de-obra: _____ ms
-- [ ] POST /api/materias-primas: _____ ms
+
+- [ ] GET /api/materias-primas: **\_** ms
+- [ ] GET /api/tipos-produto: **\_** ms
+- [ ] GET /api/mao-de-obra: **\_** ms
+- [ ] POST /api/materias-primas: **\_** ms
 
 **Critério de Aceitação**: < 500ms para listas pequenas (< 100 itens)
 
@@ -620,6 +660,7 @@ done
 **Cenário**: Sistema deve lidar com 100+ itens na listagem
 
 **Passos**:
+
 1. Popular banco com 100 matérias-primas (usar script seed)
 2. Acessar `/materias-primas`
 3. Medir tempo de carregamento
@@ -627,6 +668,7 @@ done
 5. Testar busca com muitos itens
 
 **Critério de Aceitação**:
+
 - Listagem carrega em < 5s
 - Scroll suave (60fps)
 - Busca responde em < 1s
@@ -640,6 +682,7 @@ done
 **Ferramenta**: Apache Bench ou Artillery
 
 **Script**:
+
 ```bash
 #!/bin/bash
 # pt-004-load-test.sh
@@ -649,6 +692,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 ```
 
 **Critério de Aceitação**:
+
 - 0% de requisições falhadas
 - 95º percentil < 1s
 - Média de resposta < 500ms
@@ -669,12 +713,14 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 **Cenário**: Rotas protegidas não devem ser acessíveis sem login
 
 **Passos**:
+
 1. Abrir navegador em modo anônimo
 2. Tentar acessar `/dashboard` diretamente
 3. Tentar acessar `/materias-primas`
 4. Tentar acessar `/produtos`
 
 **Resultado Esperado**:
+
 - Redirecionamento para `/auth/signin`
 - Status HTTP 401 ou 302
 
@@ -687,6 +733,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 **Cenário**: APIs não devem responder sem autenticação
 
 **Passos**:
+
 1. Fazer request sem cookie de sessão:
    ```bash
    curl -X GET https://prezzo.com/api/materias-primas
@@ -694,6 +741,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 2. Verificar resposta
 
 **Resultado Esperado**:
+
 - Status 401 Unauthorized
 - Mensagem de erro clara
 
@@ -706,11 +754,13 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 **Cenário**: Sistema deve sanitizar inputs
 
 **Passos**:
+
 1. No campo de busca, inserir: `'; DROP TABLE materias_primas; --`
 2. Submeter busca
 3. Verificar que nada foi deletado
 
 **Resultado Esperado**:
+
 - Input tratado como string literal
 - Nenhum comando SQL executado
 - Busca retorna 0 resultados ou erro de validação
@@ -724,12 +774,14 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 **Cenário**: Sistema deve escapar HTML/JavaScript
 
 **Passos**:
+
 1. Criar matéria-prima com nome: `<script>alert('XSS')</script>`
 2. Salvar
 3. Visualizar listagem
 4. Verificar que script não executa
 
 **Resultado Esperado**:
+
 - Texto exibido literalmente (escaped)
 - Nenhum alert aparece
 - HTML sanitizado
@@ -743,6 +795,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 **Cenário**: Requisições POST/PUT/DELETE devem ter CSRF token
 
 **Passos**:
+
 1. Tentar fazer POST direto via curl sem token:
    ```bash
    curl -X POST https://prezzo.com/api/materias-primas \
@@ -752,6 +805,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 2. Verificar rejeição
 
 **Resultado Esperado**:
+
 - Status 403 Forbidden
 - Mensagem sobre CSRF token
 
@@ -764,6 +818,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 **Cenário**: Variáveis sensíveis não devem vazar
 
 **Passos**:
+
 1. Inspecionar código-fonte da página
 2. Verificar Network requests
 3. Procurar por:
@@ -772,6 +827,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
    - API keys
 
 **Resultado Esperado**:
+
 - Nenhuma variável sensível exposta no client
 - Apenas variáveis com `NEXT_PUBLIC_` visíveis
 
@@ -786,23 +842,25 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 ### Pré-Deploy
 
 - [ ] **Backup de Banco de Dados realizado**
-  - Data/Hora: __________
-  - Localização: __________
+  - Data/Hora: \***\*\_\_\*\***
+  - Localização: \***\*\_\_\*\***
   - Testado restauração: ✅ / ❌
 
 - [ ] **Variáveis de Ambiente Configuradas**
   - `DATABASE_URL` ✅
   - `NEXTAUTH_URL` ✅
   - `NEXTAUTH_SECRET` ✅
-  - Outras: __________
+  - Outras: \***\*\_\_\*\***
 
 - [ ] **Build Passou Sem Erros**
+
   ```bash
   npm run build
   # Deve completar com EXIT CODE 0
   ```
 
 - [ ] **Migrations Executadas**
+
   ```bash
   npx prisma migrate deploy
   ```
@@ -822,9 +880,9 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 ### Durante Deploy
 
 - [ ] **Deploy Executado**
-  - Método: __________
-  - Tempo de downtime: __________
-  - Horário: __________
+  - Método: \***\*\_\_\*\***
+  - Tempo de downtime: \***\*\_\_\*\***
+  - Horário: \***\*\_\_\*\***
 
 - [ ] **Health Check Inicial**
   - Site acessível: ✅ / ❌
@@ -859,6 +917,7 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 ## 🔄 Rollback Plan
 
 **Critérios para Rollback Imediato**:
+
 - [ ] Site inacessível (HTTP 500/502/503) por > 2 minutos
 - [ ] Database connection failures
 - [ ] Autenticação completamente quebrada
@@ -870,18 +929,21 @@ ab -n 1500 -c 50 -t 30 "$PROD_URL/api/materias-primas"
 **Tempo Estimado**: 5-10 minutos
 
 1. **Parar Deploy Atual**
+
    ```bash
    # Reverter para versão anterior no Vercel/Railway/etc
    vercel rollback
    ```
 
 2. **Restaurar Database (se necessário)**
+
    ```bash
    # Usar backup criado no pré-deploy
    psql $DATABASE_URL < backup-2025-11-27.sql
    ```
 
 3. **Reverter Migrations (se necessário)**
+
    ```bash
    npx prisma migrate resolve --rolled-back [migration-name]
    ```
@@ -944,59 +1006,68 @@ Product Owner: ____________
 
 **Data**: 2025-11-27
 **Ambiente**: Production
-**Responsável QA**: _______________
-**Duração dos Testes**: ___ minutos
+**Responsável QA**: **\*\***\_\_\_**\*\***
+**Duração dos Testes**: \_\_\_ minutos
 
 ## Resumo Executivo
 
 ✅ APROVADO | ⚠️ APROVADO COM RESSALVAS | ❌ REPROVADO
 
-**Status**: ___________
+**Status**: \***\*\_\_\_\*\***
 
 **Resumo**: [Breve descrição dos resultados]
 
 ## Resultados
 
 ### Smoke Tests (5 testes)
-- Passaram: ___
-- Falharam: ___
-- Taxa de sucesso: ___%
+
+- Passaram: \_\_\_
+- Falharam: \_\_\_
+- Taxa de sucesso: \_\_\_%
 
 ### Testes Funcionais (8 testes)
-- Passaram: ___
-- Falharam: ___
-- Taxa de sucesso: ___%
+
+- Passaram: \_\_\_
+- Falharam: \_\_\_
+- Taxa de sucesso: \_\_\_%
 
 ### Testes de Integração (4 testes)
-- Passaram: ___
-- Falharam: ___
-- Taxa de sucesso: ___%
+
+- Passaram: \_\_\_
+- Falharam: \_\_\_
+- Taxa de sucesso: \_\_\_%
 
 ### Testes de Performance (4 testes)
-- Dentro do esperado: ___
-- Lentos mas aceitáveis: ___
-- Falharam: ___
+
+- Dentro do esperado: \_\_\_
+- Lentos mas aceitáveis: \_\_\_
+- Falharam: \_\_\_
 
 ### Testes de Segurança (6 testes)
-- Passaram: ___
-- Falharam: ___
-- Taxa de sucesso: ___%
+
+- Passaram: \_\_\_
+- Falharam: \_\_\_
+- Taxa de sucesso: \_\_\_%
 
 ## Bugs Encontrados
 
 ### Críticos (bloqueiam uso)
+
 1. [Descrever]
 2. ...
 
 ### Altos (impactam funcionalidade)
+
 1. [Descrever]
 2. ...
 
 ### Médios (inconveniências)
+
 1. [Descrever]
 2. ...
 
 ### Baixos (cosméticos)
+
 1. [Descrever]
 2. ...
 
@@ -1009,9 +1080,9 @@ Product Owner: ____________
 
 ## Assinaturas
 
-**QA Lead**: _________________ Data: __________
-**Tech Lead**: ________________ Data: __________
-**Aprovação Final**: ___________ Data: __________
+**QA Lead**: **\*\*\*\***\_**\*\*\*\*** Data: \***\*\_\_\*\***
+**Tech Lead**: **\*\***\_\_\_\_**\*\*** Data: \***\*\_\_\*\***
+**Aprovação Final**: \***\*\_\_\_\*\*** Data: \***\*\_\_\*\***
 ```
 
 ---
@@ -1094,21 +1165,25 @@ fi
 ### Níveis de Severidade
 
 **P0 - Critical (Resolver imediatamente)**
+
 - Sistema completamente offline
 - Perda de dados
 - Vulnerabilidade de segurança exposta
 
 **P1 - High (Resolver em 4h)**
+
 - Funcionalidade crítica quebrada
 - Performance severamente degradada
 - Afeta > 50% dos usuários
 
 **P2 - Medium (Resolver em 24h)**
+
 - Funcionalidade secundária quebrada
 - Bug afeta workflow específico
 - Afeta < 50% dos usuários
 
 **P3 - Low (Resolver em 1 semana)**
+
 - Bugs visuais
 - Melhorias de UX
 - Otimizações
@@ -1178,5 +1253,5 @@ curl -f https://prezzo.com/api/health || echo "Health check failed"
 **Próxima Revisão**: Pós primeiro deploy
 
 **Elaborado por**: Enterprise QA Team
-**Aprovado por**: ________________
-**Data**: ________________
+**Aprovado por**: **\*\***\_\_\_\_**\*\***
+**Data**: **\*\***\_\_\_\_**\*\***

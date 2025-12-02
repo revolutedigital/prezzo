@@ -19,23 +19,16 @@ export async function GET() {
         variacaoProduto: {
           include: {
             tipoProduto: true,
-          },
-        },
-        composicoesMateriasPrimas: {
-          include: {
-            materiaPrima: true,
-          },
-        },
-        composicoesMaoDeObra: {
-          include: {
-            tipoMaoDeObra: true,
-          },
-        },
-      },
-      orderBy: {
-        variacaoProduto: {
-          tipoProduto: {
-            nome: "asc",
+            composicao: {
+              include: {
+                materiaPrima: true,
+              },
+            },
+            composicaoMaoDeObra: {
+              include: {
+                tipoMaoDeObra: true,
+              },
+            },
           },
         },
       },
@@ -55,18 +48,18 @@ export async function GET() {
     // Preparar dados para a tabela
     const dadosTabela = produtos.map((produto) => {
       // Calcular custo de matérias-primas
-      const custoMateriasPrimas = produto.composicoesMateriasPrimas.reduce(
-        (acc, comp) => acc + Number(comp.quantidade) * Number(comp.materiaPrima.precoUnitario),
+      const custoMateriasPrimas = produto.variacaoProduto.composicao.reduce(
+        (acc, comp) => acc + Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario),
         0
       );
 
       // Calcular custo de mão de obra
-      const custoMaoDeObra = produto.composicoesMaoDeObra.reduce((acc, comp) => {
+      const custoMaoDeObra = produto.variacaoProduto.composicaoMaoDeObra.reduce((acc, comp) => {
         const custoBase = Number(comp.tipoMaoDeObra.custoHora);
         const custoMaquina = comp.tipoMaoDeObra.incluiMaquina
           ? Number(comp.tipoMaoDeObra.custoMaquinaHora || 0)
           : 0;
-        const custoTotal = (custoBase + custoMaquina) * Number(comp.tempoHoras);
+        const custoTotal = (custoBase + custoMaquina) * Number(comp.horasNecessarias);
         return acc + custoTotal;
       }, 0);
 
@@ -79,7 +72,6 @@ export async function GET() {
 
       return [
         `${produto.variacaoProduto.tipoProduto.nome} - ${produto.variacaoProduto.nome}`,
-        `${Number(produto.largura)}x${Number(produto.altura)}`,
         `R$ ${custoMateriasPrimas.toFixed(2)}`,
         `R$ ${custoMaoDeObra.toFixed(2)}`,
         `R$ ${custoTotal.toFixed(2)}`,
@@ -91,47 +83,38 @@ export async function GET() {
     // Adicionar tabela ao PDF
     autoTable(doc, {
       head: [
-        [
-          "Produto",
-          "Dimensões",
-          "Custo MP",
-          "Custo MO",
-          "Custo Total",
-          "Preço Venda",
-          "Margem",
-        ],
+        ["Produto", "Custo MP", "Custo MO", "Custo Total", "Preço Venda", "Margem"],
       ],
       body: dadosTabela,
       startY: 35,
       styles: { fontSize: 8 },
       headStyles: { fillColor: [66, 66, 66] },
       columnStyles: {
-        0: { cellWidth: 45 },
-        1: { cellWidth: 22 },
-        2: { cellWidth: 22, halign: "right" },
-        3: { cellWidth: 22, halign: "right" },
-        4: { cellWidth: 22, halign: "right" },
-        5: { cellWidth: 25, halign: "right" },
-        6: { cellWidth: 20, halign: "right" },
+        0: { cellWidth: 60 },
+        1: { cellWidth: 25, halign: "right" },
+        2: { cellWidth: 25, halign: "right" },
+        3: { cellWidth: 28, halign: "right" },
+        4: { cellWidth: 28, halign: "right" },
+        5: { cellWidth: 22, halign: "right" },
       },
     });
 
     // Calcular totais
     const totalCustoMP = produtos.reduce((acc, produto) => {
-      const custo = produto.composicoesMateriasPrimas.reduce(
-        (sum, comp) => sum + Number(comp.quantidade) * Number(comp.materiaPrima.precoUnitario),
+      const custo = produto.variacaoProduto.composicao.reduce(
+        (sum, comp) => sum + Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario),
         0
       );
       return acc + custo;
     }, 0);
 
     const totalCustoMO = produtos.reduce((acc, produto) => {
-      const custo = produto.composicoesMaoDeObra.reduce((sum, comp) => {
+      const custo = produto.variacaoProduto.composicaoMaoDeObra.reduce((sum, comp) => {
         const custoBase = Number(comp.tipoMaoDeObra.custoHora);
         const custoMaquina = comp.tipoMaoDeObra.incluiMaquina
           ? Number(comp.tipoMaoDeObra.custoMaquinaHora || 0)
           : 0;
-        return sum + (custoBase + custoMaquina) * Number(comp.tempoHoras);
+        return sum + (custoBase + custoMaquina) * Number(comp.horasNecessarias);
       }, 0);
       return acc + custo;
     }, 0);
@@ -167,9 +150,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Erro ao exportar relatório de custos:", error);
-    return NextResponse.json(
-      { error: "Erro ao exportar relatório de custos" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao exportar relatório de custos" }, { status: 500 });
   }
 }

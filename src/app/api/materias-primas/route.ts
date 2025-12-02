@@ -57,9 +57,18 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Validar campos de ordenação permitidos
-    const allowedSortFields = ['nome', 'codigo', 'unidadeMedida', 'custoUnitario', 'fornecedor', 'categoria', 'ativo', 'createdAt'];
-    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'nome';
-    const validOrder = (order === 'asc' || order === 'desc') ? order : 'asc';
+    const allowedSortFields = [
+      "nome",
+      "codigo",
+      "unidadeMedida",
+      "custoUnitario",
+      "fornecedor",
+      "categoria",
+      "ativo",
+      "createdAt",
+    ];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : "nome";
+    const validOrder = order === "asc" || order === "desc" ? order : "asc";
 
     const [materiasPrimas, total] = await Promise.all([
       prisma.materiaPrima.findMany({
@@ -69,11 +78,11 @@ export async function GET(request: NextRequest) {
         orderBy: { [validSortBy]: validOrder },
         include: {
           _count: {
-            select: { composicoes: true }
-          }
-        }
+            select: { composicoes: true },
+          },
+        },
       }),
-      prisma.materiaPrima.count({ where })
+      prisma.materiaPrima.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -82,15 +91,12 @@ export async function GET(request: NextRequest) {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     console.error("Erro ao buscar matérias-primas:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar matérias-primas" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar matérias-primas" }, { status: 500 });
   }
 }
 
@@ -111,14 +117,11 @@ export async function POST(request: NextRequest) {
     // Verificar se código já existe (se fornecido)
     if (validatedData.codigo) {
       const existing = await prisma.materiaPrima.findUnique({
-        where: { codigo: validatedData.codigo }
+        where: { codigo: validatedData.codigo },
       });
 
       if (existing) {
-        return NextResponse.json(
-          { error: "Código já cadastrado" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Código já cadastrado" }, { status: 400 });
       }
     }
 
@@ -132,23 +135,16 @@ export async function POST(request: NextRequest) {
         fornecedor: validatedData.fornecedor,
         categoria: validatedData.categoria,
         ativo: validatedData.ativo ?? true,
-      }
+      },
     });
 
     return NextResponse.json(materiaPrima, { status: 201 });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao criar matéria-prima:", error);
-    return NextResponse.json(
-      { error: "Erro ao criar matéria-prima" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao criar matéria-prima" }, { status: 500 });
   }
 }

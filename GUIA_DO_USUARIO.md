@@ -33,6 +33,7 @@ Este guia irá ajudá-lo a usar todas as funcionalidades do sistema de forma efi
 ### 2. Visão Geral do Dashboard
 
 O Dashboard mostra:
+
 - **KPIs principais**: Matérias-primas, produtos, orçamentos
 - **Taxa de conversão**: % de orçamentos aprovados
 - **Valor total aprovado**: Receita total
@@ -201,6 +202,7 @@ Sistema inteligente que processa Notas Fiscais automaticamente e sugere atualiza
 #### 2. Processamento Automático
 
 A IA do Claude extrai:
+
 - ✅ Fornecedor
 - ✅ Número da NF
 - ✅ Data de Emissão
@@ -210,6 +212,7 @@ A IA do Claude extrai:
 #### 3. Matching Inteligente
 
 O sistema tenta associar automaticamente cada item da NF com suas matérias-primas cadastradas usando:
+
 - Nome exato
 - Nome parcial + unidade
 - Palavras-chave
@@ -257,6 +260,7 @@ O sistema tenta associar automaticamente cada item da NF com suas matérias-prim
 ### Dashboard Principal
 
 Acesso rápido a métricas essenciais:
+
 - Total de matérias-primas, produtos, orçamentos
 - Taxa de conversão (aprovados / enviados)
 - Valor total e ticket médio
@@ -265,6 +269,7 @@ Acesso rápido a métricas essenciais:
 ### Widget de Alertas de Custo
 
 Aparece no dashboard quando há atualizações pendentes:
+
 - Resumo por nível de impacto
 - Top 5 atualizações aguardando
 - Link direto para Prezzo AI
@@ -276,12 +281,14 @@ Menu **"Relatórios"** com 3 abas:
 #### 1. Margens por Produto
 
 **O que mostra**:
+
 - Margem média geral
 - Produtos com margem baixa (<20%)
 - Produtos com alta margem (>35%)
 - Tabela detalhada de todos os produtos
 
 **Como usar**:
+
 - Identifique produtos com margem problemática
 - Considere reajustar preços ou negociar fornecedores
 - Compare margens entre tipos de produto
@@ -289,6 +296,7 @@ Menu **"Relatórios"** com 3 abas:
 #### 2. Evolução de Custos
 
 **O que mostra**:
+
 - Total de atualizações de custo
 - Aumentos vs. Reduções
 - Variação média
@@ -296,6 +304,7 @@ Menu **"Relatórios"** com 3 abas:
 - Histórico completo de mudanças
 
 **Como usar**:
+
 - Acompanhe tendências de custo
 - Identifique matérias-primas voláteis
 - Planeje reajustes de preço antecipadamente
@@ -303,6 +312,7 @@ Menu **"Relatórios"** com 3 abas:
 #### 3. Rentabilidade
 
 **O que mostra**:
+
 - Total em vendas (orçamentos aprovados)
 - Custo total vs. Lucro total
 - Margem global do negócio
@@ -310,6 +320,7 @@ Menu **"Relatórios"** com 3 abas:
 - Análise detalhada por orçamento
 
 **Como usar**:
+
 - Avalie a saúde financeira do negócio
 - Identifique clientes mais valiosos
 - Analise se descontos estão impactando lucro

@@ -3,10 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -19,10 +16,7 @@ export async function POST(
     const { atualizacaoIds } = body; // Array de IDs das atualizações a confirmar
 
     if (!Array.isArray(atualizacaoIds) || atualizacaoIds.length === 0) {
-      return NextResponse.json(
-        { error: "IDs de atualização inválidos" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "IDs de atualização inválidos" }, { status: 400 });
     }
 
     // Buscar atualizações
@@ -39,10 +33,7 @@ export async function POST(
     });
 
     if (atualizacoes.length === 0) {
-      return NextResponse.json(
-        { error: "Nenhuma atualização válida encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Nenhuma atualização válida encontrada" }, { status: 404 });
     }
 
     // Processar cada atualização
@@ -94,10 +85,7 @@ export async function POST(
     });
   } catch (error) {
     console.error("Erro ao confirmar atualizações:", error);
-    return NextResponse.json(
-      { error: "Erro ao confirmar atualizações" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao confirmar atualizações" }, { status: 500 });
   }
 }
 

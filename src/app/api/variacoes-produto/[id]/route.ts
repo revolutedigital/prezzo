@@ -4,10 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // GET - Buscar variação por ID
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -40,10 +37,7 @@ export async function GET(
     });
 
     if (!variacao) {
-      return NextResponse.json(
-        { error: "Variação não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Variação não encontrada" }, { status: 404 });
     }
 
     // Calcular custos
@@ -73,18 +67,12 @@ export async function GET(
     });
   } catch (error) {
     console.error("Erro ao buscar variação:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar variação" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar variação" }, { status: 500 });
   }
 }
 
 // DELETE - Excluir variação de produto
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -107,10 +95,7 @@ export async function DELETE(
     });
 
     if (!variacao) {
-      return NextResponse.json(
-        { error: "Variação não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Variação não encontrada" }, { status: 404 });
     }
 
     // Validação: Não permitir excluir variação que está em produtos finais
@@ -138,9 +123,6 @@ export async function DELETE(
     });
   } catch (error) {
     console.error("Erro ao excluir variação:", error);
-    return NextResponse.json(
-      { error: "Erro ao excluir variação" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao excluir variação" }, { status: 500 });
   }
 }

@@ -9,7 +9,7 @@ export default function ContatoPage() {
     nome: "",
     email: "",
     empresa: "",
-    mensagem: ""
+    mensagem: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,11 +25,16 @@ export default function ContatoPage() {
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-500">
-              <span className="flex items-center justify-center h-full font-mono font-bold text-black text-lg">P</span>
+              <span className="flex items-center justify-center h-full font-mono font-bold text-black text-lg">
+                P
+              </span>
             </div>
             <span className="text-xl font-mono font-bold tracking-tighter">PREZZO</span>
           </Link>
-          <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-mono text-sm uppercase tracking-wider">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-mono text-sm uppercase tracking-wider"
+          >
             <ArrowLeft className="w-4 h-4" />
             Voltar
           </Link>
@@ -39,8 +44,14 @@ export default function ContatoPage() {
       <main className="pt-32 pb-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <div className="mb-16">
-            <div className="font-mono text-xs uppercase tracking-widest text-blue-500 mb-4">Contact</div>
-            <h1 className="text-6xl md:text-7xl font-black tracking-tighter mb-6">FALE<br />CONOSCO</h1>
+            <div className="font-mono text-xs uppercase tracking-widest text-blue-500 mb-4">
+              Contact
+            </div>
+            <h1 className="text-6xl md:text-7xl font-black tracking-tighter mb-6">
+              FALE
+              <br />
+              CONOSCO
+            </h1>
             <div className="w-24 h-1 bg-blue-500"></div>
           </div>
 
@@ -48,41 +59,49 @@ export default function ContatoPage() {
             <div>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">Nome</label>
+                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">
+                    Nome
+                  </label>
                   <input
                     type="text"
                     required
                     value={formData.nome}
-                    onChange={(e) => setFormData({...formData, nome: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                     className="w-full bg-white/5 border border-white/10 px-4 py-3 font-mono text-white focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">Email</label>
+                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">
+                    Email
+                  </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full bg-white/5 border border-white/10 px-4 py-3 font-mono text-white focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">Empresa</label>
+                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">
+                    Empresa
+                  </label>
                   <input
                     type="text"
                     value={formData.empresa}
-                    onChange={(e) => setFormData({...formData, empresa: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, empresa: e.target.value })}
                     className="w-full bg-white/5 border border-white/10 px-4 py-3 font-mono text-white focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">Mensagem</label>
+                  <label className="block font-mono text-xs uppercase tracking-wider text-gray-400 mb-2">
+                    Mensagem
+                  </label>
                   <textarea
                     required
                     rows={6}
                     value={formData.mensagem}
-                    onChange={(e) => setFormData({...formData, mensagem: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, mensagem: e.target.value })}
                     className="w-full bg-white/5 border border-white/10 px-4 py-3 font-mono text-white focus:border-blue-500 focus:outline-none transition-colors resize-none"
                   />
                 </div>
@@ -113,7 +132,9 @@ export default function ContatoPage() {
               </div>
 
               <div className="mt-12 p-8 bg-blue-500">
-                <h3 className="text-2xl font-black text-black mb-4 uppercase">Pronto para Começar?</h3>
+                <h3 className="text-2xl font-black text-black mb-4 uppercase">
+                  Pronto para Começar?
+                </h3>
                 <p className="text-black/80 font-mono mb-6">Acesse o sistema agora mesmo.</p>
                 <Link
                   href="/login"

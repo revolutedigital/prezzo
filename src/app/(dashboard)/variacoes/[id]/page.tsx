@@ -29,9 +29,10 @@ export default function VariacaoEditPage() {
       setVariacao(data);
 
       // Calcular custo de materiais
-      const custoMat = data.composicao?.reduce((acc: number, comp: any) => {
-        return acc + Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario);
-      }, 0) || 0;
+      const custoMat =
+        data.composicao?.reduce((acc: number, comp: any) => {
+          return acc + Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario);
+        }, 0) || 0;
       setCustoMateriais(custoMat);
     } catch (error: any) {
       console.error(error);
@@ -114,9 +115,7 @@ export default function VariacaoEditPage() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-sm text-muted-foreground">
-              Preço Venda ({margemLucro}%)
-            </div>
+            <div className="text-sm text-muted-foreground">Preço Venda ({margemLucro}%)</div>
             <div className="text-2xl font-bold text-success">{formatarMoeda(precoSugerido)}</div>
           </CardContent>
         </Card>
@@ -165,8 +164,7 @@ export default function VariacaoEditPage() {
                             {formatarMoeda(Number(comp.materiaPrima.custoUnitario))} ={" "}
                             <span className="font-semibold">
                               {formatarMoeda(
-                                Number(comp.quantidade) *
-                                  Number(comp.materiaPrima.custoUnitario)
+                                Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario)
                               )}
                             </span>
                           </span>

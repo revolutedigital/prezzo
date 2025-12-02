@@ -50,9 +50,9 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Validar campos de ordenação permitidos
-    const allowedSortFields = ['nome', 'codigo', 'categoria', 'ativo', 'createdAt'];
-    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'nome';
-    const validOrder = (order === 'asc' || order === 'desc') ? order : 'asc';
+    const allowedSortFields = ["nome", "codigo", "categoria", "ativo", "createdAt"];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : "nome";
+    const validOrder = order === "asc" || order === "desc" ? order : "asc";
 
     const [tiposProduto, total] = await Promise.all([
       prisma.tipoProduto.findMany({
@@ -64,16 +64,16 @@ export async function GET(request: NextRequest) {
           variacoes: {
             include: {
               _count: {
-                select: { composicao: true }
-              }
-            }
+                select: { composicao: true },
+              },
+            },
           },
           _count: {
-            select: { variacoes: true }
-          }
-        }
+            select: { variacoes: true },
+          },
+        },
       }),
-      prisma.tipoProduto.count({ where })
+      prisma.tipoProduto.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -82,15 +82,12 @@ export async function GET(request: NextRequest) {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     console.error("Erro ao buscar tipos de produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar tipos de produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar tipos de produto" }, { status: 500 });
   }
 }
 
@@ -109,14 +106,11 @@ export async function POST(request: NextRequest) {
     // Verificar se código já existe
     if (validatedData.codigo) {
       const existing = await prisma.tipoProduto.findUnique({
-        where: { codigo: validatedData.codigo }
+        where: { codigo: validatedData.codigo },
       });
 
       if (existing) {
-        return NextResponse.json(
-          { error: "Código já cadastrado" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Código já cadastrado" }, { status: 400 });
       }
     }
 
@@ -130,25 +124,18 @@ export async function POST(request: NextRequest) {
       },
       include: {
         _count: {
-          select: { variacoes: true }
-        }
-      }
+          select: { variacoes: true },
+        },
+      },
     });
 
     return NextResponse.json(tipoProduto, { status: 201 });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao criar tipo de produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao criar tipo de produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao criar tipo de produto" }, { status: 500 });
   }
 }

@@ -106,9 +106,7 @@ export function RelatorioMargens() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{margemMedia.toFixed(1)}%</div>
-            <p className="text-xs text-muted-foreground">
-              Média de {produtos.length} produtos
-            </p>
+            <p className="text-xs text-muted-foreground">Média de {produtos.length} produtos</p>
           </CardContent>
         </Card>
 

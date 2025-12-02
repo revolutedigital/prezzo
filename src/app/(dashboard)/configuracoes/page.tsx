@@ -29,37 +29,22 @@ export default function ConfiguracoesPage() {
               <User className="h-5 w-5" />
               Perfil do Usuário
             </CardTitle>
-            <CardDescription>
-              Informações básicas da sua conta
-            </CardDescription>
+            <CardDescription>Informações básicas da sua conta</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="nome">Nome</Label>
-                <Input
-                  id="nome"
-                  defaultValue={session?.user?.name || ""}
-                  disabled
-                />
+                <Input id="nome" defaultValue={session?.user?.name || ""} disabled />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  defaultValue={session?.user?.email || ""}
-                  disabled
-                />
+                <Input id="email" type="email" defaultValue={session?.user?.email || ""} disabled />
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="empresa">Empresa</Label>
-              <Input
-                id="empresa"
-                defaultValue={session?.user?.empresa || ""}
-                disabled
-              />
+              <Input id="empresa" defaultValue={session?.user?.empresa || ""} disabled />
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Mail className="h-4 w-4" />
@@ -75,9 +60,7 @@ export default function ConfiguracoesPage() {
               <Lock className="h-5 w-5" />
               Segurança
             </CardTitle>
-            <CardDescription>
-              Altere sua senha de acesso
-            </CardDescription>
+            <CardDescription>Altere sua senha de acesso</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
@@ -92,12 +75,7 @@ export default function ConfiguracoesPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nova-senha">Nova Senha</Label>
-                <Input
-                  id="nova-senha"
-                  type="password"
-                  placeholder="Digite a nova senha"
-                  disabled
-                />
+                <Input id="nova-senha" type="password" placeholder="Digite a nova senha" disabled />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmar-senha">Confirmar Nova Senha</Label>
@@ -125,29 +103,17 @@ export default function ConfiguracoesPage() {
               <Building2 className="h-5 w-5" />
               Preferências da Empresa
             </CardTitle>
-            <CardDescription>
-              Configurações gerais do sistema
-            </CardDescription>
+            <CardDescription>Configurações gerais do sistema</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="margem-padrao">Margem de Lucro Padrão (%)</Label>
-                <Input
-                  id="margem-padrao"
-                  type="number"
-                  placeholder="Ex: 30"
-                  disabled
-                />
+                <Input id="margem-padrao" type="number" placeholder="Ex: 30" disabled />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="validade-padrao">Validade Padrão de Orçamentos (dias)</Label>
-                <Input
-                  id="validade-padrao"
-                  type="number"
-                  placeholder="Ex: 15"
-                  disabled
-                />
+                <Input id="validade-padrao" type="number" placeholder="Ex: 15" disabled />
               </div>
             </div>
             <Button disabled className="w-full md:w-auto">
@@ -163,9 +129,7 @@ export default function ConfiguracoesPage() {
         <Card>
           <CardHeader>
             <CardTitle>Sobre o Sistema</CardTitle>
-            <CardDescription>
-              Informações da versão e ambiente
-            </CardDescription>
+            <CardDescription>Informações da versão e ambiente</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="grid gap-2 text-sm">

@@ -62,12 +62,10 @@ export async function GET() {
       orc.itens.map((item) => ({
         "Número Orçamento": orc.numero,
         Cliente: orc.clienteNome,
-        "Tipo de Produto": item.itemProduto.variacaoProduto.tipoProduto.nome,
-        Variação: item.itemProduto.variacaoProduto.nome,
-        Largura: Number(item.itemProduto.largura),
-        Altura: Number(item.itemProduto.altura),
+        "Produto": item.descricao,
         Quantidade: Number(item.quantidade),
         "Preço Unitário": Number(item.precoUnitario).toFixed(2),
+        Desconto: Number(item.desconto).toFixed(2),
         Total: Number(item.total).toFixed(2),
       }))
     );
@@ -128,12 +126,10 @@ export async function GET() {
       worksheetDetalhes["!cols"] = [
         { wch: 15 }, // Número Orçamento
         { wch: 25 }, // Cliente
-        { wch: 25 }, // Tipo de Produto
-        { wch: 25 }, // Variação
-        { wch: 10 }, // Largura
-        { wch: 10 }, // Altura
+        { wch: 40 }, // Produto
         { wch: 10 }, // Quantidade
         { wch: 15 }, // Preço Unitário
+        { wch: 12 }, // Desconto
         { wch: 12 }, // Total
       ];
       XLSX.utils.book_append_sheet(workbook, worksheetDetalhes, "Itens");

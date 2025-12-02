@@ -3,10 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -47,19 +44,13 @@ export async function GET(
     });
 
     if (!notaFiscal) {
-      return NextResponse.json(
-        { error: "Nota fiscal não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Nota fiscal não encontrada" }, { status: 404 });
     }
 
     return NextResponse.json(notaFiscal);
   } catch (error) {
     console.error("Erro ao buscar nota fiscal:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar nota fiscal" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar nota fiscal" }, { status: 500 });
   }
 }
 
@@ -84,10 +75,7 @@ export async function DELETE(
     });
 
     if (!notaFiscal) {
-      return NextResponse.json(
-        { error: "Nota fiscal não encontrada" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Nota fiscal não encontrada" }, { status: 404 });
     }
 
     // Deletar (as atualizações serão deletadas em cascade)
@@ -98,9 +86,6 @@ export async function DELETE(
     return NextResponse.json({ message: "Nota fiscal deletada com sucesso" });
   } catch (error) {
     console.error("Erro ao deletar nota fiscal:", error);
-    return NextResponse.json(
-      { error: "Erro ao deletar nota fiscal" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao deletar nota fiscal" }, { status: 500 });
   }
 }

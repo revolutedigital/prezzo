@@ -135,17 +135,17 @@ export default function MateriasPrimasPage() {
     } else {
       if (currentPage <= 4) {
         for (let i = 1; i <= 5; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 3) {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
       } else {
         pages.push(1);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       }
     }
@@ -259,9 +259,7 @@ export default function MateriasPrimasPage() {
 
   // Toggle selection
   const toggleSelection = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const toggleSelectAll = () => {
@@ -451,30 +449,19 @@ export default function MateriasPrimasPage() {
           <CardContent className="py-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">
-                {selectedIds.length} {selectedIds.length === 1 ? "item selecionado" : "itens selecionados"}
+                {selectedIds.length}{" "}
+                {selectedIds.length === 1 ? "item selecionado" : "itens selecionados"}
               </span>
               <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleBulkStatusChange(true)}
-                >
+                <Button size="sm" variant="outline" onClick={() => handleBulkStatusChange(true)}>
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                   Ativar
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleBulkStatusChange(false)}
-                >
+                <Button size="sm" variant="outline" onClick={() => handleBulkStatusChange(false)}>
                   <XCircle className="mr-2 h-4 w-4" />
                   Desativar
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setSelectedIds([])}
-                >
+                <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>
                   Cancelar
                 </Button>
               </div>
@@ -526,9 +513,7 @@ export default function MateriasPrimasPage() {
                         {material.nome}
                       </CardTitle>
                       {material.codigo && (
-                        <p className="text-xs text-muted-foreground font-mono">
-                          {material.codigo}
-                        </p>
+                        <p className="text-xs text-muted-foreground font-mono">{material.codigo}</p>
                       )}
                     </div>
                   </div>
@@ -716,9 +701,7 @@ export default function MateriasPrimasPage() {
                 <PaginationPrevious
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   className={
-                    currentPage === 1
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
+                    currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
                   }
                 />
               </PaginationItem>
@@ -743,9 +726,7 @@ export default function MateriasPrimasPage() {
                 <PaginationNext
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   className={
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
+                    currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
                   }
                 />
               </PaginationItem>
@@ -758,7 +739,8 @@ export default function MateriasPrimasPage() {
       {materiasPrimas.length > 0 && (
         <div className="flex justify-between items-center text-sm text-muted-foreground">
           <span>
-            Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} matéria(s)-prima(s)
+            Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}-
+            {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} de {totalItems} matéria(s)-prima(s)
             {(debouncedSearch || categoria || ativo) && " com filtros aplicados"}
           </span>
           <Button variant="outline" size="sm">

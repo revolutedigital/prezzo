@@ -9,7 +9,7 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -17,7 +17,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email },
         });
 
         if (!user) {
@@ -28,10 +28,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Usuário inativo");
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.senha
-        );
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.senha);
 
         if (!isPasswordValid) {
           throw new Error("Credenciais inválidas");
@@ -44,8 +41,8 @@ export const authOptions: NextAuthOptions = {
           role: user.role,
           empresa: user.empresa,
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -63,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         session.user.empresa = token.empresa as string | null;
       }
       return session;
-    }
+    },
   },
   pages: {
     signIn: "/login",

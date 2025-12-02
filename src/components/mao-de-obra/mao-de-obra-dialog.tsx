@@ -37,12 +37,7 @@ interface MaoDeObraDialogProps {
   onSuccess: () => void;
 }
 
-export function MaoDeObraDialog({
-  open,
-  onOpenChange,
-  tipo,
-  onSuccess,
-}: MaoDeObraDialogProps) {
+export function MaoDeObraDialog({ open, onOpenChange, tipo, onSuccess }: MaoDeObraDialogProps) {
   const [loading, setLoading] = useState(false);
   const isEditing = !!tipo;
 
@@ -115,11 +110,7 @@ export function MaoDeObraDialog({
         throw new Error(error.error || "Erro ao salvar");
       }
 
-      showSuccess(
-        isEditing
-          ? "Tipo atualizado com sucesso"
-          : "Tipo criado com sucesso"
-      );
+      showSuccess(isEditing ? "Tipo atualizado com sucesso" : "Tipo criado com sucesso");
 
       onSuccess();
     } catch (error: any) {
@@ -144,9 +135,7 @@ export function MaoDeObraDialog({
           <DialogTitle>
             {isEditing ? "Editar Tipo de Mão de Obra" : "Novo Tipo de Mão de Obra"}
           </DialogTitle>
-          <DialogDescription>
-            Preencha as informações do tipo de mão de obra
-          </DialogDescription>
+          <DialogDescription>Preencha as informações do tipo de mão de obra</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -188,12 +177,7 @@ export function MaoDeObraDialog({
                 <FormItem>
                   <FormLabel>Custo por Hora (R$) *</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      {...field}
-                    />
+                    <Input type="number" step="0.01" placeholder="0.00" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,10 +190,7 @@ export function MaoDeObraDialog({
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Inclui Máquina/Equipamento</FormLabel>
@@ -253,10 +234,7 @@ export function MaoDeObraDialog({
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Detalhes sobre o tipo de mão de obra..."
-                      {...field}
-                    />
+                    <Textarea placeholder="Detalhes sobre o tipo de mão de obra..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -269,10 +247,7 @@ export function MaoDeObraDialog({
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Ativo</FormLabel>
@@ -317,8 +292,10 @@ export function MaoDeObraDialog({
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Salvando...
                   </>
+                ) : isEditing ? (
+                  "Atualizar"
                 ) : (
-                  isEditing ? "Atualizar" : "Criar"
+                  "Criar"
                 )}
               </Button>
             </DialogFooter>

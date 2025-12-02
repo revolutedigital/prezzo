@@ -4,10 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // GET - Buscar item de produto por ID
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -43,27 +40,18 @@ export async function GET(
     });
 
     if (!itemProduto) {
-      return NextResponse.json(
-        { error: "Produto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
     return NextResponse.json(itemProduto);
   } catch (error) {
     console.error("Erro ao buscar produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar produto" }, { status: 500 });
   }
 }
 
 // DELETE - Excluir item de produto
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -90,10 +78,7 @@ export async function DELETE(
     });
 
     if (!itemProduto) {
-      return NextResponse.json(
-        { error: "Produto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
     // Validação: Não permitir excluir produto que está em orçamento
@@ -121,9 +106,6 @@ export async function DELETE(
     });
   } catch (error) {
     console.error("Erro ao excluir produto:", error);
-    return NextResponse.json(
-      { error: "Erro ao excluir produto" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao excluir produto" }, { status: 500 });
   }
 }

@@ -14,7 +14,9 @@ export default function SobrePage() {
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-500">
-              <span className="flex items-center justify-center h-full font-mono font-bold text-black text-lg">P</span>
+              <span className="flex items-center justify-center h-full font-mono font-bold text-black text-lg">
+                P
+              </span>
             </div>
             <span className="text-xl font-mono font-bold tracking-tighter">PREZZO</span>
           </Link>
@@ -33,9 +35,12 @@ export default function SobrePage() {
         <div className="container mx-auto max-w-4xl">
           {/* Title */}
           <div className="mb-16">
-            <div className="font-mono text-xs uppercase tracking-widest text-blue-500 mb-4">About</div>
+            <div className="font-mono text-xs uppercase tracking-widest text-blue-500 mb-4">
+              About
+            </div>
             <h1 className="text-6xl md:text-7xl font-black tracking-tighter mb-6">
-              SOBRE O<br />PREZZO
+              SOBRE O<br />
+              PREZZO
             </h1>
             <div className="w-24 h-1 bg-blue-500"></div>
           </div>
@@ -43,39 +48,63 @@ export default function SobrePage() {
           {/* Story */}
           <div className="space-y-12 font-mono text-lg leading-relaxed text-gray-300">
             <section>
-              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">Nossa História</h2>
+              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">
+                Nossa História
+              </h2>
               <p className="mb-4">
-                O Prezzo nasceu da experiência real de empresários que enfrentaram os desafios da precificação industrial no dia a dia.
+                O Prezzo nasceu da experiência real de empresários que enfrentaram os desafios da
+                precificação industrial no dia a dia.
               </p>
               <p>
-                Fundado por <span className="text-white font-bold">Giovanni Mannelli</span>, empresário à frente da Brafiltros, empresa especializada em filtração industrial, e <span className="text-white font-bold">Igor Rosso Silveira</span>, fundador da Revolute Digital, agência que já investiu mais de R$ 15 milhões em tráfego pago e atendeu mais de 300 clientes.
+                Fundado por <span className="text-white font-bold">Giovanni Mannelli</span>,
+                empresário à frente da Brafiltros, empresa especializada em filtração industrial, e{" "}
+                <span className="text-white font-bold">Igor Rosso Silveira</span>, fundador da
+                Revolute Digital, agência que já investiu mais de R$ 15 milhões em tráfego pago e
+                atendeu mais de 300 clientes.
               </p>
             </section>
 
             <section>
-              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">O Problema</h2>
+              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">
+                O Problema
+              </h2>
               <p className="mb-4">
-                Gerenciar custos de produção é complexo. Matérias-primas, mão de obra, máquinas, margens - cada centavo precisa ser contabilizado com precisão.
+                Gerenciar custos de produção é complexo. Matérias-primas, mão de obra, máquinas,
+                margens - cada centavo precisa ser contabilizado com precisão.
               </p>
               <p>
-                Planilhas manuais levam horas, são propensas a erros e não escalam. Sistemas empresariais são caros e complexos demais para a maioria das indústrias.
+                Planilhas manuais levam horas, são propensas a erros e não escalam. Sistemas
+                empresariais são caros e complexos demais para a maioria das indústrias.
               </p>
             </section>
 
             <section>
-              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">A Solução</h2>
+              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">
+                A Solução
+              </h2>
               <p className="mb-4">
-                Criamos um sistema profissional de gestão de custos e precificação que é <span className="text-blue-500 font-bold">simples de usar, mas poderoso o suficiente</span> para dar controle total sobre cada aspecto da sua precificação.
+                Criamos um sistema profissional de gestão de custos e precificação que é{" "}
+                <span className="text-blue-500 font-bold">
+                  simples de usar, mas poderoso o suficiente
+                </span>{" "}
+                para dar controle total sobre cada aspecto da sua precificação.
               </p>
               <p>
-                Automatizamos cálculos, eliminamos erros humanos e damos visibilidade completa de onde sua margem está vazando.
+                Automatizamos cálculos, eliminamos erros humanos e damos visibilidade completa de
+                onde sua margem está vazando.
               </p>
             </section>
 
             <section>
-              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">Nossa Missão</h2>
+              <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tight">
+                Nossa Missão
+              </h2>
               <p>
-                Dar para cada indústria, independente do tamanho, <span className="text-white font-bold">o poder de precificar com precisão absoluta</span>, tomar decisões baseadas em dados reais e maximizar suas margens de lucro.
+                Dar para cada indústria, independente do tamanho,{" "}
+                <span className="text-white font-bold">
+                  o poder de precificar com precisão absoluta
+                </span>
+                , tomar decisões baseadas em dados reais e maximizar suas margens de lucro.
               </p>
             </section>
           </div>

@@ -57,7 +57,10 @@ interface ComposicaoMaoDeObra {
   custoTotalHora: number;
 }
 
-export function MaoDeObraComposicao({ variacaoProdutoId, onCustoChange }: MaoDeObraComposicaoProps) {
+export function MaoDeObraComposicao({
+  variacaoProdutoId,
+  onCustoChange,
+}: MaoDeObraComposicaoProps) {
   const [composicao, setComposicao] = useState<ComposicaoMaoDeObra[]>([]);
   const [tiposMaoDeObra, setTiposMaoDeObra] = useState<TipoMaoDeObra[]>([]);
   const [loading, setLoading] = useState(true);
@@ -237,9 +240,7 @@ export function MaoDeObraComposicao({ variacaoProdutoId, onCustoChange }: MaoDeO
                       <TableCell className="font-medium">
                         {item.tipoMaoDeObra.nome}
                         {item.tipoMaoDeObra.incluiMaquina && (
-                          <span className="ml-2 text-xs text-muted-foreground">
-                            (com máquina)
-                          </span>
+                          <span className="ml-2 text-xs text-muted-foreground">(com máquina)</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">{item.horasNecessarias}h</TableCell>
@@ -253,11 +254,7 @@ export function MaoDeObraComposicao({ variacaoProdutoId, onCustoChange }: MaoDeO
                         {item.descricao || "-"}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemover(item.id)}
-                        >
+                        <Button variant="ghost" size="icon" onClick={() => handleRemover(item.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>

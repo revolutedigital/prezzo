@@ -12,11 +12,15 @@ const variacaoProdutoSchema = z.object({
   descricao: z.string().optional(),
   margemPadrao: z.number().min(0).max(100, "Margem deve estar entre 0 e 100%"),
   ativo: z.boolean().optional(),
-  composicao: z.array(z.object({
-    materiaPrimaId: z.string(),
-    quantidade: z.number().positive(),
-    unidade: z.string(),
-  })).optional(),
+  composicao: z
+    .array(
+      z.object({
+        materiaPrimaId: z.string(),
+        quantidade: z.number().positive(),
+        unidade: z.string(),
+      })
+    )
+    .optional(),
 });
 
 // GET - Listar variações (com filtro por tipo)
@@ -43,28 +47,28 @@ export async function GET(request: NextRequest) {
         tipoProduto: true,
         composicao: {
           include: {
-            materiaPrima: true
+            materiaPrima: true,
           },
-          orderBy: { ordem: "asc" }
+          orderBy: { ordem: "asc" },
         },
         composicaoMaoDeObra: {
           include: {
-            tipoMaoDeObra: true
+            tipoMaoDeObra: true,
           },
-          orderBy: { ordem: "asc" }
+          orderBy: { ordem: "asc" },
         },
         _count: {
-          select: { itensProduto: true }
-        }
+          select: { itensProduto: true },
+        },
       },
-      orderBy: { nome: "asc" }
+      orderBy: { nome: "asc" },
     });
 
     // Calcular custo total de cada variação (materiais + mão de obra)
-    const variacoesComCusto = variacoes.map(variacao => {
+    const variacoesComCusto = variacoes.map((variacao) => {
       // Custo de materiais
       const custoMateriais = variacao.composicao.reduce((acc, comp) => {
-        return acc + (Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario));
+        return acc + Number(comp.quantidade) * Number(comp.materiaPrima.custoUnitario);
       }, 0);
 
       // Custo de mão de obra
@@ -74,7 +78,7 @@ export async function GET(request: NextRequest) {
           ? Number(comp.tipoMaoDeObra.custoMaquinaHora || 0)
           : 0;
         const custoTotalHora = custoHora + custoMaquina;
-        return acc + (Number(comp.horasNecessarias) * custoTotalHora);
+        return acc + Number(comp.horasNecessarias) * custoTotalHora;
       }, 0);
 
       const custoTotal = custoMateriais + custoMaoDeObra;
@@ -93,10 +97,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(variacoesComCusto);
   } catch (error) {
     console.error("Erro ao buscar variações:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar variações" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao buscar variações" }, { status: 500 });
   }
 }
 
@@ -115,14 +116,11 @@ export async function POST(request: NextRequest) {
     // Verificar se código já existe
     if (validatedData.codigo) {
       const existing = await prisma.variacaoProduto.findUnique({
-        where: { codigo: validatedData.codigo }
+        where: { codigo: validatedData.codigo },
       });
 
       if (existing) {
-        return NextResponse.json(
-          { error: "Código já cadastrado" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Código já cadastrado" }, { status: 400 });
       }
     }
 
@@ -136,39 +134,34 @@ export async function POST(request: NextRequest) {
         descricao: validatedData.descricao,
         margemPadrao: validatedData.margemPadrao,
         ativo: validatedData.ativo ?? true,
-        composicao: validatedData.composicao ? {
-          create: validatedData.composicao.map((comp, index) => ({
-            materiaPrimaId: comp.materiaPrimaId,
-            quantidade: comp.quantidade,
-            unidade: comp.unidade,
-            ordem: index,
-          }))
-        } : undefined
+        composicao: validatedData.composicao
+          ? {
+              create: validatedData.composicao.map((comp, index) => ({
+                materiaPrimaId: comp.materiaPrimaId,
+                quantidade: comp.quantidade,
+                unidade: comp.unidade,
+                ordem: index,
+              })),
+            }
+          : undefined,
       },
       include: {
         tipoProduto: true,
         composicao: {
           include: {
-            materiaPrima: true
-          }
-        }
-      }
+            materiaPrima: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(variacao, { status: 201 });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
 
     console.error("Erro ao criar variação:", error);
-    return NextResponse.json(
-      { error: "Erro ao criar variação" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao criar variação" }, { status: 500 });
   }
 }
