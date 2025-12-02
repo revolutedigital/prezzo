@@ -32,8 +32,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Gerar PDF
     const buffer = generateOrcamentoPDF({ orcamento: orcamento as any });
 
-    // Retornar PDF
-    return new NextResponse(buffer, {
+    // Retornar PDF (converter Buffer para Uint8Array para NextResponse)
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="orcamento-${orcamento.numero}.pdf"`,
