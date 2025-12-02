@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { processarNotaFiscal } from "@/lib/claude-nf-processor";
-// TEMPORARIAMENTE DESABILITADO - pdf-parse causa SIGSEGV no Railway
-// import * as pdfParse from "pdf-parse";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -94,11 +93,21 @@ export async function GET(request: NextRequest) {
 // Função para processar em background (idealmente seria uma queue como Bull/BullMQ)
 async function processarNotaFiscalBackground(notaFiscalId: string, buffer: Buffer, userId: string) {
   try {
-    // TEMPORARIAMENTE DESABILITADO - pdf-parse causa SIGSEGV
-    // Extrair texto do PDF
-    // const pdfData = await (pdfParse as any).default(buffer);
-    // const pdfText = pdfData.text;
-    const pdfText = ""; // Placeholder temporário
+    // Extrair texto do PDF usando pdfjs-dist
+    const loadingTask = pdfjsLib.getDocument({ data: buffer });
+    const pdf = await loadingTask.promise;
+
+    let pdfText = "";
+
+    // Extrair texto de todas as páginas
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item: any) => item.str)
+        .join(" ");
+      pdfText += pageText + "\n";
+    }
 
     // Processar com Claude AI
     const dadosExtraidos = await processarNotaFiscal(pdfText);
