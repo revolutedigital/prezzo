@@ -139,14 +139,13 @@ export default function PrezzoAIPage() {
             onChange={handleFileUpload}
             disabled={uploading}
           />
-          <label htmlFor="file-upload">
-            <Button asChild disabled={uploading}>
-              <span className="cursor-pointer">
-                <Upload className="mr-2 h-4 w-4" />
-                {uploading ? "Enviando..." : "Upload Nota Fiscal"}
-              </span>
-            </Button>
-          </label>
+          <Button
+            onClick={() => document.getElementById("file-upload")?.click()}
+            disabled={uploading}
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            {uploading ? "Enviando..." : "Upload Nota Fiscal"}
+          </Button>
         </div>
       </div>
 
